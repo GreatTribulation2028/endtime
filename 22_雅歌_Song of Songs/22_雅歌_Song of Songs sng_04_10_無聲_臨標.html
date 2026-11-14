@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 4:10 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_04_10_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第4章10節<br/>我妹子，我新婦，你的愛情何其美！你的愛情比酒更美！你膏油的香氣勝過一切香品！</p>
+<p>心被奪走之後，這一節改口稱讚她的愛情與香氣。和合本寫：「我妹子，我新婦，你的愛情何其美！你的愛情比酒更美！你膏油的香氣勝過一切香品！」稱呼仍是「我妹子，我新婦」，先說愛情何其美，再說比酒更美，末了以膏油的香氣壓過一切香品。</p>
+<p>原文開頭是 מַה־יָּפוּ דֹדַיִךְ אֲחֹתִי כַלָּה「你的那些愛情何其美，我的妹子，新婦啊」。דּוֹד 在本節是複數，與 1:2、1:4 相同，和合本寫成中文裏常見的集合說法「愛情」。隨後 מַה־טֹּבוּ דֹדַיִךְ מִיַּיִן「你的那些愛情何其好，勝過酒」，與 1:2「你的愛情比酒更好」同構，只是本節加上「何其」，又把「好」寫成「更美」。和合本兩次都用「美」，原文先是「美」，後是「好」。</p>
+<p>末句是 וְרֵיחַ שְׁמָנַיִךְ מִכָּל־בְּשָׂמִים「你膏油的香氣勝過一切香料」。和合本寫「香品」。1:3 已經說過「你的膏油馨香」；本節把它拿來與「一切香料」比較，並且仍連在「我的妹子，新婦啊」這一個稱呼下面。愛情比過酒，香氣再比過一切香料，兩層比較都落在她身上。</p>
+<p>本節經文沒有角色標示。上一節是奪心，本節是把被奪之後所感到的美，用酒與香料說出來。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_04_09_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第4章9節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_04_11_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第4章11節</a></nav>
+<h2 class="ntitle">雅歌 第4章10節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第4章10節<br/>我妹子，我新婦，你的愛情何其美！你的愛情比酒更美！你膏油的香氣勝過一切香品！</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 4:10 &gt;</div>
+<div class="orig-he">מַה־ יָּפ֥וּ דֹדַ֖יִ/ךְ אֲחֹתִ֣/י כַלָּ֑ה מַה־ טֹּ֤בוּ דֹדַ֙יִ/ךְ֙ מִ/יַּ֔יִן וְ/רֵ֥יחַ שְׁמָנַ֖יִ/ךְ מִ/כָּל־ בְּשָׂמִֽים׃</div>
+<div class="orig-zh">你的那些愛情何其美，我的妹子，新婦啊；你的那些愛情何其好，勝過酒；你膏油的香氣勝過一切香料。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_04_10</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>我妹子，我新婦，你的愛情何其美！你的愛情比酒更美！你膏油的香氣勝過一切香品！</p>
+<p>原文是「你的那些愛情何其美，我的妹子，新婦啊；你的那些愛情何其好，勝過酒；並且你膏油的香氣勝過一切香料」。稱呼在第一句之後，和合本把它提前到句首，寫成「我妹子，我新婦」，並給「新婦」加上「我的」。דֹדַיִךְ 兩次都是複數「你的那些愛情」，和合本寫「你的愛情」。יָּפוּ 是「它們是美的」，טֹּבוּ 是「它們是好的」；和合本先寫「何其美」，再寫「比酒更美」，把第二次的「好」也寫成「美」。שְׁמָנַיִךְ 是「你的那些膏油」，複數；מִכָּל־בְּשָׂמִים 是「勝過一切香料」，和合本寫「香品」。原文此節沒有角色標示。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 你的愛情何其美，我的妹子，新婦啊｜מַה־יָּפוּ דֹדַיִךְ אֲחֹתִי כַלָּה</h3>
+<blockquote>מַה־ יָּפ֥וּ דֹדַ֖יִ/ךְ אֲחֹתִ֣/י כַלָּ֑ה</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>מַה־</strong>（感歎詞，何其、多麼。不另造編號）</li>
+<li><strong>יָּפ֥וּ</strong>（動詞 Qal 完成式第三人稱複數，它們是美的，<code><span class="sn">H03302</span></code> yafah；字義「美麗」）</li>
+<li><strong>דֹדַ֖יִ/ךְ</strong>（陽性名詞複數附屬形加第二人稱陰性單數詞尾，你的那些愛情，<code><span class="sn">H01730</span></code> dod；字義「愛情、良人」。本節取複數「愛情」，與 1:2、1:4 相同）</li>
+<li><strong>אֲחֹתִ֣/י</strong>（我的妹子，<code><span class="sn">H00269</span></code> achot）</li>
+<li><strong>כַלָּ֑ה</strong>（新婦，<code><span class="sn">H03618</span></code> kallah。原文沒有「我的」，和合本寫「我新婦」）</li>
+</ul>
+<p>本節先發出一聲感歎：你的那些愛情何其美。愛情是複數，和合本寫成集合的「愛情」，與 1:2 的處理相同。稱呼仍是上一節的「我的妹子，新婦啊」，和合本同樣提前到句首，並加上「我的」。上一節剛說心被奪走，本節立刻稱讚奪走他心的那一份愛情本身。美，先落在愛情上，還不是落在香氣上。</p>
+<h3>2️⃣ 你的愛情勝過酒，膏油的香氣勝過一切香料｜מַה־טֹּבוּ דֹדַיִךְ מִיַּיִן וְרֵיחַ שְׁמָנַיִךְ מִכָּל־בְּשָׂמִים</h3>
+<blockquote>מַה־ טֹּ֤בוּ דֹדַ֙יִ/ךְ֙ מִ/יַּ֔יִן וְ/רֵ֥יחַ שְׁמָנַ֖יִ/ךְ מִ/כָּל־ בְּשָׂמִֽים׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>מַה־</strong>（再次：何其。不另造編號）</li>
+<li><strong>טֹּ֤בוּ</strong>（動詞 Qal 完成式第三人稱複數，它們是好的，<code><span class="sn">H02895</span></code> tov；字義「美好、有益」）</li>
+<li><strong>דֹדַ֙יִ/ךְ֙</strong>（再次：你的那些愛情，<code><span class="sn">H01730</span></code>）</li>
+<li><strong>מִ/יַּ֔יִן</strong>（介詞加陽性名詞單數絕對形，勝過酒，<code><span class="sn">H03196</span></code> yayin；字義「酒」）</li>
+<li><strong>וְ/רֵ֥יחַ</strong>（連接詞加名詞附屬形，並且……的香氣，<code><span class="sn">H07381</span></code> reiach；字義「氣味、香氣」）</li>
+<li><strong>שְׁמָנַ֖יִ/ךְ</strong>（陽性名詞複數附屬形加第二人稱陰性單數詞尾，你的那些膏油，<code><span class="sn">H08081</span></code> shemen；字義「油」）</li>
+<li><strong>מִ/כָּל־ בְּשָׂמִֽים׃</strong>（介詞「勝過」加「一切」；一切香料，<code><span class="sn">H01314</span></code> bosem；字義「香料、香味」。「一切」不另造編號）</li>
+</ul>
+<p>感歎再說一次，這一次把比較說出來：你的那些愛情何其好，勝過酒。這與 1:2「你的愛情比酒更好」同構。和合本寫「你的愛情比酒更美」，把「好」也寫成「美」；原文先是 יָּפוּ「美」，後是 טֹּבוּ「好」，兩次用的不是同一個動詞。隨後又添一層：你膏油的香氣勝過一切香料。1:3 已說過「你的膏油馨香」，本節把它放進比較裏，勝過的對象是「一切香料」。和合本寫「香品」。酒是本卷已經用過的尺度，香料是另一種尺度；本節讓愛情與香氣各勝過一項，都指向她。</p>
+<h3>3️⃣ 收束｜本節歸納</h3>
+<p>本節稱「我的妹子，新婦啊」，說她的愛情何其美，又何其好、勝過酒，並且她膏油的香氣勝過一切香料。和合本把兩次比較都寫成「美」，又寫「香品」。這一句與 1:2、1:3 可對讀，本節特有的是「何其」與「妹子、新婦」的稱呼。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H03302、H01730、H00269、H03618、H02895、H03196、H07381、H08081、H01314。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">יָפָה</span><span class="gid">H03302</span></div><ul><li><b>主數值</b> 95</li><li><b>H小數</b> 14</li><li><b>H標準</b> 95</li><li><b>H序數</b> 32</li><li><b>H_Atbash</b> 136</li><li><b>H_Sofit擴展</b> 95</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 95 的詞條共 34 個（含本詞）。其中已有中文詞義者如 H00131 אֲדֻמִּים「紅斑」、H01840 דָנִיֵּאל「　神是我的審判官」、H01841 דָּנִיֵּאל「　神是我的審判官」、H01967 הֵימָם「滅絕」、H02001 הָמָן「傑出的」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　יָּפוּ 是「它們是美的」，主詞是複數的愛情。和合本寫「何其美」。下一句改用「好」，和合本仍寫「更美」。</p>
+<p><span class="gl">④精意</span>　美先落在愛情本身。本節還沒有拿酒來比，就已經為這一份愛情發出感歎。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">דּוֹד</span><span class="gid">H01730</span></div><ul><li><b>主數值</b> 14</li><li><b>H小數</b> 14</li><li><b>H標準</b> 14</li><li><b>H序數</b> 14</li><li><b>H_Atbash</b> 280</li><li><b>H_Sofit擴展</b> 14</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 14 的詞條共 25 個（含本詞）。其中已有中文詞義者如 H00329 אָטָד「荊棘、鼠李」、H00893 בֵּבַי「空洞」、H00959 בָּזָה「輕視、鄙視、輕蔑」、H00960 בָּזֹה「被藐視的」、H00961 בִּזָּה「搶奪、傷害、破壞」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　דֹדַיִךְ 在本節出現兩次，都是複數「你的那些愛情」。和合本寫「你的愛情」。與 1:2、1:4 同一用法；在別節這個詞也可指「良人」。</p>
+<p><span class="gl">④精意</span>　本節稱讚的是她的愛情，不是再稱呼他為良人。同一詞，用法要按本節的複數來讀。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">אָחוֹת</span><span class="gid">H00269</span></div><ul><li><b>主數值</b> 415</li><li><b>H小數</b> 19</li><li><b>H標準</b> 415</li><li><b>H序數</b> 37</li><li><b>H_Atbash</b> 541</li><li><b>H_Sofit擴展</b> 415</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 415 的詞條共 16 個（含本詞）。其中已有中文詞義者如 H00148 אֲדַרְגָּזֵר「審判官、參謀」、H00900 בֹּגְדוֹת「背逆的、奸詐的」、H02043 הֲרָרִי「山居者」、H02908 טְוָת「禁食」、H04475 מֶמְשָׁלָה「統治、主權、領域」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　אֲחֹתִי 是「我的妹子」，與「新婦」連用，接 4:9。和合本寫「我妹子」。</p>
+<p><span class="gl">④精意</span>　稱呼沒有換掉。本節仍用這對名字，把對愛情與香氣的稱讚，說給同一個人聽。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">כַּלָּה</span><span class="gid">H03618</span></div><ul><li><b>主數值</b> 55</li><li><b>H小數</b> 10</li><li><b>H標準</b> 55</li><li><b>H序數</b> 28</li><li><b>H_Atbash</b> 140</li><li><b>H_Sofit擴展</b> 55</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 55 的詞條共 30 個（含本詞）。其中已有中文詞義者如 H00129 אֲדָמִי「泥土的」、H00130 אֱדֹמִי「紅」、H00134 אֶדֶן「（建築、支柱等的）基礎、座基、底部的根基」、H00135 אַדָּן「堅固的」、H01374 גֵּבִים「蓄水池」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　כַלָּה 是「新婦」。原文沒有「我的」，和合本寫「我新婦」。從 4:8、4:9 延續下來。</p>
+<p><span class="gl">④精意</span>　新婦這個名字在本節繼續承載稱讚。被奪的心，現在改口稱讚她的愛情有多美。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">טוֹב</span><span class="gid">H02895</span></div><ul><li><b>主數值</b> 17</li><li><b>H小數</b> 17</li><li><b>H標準</b> 17</li><li><b>H序數</b> 17</li><li><b>H_Atbash</b> 430</li><li><b>H_Sofit擴展</b> 17</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 17 的詞條共 34 個（含本詞）。其中已有中文詞義者如 H00091 אֲגָגִי「我將勝出」、H00093 אֱגוֹז「核桃、果仁」、H00188 אוֹי「呼喊、哀哉、啊」、H00189 אֱוִי「渴望的」、H01416 גְּדוּד「群(尤指眾士兵)、軍隊」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　טֹּבוּ 是「它們是好的」，與「勝過酒」連用。和合本寫「比酒更美」，把「好」寫成「美」。1:2 已有同類比較。</p>
+<p><span class="gl">④精意</span>　好，是拿酒作尺度之後才說出的。本節讓人用已經嚐過的那一種歡暢，來量她的愛情。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">יַיִן</span><span class="gid">H03196</span></div><ul><li><b>主數值</b> 70</li><li><b>H小數</b> 7</li><li><b>H標準</b> 70</li><li><b>H序數</b> 34</li><li><b>H_Atbash</b> 89</li><li><b>H_Sofit擴展</b> 720</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 70 的詞條共 23 個（含本詞）。其中已有中文詞義者如 H00138 אֲדֹנִיָּה「耶和華之貴族」、H00971 בַּחִין「望樓」、H01349 גַּאֲיוֹן「傲慢的」、H01979 הֲלִיכָה「步行、行列、前進、旅行隊」、H02013 הָסָה「使平靜、保持安靜」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　יַיִן 是酒，作被勝過的對象。和合本寫「比酒更美」。1:2 已經用過這個比較。</p>
+<p><span class="gl">④精意</span>　酒在本卷是歡暢的尺度，不是本節的主角。它被提起，是為了讓愛情勝過它。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">רֵיחַ</span><span class="gid">H07381</span></div><ul><li><b>主數值</b> 218</li><li><b>H小數</b> 11</li><li><b>H標準</b> 218</li><li><b>H序數</b> 38</li><li><b>H_Atbash</b> 103</li><li><b>H_Sofit擴展</b> 218</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 218 的詞條共 20 個（含本詞）。其中已有中文詞義者如 H01256 בְּרָאיָה「耶和華已創造」、H01278 בְּרִיאָה「創作、新奇之事」、H01905 הַגְרִי「夏甲人」、H02116 זוּרֶה「被踐踏、被弄破」、H02750 חֳרִי「烈(怒)、劇烈」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　רֵיחַ 是香氣，作「你膏油的香氣」。和合本寫「香氣」。下一節還會再用這個詞寫衣服與黎巴嫩。</p>
+<p><span class="gl">④精意</span>　香氣把稱讚從可比較的愛情，轉到可以聞到的那一層。本節讓人用嗅覺加入這一句讚美。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">שֶׁמֶן</span><span class="gid">H08081</span></div><ul><li><b>主數值</b> 390</li><li><b>H小數</b> 12</li><li><b>H標準</b> 390</li><li><b>H序數</b> 48</li><li><b>H_Atbash</b> 21</li><li><b>H_Sofit擴展</b> 1040</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 390 的詞條共 19 個（含本詞）。其中已有中文詞義者如 H03142 יוּשַׁב חֶסֶד「仁慈已歸回」、H03274 יְעִישׁ「匆忙的」、H03469 יִשְׁעִי「拯救」、H04898 מְשֵׁיזַבְאֵל「　神所拯救的」、H05395 נָשַׁם「喘氣、呼吸」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　שְׁמָנַיִךְ 是你的那些膏油，複數。和合本寫「膏油」。1:3 已說過「你的膏油馨香」。</p>
+<p><span class="gl">④精意</span>　膏油是她自己的。本節不是稱讚市上的香料，乃是說，她身上的那一種油，已經勝過一切香品。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">בֶּשֶׂם</span><span class="gid">H01314</span></div><ul><li><b>主數值</b> 342</li><li><b>H小數</b> 9</li><li><b>H標準</b> 342</li><li><b>H序數</b> 36</li><li><b>H_Atbash</b> 312</li><li><b>H_Sofit擴展</b> 902</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 342 的詞條共 7 個（含本詞）。其中已有中文詞義者如 H01313 בָּשָׂם「香料、甜味、香氣」、H04016 מָבֻשׁ「男性生殖器、私處」、H04770 מַרְבֵּק「牛棚、圈養牲畜的地方」、H05878 עֵין חֲרֹד「顫抖之泉」、H07635 שָׁבִיל「路、通道」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　בְּשָׂמִים 是香料們。和合本寫「香品」。本節作被勝過的對象：「一切香料」。</p>
+<p><span class="gl">④精意</span>　一切香料被放在她膏油的對面，是為了說出她更勝一籌。本節還不是把園中的香料一一數出來，那是後文的事。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>雅歌 1:2 寫「你的愛情比酒更好」，1:3 寫「你的膏油馨香」。本節用同一類比較，加上「何其」，並把稱呼換成「我的妹子，我新婦」。宜對讀，看見這一卷開頭的那兩句怎樣在第四章被重新說出，卻不要把 1:2 的親嘴或 1:3 的傾倒之油直接搬進本節。</p>
+<p>雅歌 4:9 剛說「你奪了我的心」。本節把被奪之後所感到的美，用愛情與香氣說出來。兩節相接，不宜拆開來單獨當成兩套不相干的話。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「你的那些愛情何其美，我的妹子，新婦啊；你的那些愛情何其好，勝過酒；並且你膏油的香氣勝過一切香料」。和合本把稱呼提前，把第二次的「好」寫成「更美」，並寫「香品」。愛情在原文是複數。</p>
+<p><strong>本書用法</strong>　本節重提 1:2、1:3 的比較，特有的是「何其」與「妹子、新婦」的稱呼。它緊接 4:9 的奪心。香料在 4:14、4:16 還會再出現，本節只作被勝過的「一切香品」。</p>
+<p><strong>舊約根源</strong>　酒與膏油、香料都是舊約常見的歡宴與妝飾用語。本節用它們作比較的尺度，不另拉奠酒或聖膏油的條例來改寫這一句稱讚。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把「比酒更美」或膏油的香氣讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<p><strong>跨篇深意</strong>　心被奪走以後，人仍要說出那是怎樣的好。本節用兩層比較：愛情勝過酒，膏油勝過一切香料。被觸動的心，不是無話可說，乃是找到了已經認識的尺度，來承認她更勝一籌。</p>
+<h2>六、總意</h2>
+<p>奪心的那一句剛落，稱讚就改口說愛情。你的愛情何其美，我的妹子，新婦啊。稱呼沒有換，感歎卻是新的。</p>
+<p>隨後拿出酒來比：你的愛情何其好，勝過酒。這一句，1:2 已經說過一次。本節加上「何其」，又把它放在「妹子、新婦」下面。舊的比較，被用在新的稱呼上。和合本把「好」也寫成「更美」，原文卻是先美、後好。</p>
+<p>再下一層，是鼻子也可以參加的：你膏油的香氣勝過一切香品。1:3 只說膏油馨香，本節讓它勝過一切香料。酒量過愛情，香料量過膏油，兩樣尺度都指向她。</p>
+<p>讀到這裏，4:8 的邀請、4:9 的奪心，與本節的稱讚是一連的。不是三件不相干的事，乃是同一個人，先把她喚來，再說心已被奪，然後承認她的愛情與香氣都更勝一籌。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H03302 — יָפָה「使光亮、美麗的、俊美的」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03302</li><li>詞形 יָפָה</li><li>音譯 yaphah</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 使光亮、美麗的、俊美的</li><li>字源 一原形字根</li><li>中文用法 美2 美好2 妝飾1 榮美1 標緻1 美貌1 (8)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 漂亮, 美好</li><li>1a (Qal) 漂亮的 (實名詞)</li><li>1b (Piel) 美化 (偶像) (<br/>耶10:4<br/>)</li><li>1c (Pual) 更美 (<br/>詩45:2<br/>)</li><li>1d (Hithpael) 美化自己 (<br/>耶4:30<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－2單陰יָּפִית 歌7:6。3複יָּפוּ 歌4:10 7:1。</p>
+<p>未完成式－敘述式3單陽וַיְּיִף 結31:7。敘述式2單陰וַתִּיפִי 結16:13。</p>
+<p>漂亮的。作名詞：主詞為人，你的愛情何其美，歌4:10；你的腳，美好，歌7:1,6；用耶路撒冷的華麗比喻女人，結16:13；埃及作為樹木的象徵，結31:7。</p>
+<p>二、Piel</p>
+<p>未完成式－3單陽3單陽詞尾בְּכֶסֶף וּבְזָהָב יְיַפֵּהוּ他們用金銀妝飾他，耶10:4（美化偶像）。</p>
+<p>三、Pealal</p>
+<p>完成式－2單陽יָפְיָפִיתָ מִבְּנֵי אָדָם你比世人更美，詩45:2。</p>
+<p>四、Hitpael</p>
+<p>未完成式－2單陰תִּתְיַפִּי標緻，耶4:30。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>properly, to be bright , i.e. (by implication) beautiful</p></div></div></div></details>
+<details class="ntfold"><summary>H01730 — דּוֹד「情侶、所愛的人、叔伯、愛情」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01730</li><li>詞形 דּוֹד</li><li>音譯 dowd</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 情侶、所愛的人、叔伯、愛情</li><li>字源 來自一不用字根，意為沸騰</li><li>中文用法 良人33 叔叔12 愛情8 伯叔5 親愛1 所愛者1 叔父1 (61)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 心愛的 (人), 愛, 叔伯或舅舅</li><li>1a 心愛的 (人)</li><li>1b 叔伯或舅舅</li><li>1c 愛 (複數, 抽象)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽דּוֹד 歌5:9。單陽附屬形דּוֹד 撒上10:14；דֹּד 利10:4 斯2:15。單陽3單陽詞尾דּוֹדוֹ 摩6:10 撒上10:16；דֹּדוֹ 利20:20。單陽3單陰詞尾דּוֹדָהּ 歌8:5。單陽2單陽詞尾דֹּדְךָ 耶32:7。單陽1單詞尾דּוֹדִי 賽5:1；דֹּדִי 耶32:8。複陽דּוֹדִים 歌5:1；דֹדִים 箴7:18 結16:8 23:17。複陽3複陰詞尾דֹדֵיהֶן 民36:11。複陽2單陽詞尾דֹּדֶיךָ 歌1:2,4。複陽2單陰詞尾דֹדַיִךְ 歌4:10。</p>
+<p>一、心愛的人。良人，歌1:13,14,16 2:3,8,9,10,16,17 4:16 5:2,4,5,6,6,8,9,9,10,16 6:1,1,2,3,3 7:10,11,12,13 8:5,14。親愛的、朋友：שִׁירַת דּוֹדִי我所愛者的歌，賽5:1。</p>
+<p>二、叔伯或舅舅，民36:11 撒上14:50 王下24:17 利20:20 25:49,49 撒上10:14,15,16 斯2:7,15 耶32:7,8,9,12；大衛的叔叔約拿單，代上27:32；死人的伯叔，摩6:10。</p>
+<p>三、複數抽象：愛，歌1:2,4 4:10,10 5:1；עֵת דֹּדִים看見你的時候正動愛情，結16:8；מִשְׁכַּב דֹּדִים愛情的床，結23:17。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or (shortened) דֹּד ; from an unused root meaning properly, to boil , i.e.<br/>(figuratively) to love ; by implication, a love-token , lover , friend ; specifically an uncle</p></div></div></div></details>
+<details class="ntfold"><summary>H00269 — אָחוֹת「姐妹、親戚、所愛的人」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00269</li><li>詞形 אָחוֹת</li><li>音譯 &#x27;achowth</li><li>約 舊約</li><li>詞類 名、陰</li><li>中文詞義 姐妹、親戚、所愛的人</li><li>字源 SH251 之不規則陰性</li><li>中文用法 妹子46 姊妹23 妹妹14 姊姊13 妹3 幅2 兩1 姊1 彼1 此1 (105)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 姊妹</li><li>1a (同父母的) 姊妹</li><li>1b (同父異母的) 姊妹</li><li>1c 象徵猶大, 撒瑪利亞, 所多瑪, 與耶路撒冷</li><li>1d 心愛的人</li><li>1e (比喻用法) 密友</li><li>1f 另外的</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰אָחוֹת 撒下13:1。單陰附屬形וַאֲחוֹת 創4:22。單陰3單陽詞尾אֲחֹתוֹ 創24:30。單陰3單陰詞尾אֲחֹתָהּ 創30:1。單陰3複陽詞尾אֲחֹתָם 創24:59。單陰2單陽詞尾אֲחוֹתְךָ 利18:9。單陰2單陰詞尾אֲחוֹתֵךְ 結16:48。單陰1單詞尾אֲחֹתִי 創12:13。單陰1複詞尾אֲחֹתֵנוּ 創24:60。複陰3單陽詞尾אַחְיֹתָיו 伯42:11。複陰3複陽詞尾אַחְיֹתֵיהֶם 代上2:16 伯1:4。複陰2單陰詞尾אֲחוֹתֵךְִ 結16:51；אַחְיוֹתֵךְ 結16:52。複陰2複陽詞尾לַאֲחוֹתֵיכֶם 何2:1。複陰1單詞尾אַחְוֹתַי 書2:13。</p>
+<p>一、同父同母或同父異母的姊妹： 創4:22 12:13,19 20:2,5,12 24:29 出2:4,7 利18:11,9 民6:7 申27:22 撒下13:1,2,4 歌8:8,8。</p>
+<p>二、所親愛的：歌4:,9,10,12 5:1,2。</p>
+<p>三、象徵用法：指猶大、撒瑪利亞、所多瑪、與耶路撒冷，耶3:7,8,10 結16:45,52 23:4,11。</p>
+<p>四、比喻用法：密友。אִמִּי וַאֲחֹתִי לָרִמָּה對蟲說：你是我的母親和姊妹，伯17:14；אֱמֹר לַחָכְמָה אֲחֹתִי אָתְּ對智慧說：妳是我的姊妹，箴7:4。</p>
+<p>五、其它用法：形容帳幕，אִשָּׁה אֶל-אֲחֹתָהּ兩兩相對，出26:5；幅幅相連，出26:3,6；榫頭，出26:17；在以西結的異象中四個活物的翅膀，結1:9,23 3:13。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] irregular feminine of 251 ;<br/>a sister (used very widely [like 251 number 250, corrected to 251 ], literally and figuratively)</p></div></div></div></details>
+<details class="ntfold"><summary>H03618 — כַּלָּה「新婦(有完美之意)、兒婦」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03618</li><li>詞形 כַּלָּה</li><li>音譯 kallah</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 新婦(有完美之意)、兒婦</li><li>字源 來自 SH3634</li><li>中文用法 新婦17 兒婦16 媳婦1 (34)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 新娘, 媳婦</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰כַּלָּה 耶2:32。單陰3單陽詞尾כַּלָּתוֹ 創11:31。單陰3單陰詞尾כַלָּתָהּ 得1:22。複陰3單陰詞尾כַלֹּתֶיהָ 得1:6,7,8。複陰2複陽詞尾כַּלּוֹתֵיכֶם 何4:13,14。</p>
+<p>1.媳婦，創11:31 38:11,16,24 利18:15 20:12 得1:6,7,8,22 2:20,22 4:15 撒上4:19 代上2:4 結22:11 彌7:6。</p>
+<p>2.新娘或新婦，歌4:8,9,10,11,12 5:1 賽49:18 61:10 62:5 耶2:32 7:34 16:9 25:10 33:11 何4:13,14 珥2:16。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 3634 ;<br/>a bride (as if perfect); hence, a son&#x27;s wife</p></div></div></div></details>
+<details class="ntfold"><summary>H02895 — טוֹב「美好的、取悅於、有益於、行善、做得對」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02895</li><li>詞形 טוֹב</li><li>音譯 towb</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 美好的、取悅於、有益於、行善、做得對</li><li>字源 一原形字根</li><li>中文用法 以為美5 喜歡3 好2 很好2 得福2 甚好2 願意2 善1 善於1 好意1 施恩1 更美1 樂1 爽快1 美1 華美1 賜福...更多1 辦好1 (29)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 好的, 愉悅的</li><li>1a (Qal)</li><li>1a1 愉快的, 喜悅的</li><li>1a2 高興的, 歡喜的</li><li>1a3 更好</li><li>1a4 合於, 適於</li><li>1a5 令人滿意, 喜歡</li><li>1b (Hiphil) 作得好, 作得正確</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－3單陽טוֹב 民11:18。3複טֹּבוּ 民24:5 歌4:10。連續式3單陽וְטוֹב 申5:33。</p>
+<p>不定詞－附屬形טוֹב 耶32:39。</p>
+<p>1.愉快的、喜悅的。雅各的帳棚，民24:5；מַה־טֹּבוּ דֹדַיִךְ מִיַּיִן你的愛情比酒更美，歌4:10。</p>
+<p>2.高興的、歡喜的。טוֹב לִבָּם正宴樂，士16:25。</p>
+<p>3. טוֺב לְ對…有好處、有利於。טוֹב לָנוּ בְּמִצְרָיִם我們在埃及很好，民11:18 申5:33 15:16 19:13 撒上16:16,23；טוֹב אֶל־דָּוִד若向你有好意，撒上20:12。</p>
+<p>4.令人滿意、喜歡。טוֹב בְּעֵינֵי眼中看為美(意思是喜歡)，民24:1；אִם־עַל־הַמֶּלֶךְ טוֹב王若喜歡，尼2:5,7 斯8:5；王若以為美，斯1:19 3:9 5:4 7:3 9:13。</p>
+<p>二、Hifil</p>
+<p>完成式－2單陽הֱטִיבוֹתָ 代下6:8；הֱטִיבֹתָ 王上8:18 王下10:30。連續式1單וְהֵטִבֹתִי 結36:11。</p>
+<p>不定詞－附屬形הֵטִיב 耶32:41。</p>
+<p>分詞－單陽מֵטִיב 詩119:68 結33:32。</p>
+<p>作得好、作得正確。後面跟著כִּי：這意思甚好，王上8:18＝代下6:8；與לְ＋不定詞：הֱטִיבֹתָ לַעֲשׂוֹת הַיָּשָׁר בְּעֵינַי你辦好我眼中看為正的事，王下10:30。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root,<br/>to be (transitively, do or make ) good (or well) in the widest sense</p></div></div></div></details>
+<details class="ntfold"><summary>H03196 — יַיִן「酒」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03196</li><li>詞形 יַיִן</li><li>音譯 yayin</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 酒</li><li>字源 來自一不用字根，意為起泡沫</li><li>中文用法 酒137 清酒2 筵宴1 (140)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 酒</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽יַיִן 創9:21。יָיִן 創14:18。單陽附屬形יַיִן 詩60:3 歌8:2；יֵין 申32:38。單陽3單陽詞尾יֵינוֹ 創9:24。單陽3單陰詞尾יֵינָהּ 箴9:2。單陽3複陽詞尾יֵינָם 申32:33。單陽2單陽詞尾יֵינֶךָ 傳9:7。單陽2單陰詞尾 撒上1:14。單陽1單詞尾יֵינִי 歌5:1。</p>
+<p>1. 一般飲品：提神，創14:18 27:25 士19:19 撒下16:2 摩5:11 9:14 何14:7 伯1:13,18 但1:5。補品，箴31:6 結27:18 尼13:15。防營內儲備的物資，代下11:11。助興，撒下13:28 亞9:15 10:7 斯1:10 傳9:7 10:19 詩104:15。</p>
+<p>2. 宗教禮儀：在　神面前吃喝快樂，申14:26 何9:4。作為奠祭，出29:40 利23:13 民15:5,7,10 28:14；聖所的庫存，代上9:29；也用於異教徒的儀式，申32:33。</p>
+<p>3. 醉人的飲品： 創9:21,24 19:32,33,34,35 撒上1:14 25:37 賽5:11,22 箴21:17 23:30,31；平行詞תִּירוֹשׁ新酒，何4:11；平行詞שֵׁכָר	烈酒，撒上1:15 彌2:11 賽24:9 28:7,7 56:12；離俗歸耶和華的人不可飲用，民6:3,3,4,20 摩2:12；利甲的後代不可喝，耶35:6。參孫的母親，士13:4,7,14；進入聖所的祭司，利10:9 結44:21；君王喝酒不宜，箴31:4。</p>
+<p>4. 組合字：כְּיֵין הַטּוֹב上好的酒，歌7:9；וְיֵין מַלְכוּת御酒，斯1:7；אֹצְרוֹת הַיַּיִן酒窖，代上27:27；מִיַּיִן הָרֶקַח香酒，歌8:2；מִשְׁתֵּה הַיַּיִן酒席，斯5:6 7:2,7,8；בְסֹבְאֵי-יָיִן好飲酒的，箴23:20；נֹאד יַיִן皮酒袋，書9:4,13 撒上16:20；נֵבֶל יַיִן一皮袋酒，撒上1:24 10:3 25:18 撒下16:1 耶13:12,12；בֵּית הַיָּיִן筵宴所，歌2:4。</p>
+<p>5. 隱喻用法：智慧的酒，箴9:2 賽55:1。　神的忿怒，耶25:15（כּוֹס הַיַּיִן）。象徵因　神的作為而帶來的混亂，יַיִן תַּרְעֵלָה使人東倒西歪的酒，詩60:3 75:8；形容　神的震怒和行動，詩78:65；　神藉巴比倫猛烈的力量來施行審判，耶51:7；歡娛的酒，歌5:1；וְיֵין חֲמָסִים暴力的酒，箴4:17；比喻迫切想要說出自己心中想法，伯32:19；先知因　神的話語和審判而深感憂傷和震撼，וּכְגֶבֶר עֲבָרוֹ יָיִן像被酒所勝的人，耶23:9；表達愛情的甜美，你的口如上好的酒，歌7:9；因你的愛情比酒更美，歌1:2 4:10。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root meaning to effervesce;<br/>wine (as fermented); by implication, intoxication</p></div></div></div></details>
+<details class="ntfold"><summary>H07381 — רֵיחַ「氣味、香氣」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07381</li><li>詞形 רֵיחַ</li><li>音譯 reyach</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 氣味、香氣</li><li>字源 來自 SH7306</li><li>中文用法 香34 香氣9 香的6 氣2 燔祭2 名1 香味1 馨香1 (56)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 香味, 香氣, 芳香, 氣味</li><li>1a 香味, 氣味</li><li>1b 香氣 (向　神獻祭時的特別用語)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽רֵיחַ 歌2:13。單陽附屬形רֵיחַ 創8:21。單陽3單陽詞尾רֵיחוֹ 耶48:11 歌1:12。單陽1複詞尾רֵיחֵנוּ 出5:21。</p>
+<p>1.香味、氣味。田地的，創27:27；哪噠香膏，歌1:12；葡萄樹開花，歌2:13；衣服，歌4:11；風茄，歌7:13；黎巴嫩的樹木，何14:6；膏油，歌1:3 4:10；人和衣服，創27:27,27 歌7:8；水，伯14:9；比喻名聲和影響力，有了臭名，出5:21；香氣未變，耶48:11。</p>
+<p>2.香氣。向　神獻祭時的特別用語：馨香之氣，創8:21 結6:13 16:19 20:28,41 出29:18,25,41 利1:9（利未記約16次）；民15:3（民數記約17次）。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 7306 ;<br/>odor (as if blown)</p></div></div></div></details>
+<details class="ntfold"><summary>H08081 — שֶׁמֶן「油、富裕」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08081</li><li>詞形 שֶׁמֶן</li><li>音譯 shemen</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 油、富裕</li><li>字源 來自 SH8080</li><li>中文用法 油152 膏油20 橄欖5 膏4 肥美3 肥甘2 肥壯1 野橄欖1 (188)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 油脂, 油</li><li>1a 油脂, 肥胖</li><li>1b 油, 橄欖油</li><li>1b1 當作主要食物, 藥物或軟膏</li><li>1b2 膏抹用</li><li>1c 油脂 (指肥沃的土地, 山谷) (隱喻)</li><li>2 一種樹木, 可能是野生橄欖, 或松樹, 及其木材</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰שֶׁמֶן 創28:18；שָׁמֶן 王下4:6。單陽附屬形שֶׁמֶן 利8:12。單陽1單詞尾שַׁמְנִי 何2:5。複陽שְׁמָנִים 摩6:6。複陽2單陽詞尾שְׁמָנֶיךָ 歌1:3。複陽2單陰詞尾שְׁמָנַיִךְ 歌4:10。</p>
+<p>一、脂肪、肥胖。קֶרֶן בֶּן-שָׁמֶן肥美的山岡，賽5:1；複數גֵּיא-שְׁמָנִים肥美谷，賽28:1,4；比喻：用肥甘設擺筵席，賽25:6,6；בְשָׂרִי כָּחַשׁ מִשָּׁמֶן我身體消瘦，不再肥潤，詩109:24。מִפְּנֵי-שָׁמֶן因肥壯的緣故，賽10:27。</p>
+<p>二、油、橄欖油</p>
+<p>1. 橄欖油，豐富美地的產品，申8:8；עֵץ שָׁמֶן野橄欖樹，賽41:19 尼8:15；עֲצֵי-שָׁמֶן橄欖木，王上6:23,31,32,33；שֶׁמֶן הַמֹּר沒藥油，斯2:12。</p>
+<p>2. 作為主食，民11:8 王上17:12,14,16 王下4:2,6,7；豐富的象徵，申32:13 33:24 伯29:6；把生活所需的供應歸功於偶像巴力，何2:5；王展示寶庫中的財寶之一，王下20:13＝賽39:2；參 王上5:11 代下2:15；作貢品，何12:1；作為交易用物品，結27:17；使人心喜悅的香氣，箴27:9 歌1:3 4:10；שֶׁמֶן רוֹקֵחַ作香的膏油，傳10:1；比喻用法： 歌1:3 傳7:1 箴27:16；奢華的象徵，結16:13 箴21:17；繁榮，結16:19。</p>
+<p>3. 膏抹用，賽1:6 撒下1:21 摩6:6 彌6:15 申28:40 結16:9 斯2:12 詩92:10 104:15；喜樂的象徵，傳9:8；主人向賓客的盛情款待，דִּשַּׁנְתָּ בַשֶּׁמֶן רֹאשִׁי你用油膏了我的頭，詩23:5（比喻）；詩133:2 141:5。</p>
+<p>4. 膏立為王用，פַּךְ הַשֶּׁמֶן一瓶膏油倒在頭上，表徵　神的揀選和設立，撒上10:1 王下9:1,3,6 撒上16:1,13 王上1:39；בְּשֶׁמֶן קָדְשִׁי מְשַׁחְתִּיו用我的聖膏膏他，詩89:20。</p>
+<p>5. 用於比喻：שֶׁמֶן שָׂשׂוֹן喜樂油，賽61:3 詩45:7；討人歡喜的假話，詩55:21 109:18 箴5:3；江河像油緩流，結32:14。</p>
+<p>6. 古老的宗教儀式，澆油在石頭上，創28:18 35:14。</p>
+<p>7. 用於各種儀式：膏抹祭司、帳幕、祭壇用具等，由各種材料製成：שֶׁמֶן זַיִת橄欖油，出30:24；שֶׁמֶן הַמִּשְׁחָה膏油，出25:6 利8:2,10,12；שֶׁמֶן מִשְׁחַת-קֹדֶשׁ聖膏油，出30:25,25；שֶׁמֶן מִשְׁחַת יְהוָה耶和華的膏油，利10:7；שֶׁמֶן מִשְׁחַת אֱלֹהָיו　神膏油，利21:12；שֶׁמֶן הַקֹּדֶשׁ聖膏油，民35:25；שֶׁמֶן單獨使用： 利14:10-29。用於照明：點燈的油，出25:6 35:8,14,28 39:37；שֶׁמֶן זַיִת זָךְ כָּתִית燈搗成的清橄欖油，出27:20 利24:2；塗抹在薄餅上，出29:2 利2:4,5；סֹלֶת בַּשֶּׁמֶן תֵּעָשֶׂה用油與細麵做成，利2:7；חַלַּת לֶחֶם שֶׁמֶן油的糕餅，出29:23 利8:26。</p>
+<p>8. 用於聖所，代上9:29。</p>
+<p>9. 獻給偶像的，賽57:9 結16:18,19 23:41。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 8080 ;<br/>grease , especially liquid (as from the olive, often perfumed); figuratively, richness</p></div></div></div></details>
+<details class="ntfold"><summary>H01314 — בֶּשֶׂם「香味、香料」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01314</li><li>詞形 בֶּשֶׂם</li><li>音譯 besem</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 香味、香料</li><li>字源 來源同 SH1313</li><li>中文用法 香料17 料3 香花2 果品1 香1 香品1 香氣1 香草1 馨香1 (28)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 香料, 香水, 甜味</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽בֹּשֶׂם 賽3:24；בֶּשֶׂם 出30:23。單陽1單詞尾בְּשָׂמִי 歌5:1。複陽בְּשָׂמִים 出25:6。複陽3單陽詞尾בְשָׂמָיו 歌4:16。</p>
+<p>一、香料、香水、甜品。馨香，賽3:24。קִנְּמָן-בֶּשֶׂם上品的香料，出30:23,23。</p>
+<p>二、貴重的香料象徵財富，王下20:13= 賽39:2 代下32:27。皇室的禮物，王上10:2,10,25 代下9:1,9,9,24。</p>
+<p>三、作為交易商品，結27:22；葬禮用，代下16:14；做膏油的成分，出25:6 35:8,28 代上9:29,30；入宮女子潔淨身體，斯2:12。</p>
+<p>四、其他：香品，歌4:10,14；香氣，歌4:16；香料，歌5:1；הָרֵי בְשָׂמִים香草山，歌8:14；עֲרוּגוֹת הַבֹּשֶׂם香草臺，歌6:2；比喻良人的兩頰充滿香氣，歌5:13。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or בֹּשֶׂם ; from the same as 1313 ;<br/>fragrance ; by implication, spicery ; also the balsam plant</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_04_10_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第4章10節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 01:41:04 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

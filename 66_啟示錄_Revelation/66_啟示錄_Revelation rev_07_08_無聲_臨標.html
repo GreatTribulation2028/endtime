@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>啟示錄 7:8 原文逐節查經（臨標）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="66_啟示錄_Revelation rev_07_08_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p class="verse-lead">啟示錄 第7章8節</p>
+<p class="verse-cuv">西布倫支派中有一萬二千；約瑟支派中有一萬二千；便雅憫支派中受印的有一萬二千。</p>
+<p>西布倫支派中有一萬二千；約瑟支派中有一萬二千；便雅憫支派中受印的有一萬二千。名單到這一節列完。最後三個是西布倫、約瑟、便雅憫。和合本在便雅憫處再寫「受印的」，與名單開頭猶大處相呼應；本機原文十二個名字每一個都有「受了印的」。</p>
+<p>十二個名字現在都在眼前了。猶大在最前，便雅憫在最後。利未被列入。瑪拿西與約瑟都出現。但支派沒有被點到，以法蓮也沒有單獨出現。這些是已經寫明的形狀。有人按字面讀這十二名；有人討論但為何未列、約瑟與瑪拿西如何並存。各種讀法當公平並陳，不在本節鎖死一個編排理論，也不用後來的傳統去改定這份已經寫出的名單。下一節要另有一個「此後我觀看」，是後來的所見，不在本節預支。</p>
+
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="66_%E5%95%9F%E7%A4%BA%E9%8C%84_Revelation%20rev_07_07_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　啟示錄 第7章7節</a><a href="index.html">啟示錄目錄</a><a href="../index.html">總目錄</a><a href="66_%E5%95%9F%E7%A4%BA%E9%8C%84_Revelation%20rev_07_09_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　啟示錄 第7章9節</a></nav>
+<h2 class="ntitle">啟示錄 第7章8節 原文逐節查經（臨標）</h2>
+<blockquote>啟示錄 第7章8節<br/>西布倫支派中有一萬二千；約瑟支派中有一萬二千；便雅憫支派中受印的有一萬二千。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 啟示錄 7:8 &gt;</div>
+<div class="orig-gr">ἐκ (ek) φυλῆς (phulēs) Ζαβουλὼν (Zaboulōn) δώδεκα (dōdeka) χιλιάδες (chiliades) ἐσφραγισμένοι· (esphragismenoi) ἐκ (ek) φυλῆς (phulēs) Ἰωσὴφ (Iōsēph) δώδεκα (dōdeka) χιλιάδες (chiliades) ἐσφραγισμένοι· (esphragismenoi) ἐκ (ek) φυλῆς (phulēs) Βενιαμὶν (Beniamin) δώδεκα (dōdeka) χιλιάδες (chiliades) ἐσφραγισμένοι.¶ (esphragismenoi)</div>
+<p>本節原文詞（依資料庫詞序；英語詞義取自資料庫既有欄位，不另撰中文。）</p>
+<ul class="wlist">
+<li>ἐκ (ek)　out of　G1537=PREP</li>
+<li>φυλῆς (phulēs)　[the] tribe　G5443=N-GSF</li>
+<li>Ζαβουλὼν (Zaboulōn)　of Zebulun　G2194=N-GSM-L</li>
+<li>δώδεκα (dōdeka)　twelve　G1427=A-NUI</li>
+<li>χιλιάδες (chiliades)　thousand　G5505=N-NPF</li>
+<li>ἐσφραγισμένοι· (esphragismenoi)　sealed;　G4972=V-RPP-NPM</li>
+<li>ἐκ (ek)　out of　G1537=PREP</li>
+<li>φυλῆς (phulēs)　[the] tribe　G5443=N-GSF</li>
+<li>Ἰωσὴφ (Iōsēph)　of Joseph　G2501N=N-GSM-P</li>
+<li>δώδεκα (dōdeka)　twelve　G1427=A-NUI</li>
+<li>χιλιάδες (chiliades)　thousand　G5505=N-NPF</li>
+<li>ἐσφραγισμένοι· (esphragismenoi)　sealed;　G4972=V-RPP-NPM</li>
+<li>ἐκ (ek)　out of　G1537=PREP</li>
+<li>φυλῆς (phulēs)　[the] tribe　G5443=N-GSF</li>
+<li>Βενιαμὶν (Beniamin)　of Benjamin　G0958=N-GSM-P</li>
+<li>δώδεκα (dōdeka)　twelve　G1427=A-NUI</li>
+<li>χιλιάδες (chiliades)　thousand　G5505=N-NPF</li>
+<li>ἐσφραγισμένοι.¶ (esphragismenoi)　sealed.　G4972=V-RPP-NPM</li>
+</ul>
+</div>
+<p><strong>語意直譯</strong>（按本節原文停頓與詞序現寫，只取本節最貼的一個意思；其餘義項見剖析。）</p>
+<p>出自西布倫支派受印的，有一萬二千；<br/>
+出自約瑟支派受印的，有一萬二千；<br/>
+出自便雅憫支派受印的，有一萬二千。</p>
+<p>和合本支派名稱作「西布倫」「約瑟」「便雅憫」，並在便雅憫處再寫「受印的」。語意直譯沿用和合本專名，不另造音譯。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 西布倫、約瑟、便雅憫三支派，各有一萬二千受了印｜ἐκ φυλῆς Ζαβουλὼν δώδεκα χιλιάδες ἐσφραγισμένοι· ἐκ φυλῆς Ἰωσὴφ δώδεκα χιλιάδες ἐσφραγισμένοι· ἐκ φυλῆς Βενιαμὶν δώδεκα χιλιάδες ἐσφραγισμένοι</h3>
+<blockquote>ἐκ φυλῆς Ζαβουλὼν δώδεκα χιλιάδες ἐσφραγισμένοι· ἐκ φυλῆς Ἰωσὴφ δώδεκα χιλιάδες ἐσφραγισμένοι· ἐκ φυλῆς Βενιαμὶν δώδεκα χιλιάδες ἐσφραγισμένοι</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>ἐκ φυλῆς Ζαβουλών / Ἰωσήφ / Βενιαμίν</strong>（出自西布倫、約瑟、便雅憫支派，<code><span class="sn">G05443</span></code>、<code><span class="sn">G02194</span></code>、<code><span class="sn">G02501</span></code>、<code><span class="sn">G00958</span></code>）</li>
+<li><strong>δώδεκα χιλιάδες ἐσφραγισμένοι</strong>（一萬二千人已經受了印，<code><span class="sn">G01427</span></code>、<code><span class="sn">G05505</span></code>、<code><span class="sn">G04972</span></code>）</li>
+</ul>
+<p>這是 7:4 總數分列的收束。十二個名字各一萬二千，合計仍是十四萬四千。專名按和合本作西布倫、約瑟、便雅憫，不另造音譯。便雅憫處和合本再標「受印的」，與 7:5 猶大處相應。</p>
+<p>把 7:5-8 放在一起看，名單的形狀已經清楚：猶大領頭，便雅憫收尾；利未在其中；瑪拿西與約瑟都在；但沒有被點到，以法蓮也沒有單獨出現。有人按字面收下這十二名。有人把約瑟讀作涵蓋以法蓮，又討論但未列的緣故，或連於舊約中但支派的墮落記載，以及後來的各種傳說。這些讀法可以並陳，卻不可在本節鎖成已經裁定的答案，也不可用傳說去改已經寫出的名字。7:4 關於這十四萬四千是誰的讀法，仍當並陳，不在列完名單時另鎖一條。下一節是另一個「此後」，不在本節預寫。</p>
+<h3>2️⃣ 收束｜本節歸納</h3>
+<p>出自西布倫、約瑟、便雅憫三支派，各有一萬二千人已經受了印。十二名至此列完。但未列、約瑟與瑪拿西並存、利未在其中，只據實記下，不鎖編排理論。</p>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。下列按本頁機械層已抄錄的裁定值原樣移入，未另行推算。 庫中未見各數現成的「四層意思」條目，故不補寫。數字輔助原文，不凌駕原文。</p>
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">ἐκ</span><span class="gid">G01537</span></div><ul><li><b>主數值</b> 25</li><li><b>G_iso</b> 25</li><li><b>G序數</b> 15</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">φυλή</span><span class="gid">G05443</span></div><ul><li><b>主數值</b> 938</li><li><b>G_iso</b> 938</li><li><b>G序數</b> 59</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">Ζαβουλών</span><span class="gid">G02194</span></div><ul><li><b>主數值</b> 1360</li><li><b>G_iso</b> 1360</li><li><b>G序數</b> 92</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">δώδεκα</span><span class="gid">G01427</span></div><ul><li><b>主數值</b> 834</li><li><b>G_iso</b> 834</li><li><b>G序數</b> 48</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">χιλιάς</span><span class="gid">G05505</span></div><ul><li><b>主數值</b> 851</li><li><b>G_iso</b> 851</li><li><b>G序數</b> 70</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">σφραγίζω</span><span class="gid">G04972</span></div><ul><li><b>主數值</b> 1621</li><li><b>G_iso</b> 1621</li><li><b>G序數</b> 99</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">Βενιαμίν</span><span class="gid">G00958</span></div><ul><li><b>主數值</b> 168</li><li><b>G_iso</b> 168</li><li><b>G序數</b> 64</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">Ἰωσήφ</span><span class="gid">G02501</span></div><ul><li><b>主數值</b> 1518</li><li><b>G_iso</b> 1518</li><li><b>G序數</b> 79</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div></div>
+</div></details>
+<h2>四、對照經文</h2>
+<p>7:4 的總數與 7:5-7 的分列，須與本節連讀。創世記 49 章、申命記 33 章、民數記的支派名單，可作舊約對照上的參考，各份名單本不完全相同。士師記中但支派的記載，只在有人討論「但未列」時可作背景參考，不是本節整句出典，也不可據此改定正文。下一節的「此後我觀看」按節次再寫。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　出自西布倫、約瑟、便雅憫支派受印的，各有一萬二千。十二名列完。</p>
+<p><strong>本書用法</strong>　本節收束 7:4 開始的分列。下一節要另見一個不能數的群眾，不在本節預支。名單形狀並陳，不鎖死。</p>
+<p><strong>舊約根源</strong>　舊約多份支派名單是可對照的根源，本不完全相同。</p>
+<p><strong>新約慣用</strong>　本節特點是名單收尾，以及約瑟出現、但未列這兩件已寫明的事實。</p>
+<p><strong>跨篇深意</strong>　總數被一點完，十二個名字都落到地上。誰在裏面、誰沒有被點到，都按所寫收下，不必另造一份更「整齊」的名單來替換它。</p>
+<h2>六、總意</h2>
+<p>西布倫、約瑟、便雅憫，各一萬二千。點到這裏，十二個名字齊了。猶大在頭，便雅憫在尾。利未在其中，約瑟和瑪拿西都在，但沒有被點到。這些都是已經寫出來的。</p>
+<p>　神的心，是讓這十四萬四千不只是一個總數，乃是有名字可點的人。怎樣解釋這份名單的形狀，可以留下空間；卻不能把已經寫出的名字抹掉，也不能把沒有寫出的名字硬補進去。下一節還有另一個所見，本節先把這列完的名單收下。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。 下列為本頁機械層原有之原文字典摺層，原樣移入，不刪條目，不改 Strong 號，不杜撰義項。</p>
+<details class="ntfold"><summary><span class="heb">ἐκ</span> <span class="tl">ek</span> <span class="sn">G01537</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G01537</li><li>詞形 ἐκ</li><li>音譯 ek</li><li>讀音 ek</li><li>約 新約</li><li>詞類 介系詞</li><li>字源 源自, 出自 (某個地點, 某時間, 出於什麼原因, 緣由; 無論按字面的意思, 或比喻); 介系詞</li><li>KJV 用法 of 367, from 181, out of 162, by 55, on 34, with 25, misc 97; 921</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 接所有格:<br/>從...出來, 出於, 避開, 脫離 (<br/>約10:39<br/>12:27<br/>), 藉著, 由於,<br/>因為, 為, 在...之上, ..., ...的, 從...(時候) 就 (<br/>可9:21<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>01537  ἐκ  於母音前用ἐξ   介系詞帶所有格：「出於，從，離」。一、表示分離。A. 表示所分離之地點，因此常與表移動的動詞同用：ἀναβαίνω, ἀναλύω, ἀνίστημι, ἐγείρομαι, εἰσέρχομαι, ἐκβάλλω, ἐκπορεύομαι, ἐξέρχομαι, ἔρχομαι, ἥκω, καταβαίνω, μεταβαίνω, ῥύομαι, συνάγω, φεύγω；各見該字。 καλεῖν ἐξ Αἰγύπτου從埃及召出，太2:15（ 何11:1）；ἐκ σκότους出黑暗，彼前2:9。αἵρειν ἐκ τ. κόσμου離開世界，約17:15。ἐξαλείφειν ἐκ τῆς βίβλου從冊上塗抹，啟3:5（ 出32:32,33 詩69:28）。ἀποκυλίειν τ. λίθον ἐκ τ. θύρας 把石頭從門輥開，可16:3 約20:1 啟6:14；σῴζειν ἐκ γῆς Αἰγ.救出埃及地，猶1:5；διασῴζειν ἐκ τ. θαλάσσης從海裡救上來，徒28:4。παραγίνεσθαι ἐξ ὁδοῦ 行路來到（字義：「自即終止了旅程」），路11:6；喻意－ἐπιστρέφειν ἐξ ὁδοῦ從路上轉回，雅5:20;參 彼後2:21。ἐκ τῆς χειρός τινος 逃出某人的暴力脅迫，ἐξέρχεσθαι脫離，約10:39；ἁρπάζειν 奪去，約10:28,29；ἐξαιρεῖσθαι 徒12:11；ῥύεσθαι被救，路1:74；參 路1:71節〔 詩106:10〕。置於πίνειν喝之後，表示所飲用的杯皿－ ἐκ τ. ποτηρίου自這杯，太26:27 可14:23 林前11:28;參 林前10:4 約4:12。相似者－φαγεῖν ἐκ τ. θυσιαστηρίου 吃自祭物，來13:10。B. 表示自多數人或集會團體分離開來。ἐξολεθρεύειν ἐκ τοῦ λαοῦ從民中滅絕，徒3:23（ 出30:33 利23:29）。συμβιβάζειν ἐκ τ. ὄχλου從眾人中帶出，徒19:33；ἐκλέγειν ἐκ τ. κόσμου從世界中揀選，約15:19;參 太13:41,47 徒1:24 15:22 羅9:24。ἐκ μέσου當代替ἐκ，太13:49 徒17:33 23:10 林前5:2 林後6:17（參 出31:14）。ἀνιστάναι τινὰ ἔκ τινων從某些人中興起，徒3:22（ 申18:15）；ἐκ νεκρῶν從死裡，徒17:31。ἐγείρειν τινὰ ἐκ νεκρῶν使某人從死裡復活，約12:1,9,17 徒3:15 4:10 13:30 來11:19。ἀνίστασθαι ἐκ νεκρῶν從死裡被復活，徒10:41 17:3；ἀνάστασις ἐκ νεκρῶν從死人中的復活，路20:35 彼前1:3;參 羅10:7。C. 指某些狀況或環境，由其中某人被帶出來，「自，由，從」：ἐξαγοράζειν ἔκ τινος由某事中買贖出來，加3:13。或用λυτροῦν，彼前1:18；σῴζειν ἔκ τινος 救脫離某事物，約12:27 來5:7 雅5:20。或用ἐξαιρεῖσθαι，徒7:10。τηρεῖν ἔκ τινος，保守脫離某事物，啟3:10；μεταβαίνειν ἔκ τινος εἴς τι移出某狀態入某狀態，約5:24約一3:14；μετανοεῖν ἔκ τινος悔改轉而脫離某事物，啟2:21,22 9:20,21 16:11。ἀναπαύεσθαι ἐκ τ. κόπων 休息脫離勞苦，啟14:13。ἐγείρεσθαι ἐξ ὔπνου從睡眠中醒來，羅13:11。ζωὴ ἐκ νεκρῶν從死裡復活，羅11:15。或ζῶντες ἐκ νεκρῶν，羅6:13。D. 用於將與之脫離關係或應保持脫離關係的某人或某事物：τήρεῖν αὐτοὺς ἐκ τοῦ πονηροῦ保守他們脫離那惡者，約17:15;參 徒15:29。言簡意賅之說法：ἀνανήφειν ἐκ τῆς τοῦ διαβόλου παγίδος脫離魔鬼的網羅，提後2:26。νικᾶν ἔκ τινος 因得勝而脫離某位，啟15:2。ἐλεύθερος ἐκ自由免於…，林前9:19。二、標示某事物所來自的方向： καταβαίνειν ἐκ τοῦ ὄρους從山下來（ 出19:14 32:1等）太17:9原文。θρὶξ ἐκ τῆς κεφαλῆς ὑμῶν οὐ μὴ ἀπόληται長自你們頭上的毛髮絕不會受損，路21:18。ἐκπίπτειν ἐκ τ. χειρῶν從他手中脫落，徒12:7。διδάσκειν ἐκ τοῦ πλοίου從船上的教訓，路5:3。ἐκ τῆς πρύμνης ῥίψαντες τὰς ἀγκύρας從船尾拋下錨，徒27:29。κρέμασθαι ἔκ τινος 懸在某物上，徒28:4。ἐκ ῥιζῶν從根本上（ 伯28:9 31:12）可11:20。因為在上述情況，希臘人對事物之間彼此的關係和別的民族感覺不同，對回答「在那裡？」之問題亦然。ἐκ δεξιῶν在右邊（δεξιός－SG1188二B.）太20:21,23 22:44〔 詩110:1〕;太25:33 路1:11 徒2:25〔 詩16:8〕，徒2:34〔 詩110:1〕;徒7:55,56。ἐξ ἐναντίας在對面，可15:39；ὁ ἐξ ἐναντίας反對的人，多2:8。三、表示根源，原因，動機，理由。A. 用於有關（提及）出生或生產過程的用語中：「從，自，由」。ἐκ引入男性部分之角色－ἐν γαστρὶ ἔξειν ἔκ τινος從某位懷了孕，太1:18。或κοίτην ἔχειν ἔκ τινος 羅9:10；亦有指女性－γεννᾶν τινα ἐκ由女性（見γεννάω－SG1080一A.）「生某人」，太1:3,5等。γίνεσθαι ἐκ γυναικός由女子所生，加4:4，參 加4:22,23等。γεννᾶσθαι ἐξ αἱμάτω κτλ.從血氣等生，約1:13；ἐκ τ. σαρκός從肉身，約3:6；ἐκ πορνείας從淫亂，約8:41。ἐγείρειν τινὶ τέκνα ἐκ從…給某人興起子孫，太3:9 路3:8。(τὶς) ἐκ καρποῦ τῆς ὀσφύος αὐτοῦ從他腰的果實中，徒2:30原文（ 詩132:11）。γεννᾶσθαι ἐκ τ. θεοῦ從　神生，約1:13約一3:9 4:7 5:1,4,18；ἐκ τ. πνεύματος從靈，約3:6（反於ἐκ τ. σαρκός從肉身）。εἶναι ἐκ τοῦ θεοῦ出於　神，約8:47約一4:4,6 5:19；反於εἶναι ἐκ τ. διαβόλου出於魔鬼，約8:44約一3:8。B. 表示出身（來歷）之家族，種族，城市，人，地區等： ἐκ Ναζαρέτ出於拿撒勒，約1:46。 ἐκ πόλεω出於（同一）城，44節。ἐξ οἴκου出於…家，路1:27 2:4。ἐκ γένους 出於…族，腓3:5 徒4:6。ἐκ φυλῆς出於…支派，路2:36 徒13:21 羅11:1。Ἑβρ. ἐξ Ἑβραίων希伯來人所生的希伯來人，腓3:5。 ἐκ σπέρματος τινος出於某人的後裔，約7:42 羅1:3 11:1。ἐξ ἐθνῶν ἁμαρτωλοί出於外邦的罪人，加2:15;參 路23:7 徒23:34。ἐκ τ. γῆς從地上來的，約3:31。同此ἐκ τῶν κάτω從下頭，約8:23（反於ἐκ τ. ἄνω從上頭）。ἐκ (τούτου) τ. κόσμου屬（這個）世界，約15:19 17:14約一2:16 4:5。ἐξ οὐρανοῦ ἢ ἐξ ἀνθρώπων從天上…或是從人間，太21:25 可11:30。C. 表示其他任何一種之根源：καπνὸς ἐκ τ. δόξης τ. θεοῦ因　神榮耀而生的煙，啟15:8。ἡ σωτηρία ἐκ τ. Ἰουδαίων ἐστίν救恩是從猶太人出來的，約4:22。εἶναι ἔκ τινος出於某人或某事物，太5:37 約7:17,22約一2:16,21；因此εἶναι常用來補充文義，羅2:29 11:36 林前8:6 11:12 林後4:7 加5:8。ἔργα ἐκ τοῦ πατρός從父而來的工作，約10:32。οἰκοδομὴ ἐκ θεοῦ出於　神的房屋，林後5:1；χὰρισμα恩賜，林前7:7；δικαιοσύνη義，腓3:9。φωνὴ ἐκ τ. στόματος αὐτοῦ 他口中所出的聲音，徒22:14。此處之帶ἐκ之構造，是表示主詞所有格，如同ἡ ἐξ ὑμῶν（異版）。ἀγάπη出於你們的愛，林後8:7；ὁ ἐξ ὑμῶν ζῆλος出於你們的熱心，林後9:2異版；啟2:9。ἐγένετο ζήτησις ἐκ τ. μαθητῶν Ἰωάννου 約翰門徒中的人（和…）起了辯論，約3:25。D. 實名詞：οἱ ἐξ Ἰσραὴλ從以色列人，羅9:6。οἱ ἐξ ἐριθείας自私結黨的人，羅2:8。οἱ ἐκ νόμου屬乎律法的人，羅4:14；參 羅4:16節。οἱ ἐκ πίστεως以信為本的人，加3:7,9;參 羅3:26 4:16。οἱ ἐκ περιτομῆς奉割禮的人，徒11:2 羅4:12 加2:12。οἱ ἐκ τῆς περιτομῆς 那奉割禮的，多1:10。或οἱ ὄντες ἐκ περιτομῆς 西4:11。οἱ ἐκ τ. συναγωγῆς 會堂的人，徒6:9。οἱ ἐκ τῶν Ἀριστοβούλου 亞利多布家裡的人，羅16:10,11。οἱ ἐκ τῆς Καίσαρος οἰκίας在該撒家裡的人，腓4:22（見Καῖσαρ－SG2541及οἰκία－SG3614三）。在這些例子中「屬於」之觀念常蓋過「根源」之觀念。E. 指誘發的原因：「藉著，由於」（參ἐκ之「完成」意味，及其他複合介系詞，如 太4:7 可9:15）。1. （原因為）人：ὠφελεῖσθαι ἔκ τινος因某人得益，太15:5 可7:11。ζημιοῦσθαι受損，林後7:9。λυπεῖσθαι 憂愁，林後2:2。εὐχαριστεῖσθαι感謝 林後1:11。ἀδικεῖσθαι受害，啟2:11。ἐξ ἐμαυτοῦ οὐκ ἐλάλησα 沒有憑著自己講，約12:49。2. （原因為）事物：ἀποθανεῖν ἐκ τ. ὑδάτων因水而死，啟8:11。πυροῦσθαι被煉，啟3:18。σκοτοῦσθαι 昏暗，啟9:2。φωτίζεσθαι發光 啟18:1。κεκοπιακώς ἐκ τῆς ὁδοιπορίας因走路而困乏，約4:6。F. 指理由，此理由為某事物之前提：「由於…之理由，…之結果，由於…」。δικαιοῦσθαι ἔκ τινος因某事稱義，羅4:2 加2:16 3:24;參 羅3:20,30。οὐκ … ἡ ζωὴ αὐτοῦ ἐστιν ἐκ τῶν ὑπαρχόντων αὐτῷ人的生命，不在乎家道豐富，路12:15。ἐκ ταύτης τῆς ἐργασίας倚靠這生意，徒19:25。ἐξ ἔργων λαβεῖν τὸ πνεῦμα受了聖靈是因行為，加3:2,5;參 羅11:6。ἐξ ἀναστάσεως λαβεῖν τ. νεκρούς因復活而得死人，來11:35原文。ἐσταυρώθη ἐξ ἀσθενείας因軟弱被釘在十字架，林後13:4。τὸ ἐξ ὑμῶν盡其在你們的（總要盡力），羅12:18。ἐκ τοῦ πόνου因疼痛，啟16:10；參11節；啟8:13。ἐκ τούτου由於這一原因，因此，約6:66 19:12。相類似地，ἐκ可以引進為特定目的而用之方法：「用…，藉著…」。ἐκ τοῦ μαμωνᾶ藉著錢財，路16:9;參 路8:3。G. 指某事物流出之根源：1. λαλεῖν ἐκ τῶν ἰδίων憑自己說，約8:44。ἐκ τοῦ περισσεύματος τῆς καρδίας從心裡所充滿的，太12:34。τὰ ἐκ τοῦ ἱεροῦ 殿中的物，林前9:13。ἐκ τοῦ εὐαγγελίου ζῆν靠著福音養生，林前9:14節。2. 指消息，見識等： κατηχεῖσθαι ἐκ 受教於，羅2:18。ἀκούειν ἐκ聽自，約12:34。γινώσκειν得知於，太12:33 路6:44約一3:24 4:6。ἐποπτεύειν因…看見，彼前2:12。δεικνύναι由…指示，雅2:18。3. 指心靈的狀況等，從其中發生某種結果：ἐκ καρδίας從心中，羅6:17 彼前1:22。ἐκ ψυχῆς從魂中，弗6:6 西3:23。ἐκ καθαρᾶς καρδίας從清潔的心，提前1:5 提後2:22。ἐξ ὅλης τ. καρδίας σου καὶ ἐξ ὅλης τ. ψυχῆς σου καὶ ἐξ ὅλης τ. διανοίας σου καὶ ἐκ ὅλης τ. ἰσχύος σου從你的心，從你的魂，從你的意，從你的力，可12:30原文；也參 路10:27（ 申6:5）。ἐκ πίστεως 羅14:23;參 林後2:17。亦指一行動所附帶之環境，但不一定為其根源：γράφειν ἐκ πολλῆς θλίψεως因心裡難過痛苦，寫（信給…），林後2:4。H. 指作成某一物之材料，原料：「由，自」。στέφανος ἐξ ἀκανθῶν用荊棘作的冠冕，太27:29 約19:2;參 約2:15 9:6 羅9:21 林前15:47 啟18:12 21:21；也許亦包括，林前11:12，ἡ γυνὴ ἐκ τοῦ ἀνδρός 女人由男人而出。I. 指基礎的規則或準繩：「依照，據，符合」。ἐκ τ. λόγων憑話，太12:37。ἐκ τ. στόματός σου κρινῶ σε憑你的口定你的罪，路19:22。啟20:12。ἐκ τ. καλοῦντος在於呼召者，羅9:11。ἐκ τ. ἔχειν照你所有的財產為準，林後8:11原文。ἐξ ἰσότητος照平等的標準，林後8:13節原文。四、亦用於迂迴說法：A. 用於表部份之所有格之迂迴說法。1. 是表示數目或數量的字之後：εἷς, μία, ἕν一，太10:29 18:12 22:35 27:48 可9:17及多處；εἷς τις 一個人，約11:49；δύο二，可16:12 路24:13 約1:35 21:2。πέντε五，太25:2。πολλοί許多，約6:60 7:31 11:19,45。οἱ πλείονες 更多人，林前15:6。οὐδείς沒有人，約7:19 16:5。χιλιάδες ἐκ πάσης φυλῆς 每支派…千，啟7:4。2. 在不定代名詞之後，路11:15 約6:64 7:25,44,48 9:16 11:37,46等。亦於疑問代名詞之後，太6:27 21:31 路11:5 12:25 14:28等。3. 表部份的字詞帶ἐκ一作為主詞（ 撒下11:17） εἶπαν ἐκ τῶν μαθητῶν αὐτοῦ 祂的門徒中有幾個說，約16:17原文。啟11:9。作複數受詞，太23:34 路11:49 21:16約二1:4。4. 與εἶναι連用：屬乎某人或某事物。καὶ σὺ ἐξ αὐτῶν εἶ你也是他們一黨的，太26:73；參 可14:69,70 路22:58 約7:50 10:26 徒21:8。οὐκ εἰμὶ ἐκ τ. σώματος我不屬乎身子，林前12:15,16。5. 在表分配，接受，享用之動詞之後：ἐσθιειν ἔκ τινος 吃自某物，林前9:7 11:28 約6:26,50,51 啟2:7。πίνειν喝，太26:29 可14:25 約4:13,14 啟14:10。διδόναι 給（ 結16:17）太25:8約一4:13。διαδιδόναι分給，約6:11。6. 在表充滿的動詞之後：ἐπληρώθη ἐκ τῆς ὀσμῆς 滿了香氣，約12:3。γεμίζειν τ. κοιλίαν έκ τινος 以某物填肚，路15:16；參 啟8:5。γέμειν ἐξ ἁρπαγῆς盛滿勒索，太23:25。B. 是價格（價值）之所有格的迂迴說法：用，ἀγοράζειν τι ἔκ τινος用某物買某物，太27:7;參 徒1:18 太20:2。五、指時間：A. 指某事物起始之時刻：「自，從一開始，自從」等。ἐκ κοιλίας μητρός自母胎（ 詩22:10 71:6 賽49:1）太19:12等；亦有ἐκ γενετῆς生來，約9:1。ἐκ νεότητος從小，（ 詩71:5）;可10:20 路18:21。ἐξ ἱκανῶν χρόνων 好久以來，路23:8。ἐκ γενεῶν ἀρχαίων從古以來，徒15:21。ἐκ τ. αἰῶνος從創世以來，約9:32。ἐξ ἐτῶν ὀκτώ有八年，徒9:33;參 徒24:10。ἐξ ἀρχῆς從起初，約6:64。ἐκ παιδιόθεν從小的時候，可9:21（見παιδιόθεν－SG3812）。B. 指時間順序：1. ἡμέραν ἐξ ἡμέρας 天天，彼後2:8（ 創39:10 民30:15 斯3:7）。2. ἐκ δευτέρου 「第二次，再」，見δεύτερος－SG1208四。ἐκ τρίτου第三次，太26:44。六、特殊用法：A. 受介系詞牽引：ἐκ代ἐν－ὁ πατὴρ ὁ ἐξ οὐρανοῦ δώσει 天父給，路11:13。 μὴ καταβάτω ἆραι τὰ ἐκ τῆς οἰκίας αὐτοῦ不要下來拿他家裡的東西，太24:17。 τὴν ἐκ Λαοδικείας (ἐπιστολὴν)  ἵνα καὶ ὑμεῖς ἀναγνῶτε 你們也要念從老底嘉來的（書信）西4:16。B. 像舊約מִן之用法：ἔκρινεν ὁ θεὸς τὸ κρίμα ὑμῶν ἐξ αὐτῆς　神已經在她身上為你們施行審判了，啟18:20（參 詩119:84 賽1:24）。ἐξεδίκησεν τὸ αἷμα τῶν δούλων αὐτοῦ ἐκ χειρὸς αὐτῆς向她手裡為他僕人們伸流血的冤，啟19:2，參 啟6:10（二者見 王下9:7）。C. 副詞用法：ἐξ ἀνάγκης（ἀνάγκη－SG318一）。ἐκ συμφώνου出於相互同意，林前7:5。ἐκ λύπης勉強，林後9:7。ἐκ περισσοῦ十分，可6:51。ἐκ μέτρου依有限的量＝節儉的，約3:34。ἐκ μέρους 「就各肢體而言」＝「顧及各肢體，每一個體」，林前12:27；大多和「全部」相對，只是部份。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primary preposition denoting origin (the point whence action or motion proceeds), from, out (of place, time, or cause;<br/>literal or figurative; direct or remote)</p>
+<p>1537 ek {ek} or ex {ex}<br/>a primary preposition denoting origin (the point whence action or<br/>motion proceeds), from, out (of place, time, or cause; literal<br/>or figurative;; prep<br/>AV - of 367, from<br/>181<br/>, out of 162, by 55, on 34, with 25, misc 97; 921<br/>1) out of, from, by, away from</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">φυλή</span> <span class="tl">phylḗ</span> <span class="sn">G05443</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G05443</li><li>詞形 φυλή</li><li>音譯 phylḗ</li><li>讀音 foo-lay&#x27;</li><li>約 新約</li><li>詞類 名詞</li><li>字源 [字源] from (compare ); an offshoot, i.e. race or clan</li><li>KJV 用法 tribe 25, kindred 6; 31</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 部族</li><li>1a 在新約中指族長雅各的十二個兒子的所有後裔</li><li>2 國家, 民族</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>05443  φυλή, ῆς, ἡ 名詞一、「支派」，指以色列的十二支派，來7:13 啟7:4。被提到的某些支派的名字：Ἀσήρ亞設，路2:36。Βενιαμίν便雅憫，徒13:21 羅11:1 腓3:5。Ἰούδα猶大，啟5:5;參 來7:14；所有的支派，啟7:5-8（除了但，它被瑪拿西取代；可能根據 創49:17，以後敵基督可能由此支派中出來）。τὰς δώδεκα φυλὰς τοῦ Ἰσραήλ 以色列十二個支派，太19:28 路22:30;參 啟21:12。並象徵性的用法，雅1:1。二、「國家，民族」。πᾶσαι αἱ φυλαὶ τῆς γῆς 地上的萬族（ 創12:3 28:14 結20:32），太24:30 啟1:7。帶同義的表達，啟5:9 7:9 11:9 13:7 14:6。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from (compare );<br/>an offshoot, i.e. race or clan</p>
+<p>5443 phule {foo-lay&#x27;}<br/>from<br/>5453<br/>(cf 5444); TDNT - 9:245,1280; n f<br/>AV - tribe 25, kindred 6; 31<br/>1) a tribe<br/>1a) in the NT all the persons descending from one of the twelve<br/>sons of the patriarch, Jacob<br/>2) a nation, people</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">Ζαβουλών</span> <span class="tl">Zaboulṓn</span> <span class="sn">G02194</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02194</li><li>詞形 Ζαβουλών</li><li>音譯 Zaboulṓn</li><li>讀音 dzab-oo-lone&#x27;</li><li>約 新約</li><li>詞類 專有名詞</li><li>字源 源自希伯來文 2074 ; 陽性專有名詞&#x27;</li><li>KJV 用法 Zabulon 3; 3 西布倫= 居所</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 雅各的第十代子孫</li><li>2 西布倫族 (<br/>太 4:13,15<br/>啟 7:8<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02194  Ζαβουλών, ὁ人名　無變格（זְבוּלוּן －SH2074）「西布倫」（ 創30:20）是以色列的一個支派，啟7:8；它的版圖位於拿弗他利旁邊，太4:13,15；路4:31異版。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of Hebrew origin ( );<br/>Zabulon (i.e. Zebulon), a region of Palestine</p>
+<p>2194 Zaboulon {dzab-oo-lone&#x27;}<br/>of Hebrew origin<br/>02074<br/>;; n pr m<br/>AV - Zabulon 3; 3<br/>Zebulun meaning &quot;a habitation&quot;<br/>1) the tenth of the sons of Jacob<br/>2) the tribe of Zebulun</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">δώδεκα</span> <span class="tl">dṓdeka</span> <span class="sn">G01427</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G01427</li><li>詞形 δώδεκα</li><li>音譯 dṓdeka</li><li>讀音 do&#x27;-dek-ah</li><li>約 新約</li><li>詞類 數詞</li><li>字源 源自 1417 與 1176 ; TDNT - 2:321,192; 字尾無變化名詞</li><li>KJV 用法 twelve 72; 72</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 十二</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>01427  δώδεκα  名詞「十二」。太9:20 可5:25,42 路2:42等；οἱ δ.十二個（要意會μαθηταί門徒），林前15:5;參 太10:1,2,5 11:1 20:17 26:14等（早期著作中將此十二人清楚與其他人作區別）。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from and ;<br/>two and ten, i.e. a dozen</p>
+<p>1427 dodeka {do&#x27;-dek-ah}<br/>from<br/>1417<br/>and<br/>1176<br/>; TDNT - 2:321,192; n indecl<br/>AV - twelve 72; 72<br/>1) twelve<br/>1a) the twelve apostles of Jesus, so called by way of eminence</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">χιλιάς</span> <span class="tl">chiliás</span> <span class="sn">G05505</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G05505</li><li>詞形 χιλιάς</li><li>音譯 chiliás</li><li>讀音 khil-ee-as&#x27;</li><li>約 新約</li><li>詞類 名詞</li><li>字源 [字源] from ; one thousand (&quot;chiliad&quot;)</li><li>KJV 用法 thousand 23; 23</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 一千個</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>05505  χιλιάς, άδος, ἡ 名詞「一千」（的群體）。複數，路14:31上，下;徒4:4 林前10:8 啟7:4-8 11:13 14:1,3 21:16。（ 但7:10）。χιλιάδες  χιλιάδων千千萬萬，啟5:11。在啟示錄，用以計算的名詞也可作χιλ.相同的格，而不是用所有格。啟7:4,5上，啟7:8下;啟11:13 21:16異版。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from ;<br/>one thousand (&quot;chiliad&quot;)</p>
+<p>5505 chilias {khil-ee-as&#x27;}<br/>from<br/>5507<br/>; TDNT - 9:466,1316; n f<br/>AV - thousand<br/>23<br/>; 23<br/>1) a thousand, the number one thousand</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">σφραγίζω</span> <span class="tl">sphragízō</span> <span class="sn">G04972</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G04972</li><li>詞形 σφραγίζω</li><li>音譯 sphragízō</li><li>讀音 sfrag-id&#x27;-zo</li><li>約 新約</li><li>詞類 動詞</li><li>字源 源自 4973 ; TDNT - 7:939,1127; 動詞</li><li>KJV 用法 seal 22, set to (one&#x27;s) seal 1, stop 1, seal up 1, set a seal 1, vr seal 1; 27</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 (以保安全) 封印 (<br/>太27:66<br/>啟20:3<br/>)</li><li>2 封起來 (<br/>啟10:4<br/>22:10<br/>)</li><li>3 作記號, 蓋印</li><li>4 作證, 承認 (<br/>約3:33<br/>)</li><li>5 (為了交付) 封好 (<br/>羅15:28<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>04972  σφραγίζω 動詞1不定式ἐσφράγισα，關身ἐσφραγισάμην ，被動；完分ἐσφραγισμένος；1不定式ἐσφραγίσθην。「蓋印記以封」。一、字義：帶要被保護或用印黏起來的物件之直接受格：用於石頭，以防止它從所放置的地點被挪走（ 但6:18），太27:66。獨立用法：ἐσφράγισεν ἐπάνω αὐτοῦ在他上邊蓋印封著，※ 啟20:3。二、喻意：A.封上τί某物為要保密，（ 伯14:17 24:16 但9:24 12:9七十士譯）啟10:4 22:10。B. （用印）「做為記號，做為辨別的方法」，以致表示擁有權柄的標誌亦帶有擁有者的保障：σφραγίσωμεν τοὺς δούλους τοῦ θεοῦ ἐπὶ τῶν μετώπων αὐτῶν等我們印了我們　神眾僕人的額，啟7:3。同等ἐσφραγισμένοι受印的，啟7:4上，下，啟7:5,8。關於末世印記的觀念（參 結9:4以下;賽44:5）。這些觀念幫助我們瞭解新約之象徵用法，亦即是提到那些要進入基督教相交團體而受到聖靈印記的人們，弗1:13;參 弗4:30。類似θεός， ὁ  σφραγισάμενος ἡμᾶς καὶ δοὺς τὸν ἀρραβῶνα τοῦ πνεύματος ἐν ταῖς καρδίαις ἡμῶν　神又用印印了我們，並賜聖靈在我們心中作憑據，林後1:22。但在此σφ.很明顯所指的不止是給予一個辨明的記號，它更是指「從天上授予能力」，如同 約6:27一般。C. 「證明，保證，承認」（蓋在文件上的印： 耶32:10,11 斯8:8,10）。帶ὅτι，約3:33。D. σφραγισάμενος αὐτοῖς τὸν καρπὸν τοῦτον，⊙ 羅15:28可能是指將穀類的袋子封起來之慣例中來了解。但究竟是什麼樣子我們無從知道，因為這「果子」不僅要封起，且要運送到耶路撒冷並在那裡移交。不管如何，這個措辭的意思用這種方式來說較易令人了解：把這筆款項安全的交了給他們。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from ;<br/>to stamp (with a signet or private mark) for security or preservation (literally or figuratively); by implication, to keep secret, to attest</p>
+<p>4972 sphragizo {sfrag-id&#x27;-zo}<br/>from<br/>4973<br/>; TDNT - 7:939,1127; v<br/>AV - seal 22, set to (one&#x27;s) seal 1, stop 1, seal up 1, set a seal 1,<br/>vr seal 1; 27<br/>1) to set a seal upon, mark with a seal, to seal<br/>1a) for security: from Satan<br/>1b) since things sealed up are concealed (as the contents of a<br/>letter), to hide, keep in silence, keep secret<br/>1c) in order to mark a person or a thing<br/>1c1) to set a mark upon by the impress of a seal or a stamp<br/>1c2) angels are said to be sealed by God<br/>1d) in order to prove, confirm, or attest a thing<br/>1d1) to confirm authenticate, place beyond doubt<br/>1d1a) of a written document<br/>1d1b) to prove one&#x27;s testimony to a person that he is what<br/>he professes to be</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">Βενιαμίν</span> <span class="tl">Beniamín</span> <span class="sn">G00958</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G00958</li><li>詞形 Βενιαμίν</li><li>音譯 Beniamín</li><li>讀音 ben-ee-am-een&#x27;</li><li>約 新約</li><li>詞類 專有名詞</li><li>字源 源自希伯來文 1144 ; 陽性專有名詞</li><li>KJV 用法 Benjamin 4; 4 便雅憫 = &quot;右手的兒子&quot; 或, &quot;好運的兒子&quot;</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 雅各的第十二個兒子</li><li>2 便雅憫支派</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>00958  Βενιαμ(ε)ίν, ὁ  名詞　無變格（בִּנְיָמִן－SH1144）猶太支派「便雅憫」。徒13:21 羅11:1 腓3:5 啟7:8。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of Hebrew origin ( );<br/>Benjamin, an Israelite</p>
+<p>958 Beniamin {ben-ee-am-een&#x27;}<br/>of Hebrew origin<br/>01144<br/>;; n pr m<br/>AV - Benjamin 4; 4<br/>Benjamin = &quot;son of the right hand&quot; or, &quot;son of good fortune&quot;<br/>1) Jacob&#x27;s twelfth son<br/>2) the tribe of Benjamin</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">Ἰωσήφ</span> <span class="tl">Iōsḗph</span> <span class="sn">G02501</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02501</li><li>詞形 Ἰωσήφ</li><li>音譯 Iōsḗph</li><li>讀音 ee-o-safe&#x27;</li><li>約 新約</li><li>詞類 專有名詞</li><li>字源 [字源] of Hebrew origin ( ); Joseph, the name of seven Israelites</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 族長之一, 雅各的第十一個兒子</li><li>2 約南的兒子, 基督的祖先之一(<br/>路 3:30<br/>)</li><li>3 猶大的兒子, 耶穌的另一個祖先(<br/>路 3:26<br/>)</li><li>4 瑪他提亞的兒子, 另一位基督的祖先(<br/>路 3:25<br/>)</li><li>5 耶穌的母親馬利亞的丈夫 (<br/>太 1:16<br/>)</li><li>6 耶穌的兄弟約西 (<br/>太 13:55<br/>)</li><li>7 亞利馬太的約瑟, 公會中的人, 是支持耶穌的人 (<br/>太 27:57,59<br/>可 15:43,45<br/>)</li><li>8 被稱作巴拿巴的約瑟 (<br/>徒 4:36<br/>)</li><li>9 稱為巴撒巴的約瑟, 又叫作猶士都 (<br/>徒 1:23<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02501  Ἰωσήφ, ὁ 人名　無變格（יוֹסֵף－SH3130）「約瑟」。一、族長約瑟（ 創30:24及其他多處）約4:5 徒7:9,13,14,18 來11:21,22 啟7:8中之φυλὴ Ἰ.約瑟支派指其一半之以法蓮支派，與6節的另一半之瑪拿西支派湊成十二之數，而其中所缺乏但支派，依傳統指為敵基督所屬。二、約南的兒子。出現於耶穌家譜中，路3:30。三、瑪他提亞的兒子，路3:25。四、耶穌的母親馬利亞的丈夫，太1:16,18-20,24 2:13,19 路1:27 2:4,16,33異版;路3:23 4:22 約1:45 6:42。五、耶穌的一兄弟，太13:55。參Ἰωσῆς－SG2500一。六、亞利馬太的「約瑟」。是猶太議會中的一員，耶穌葬在他的墳墓裡，太27:57,59 可15:43,45 路23:50 約19:38。七、稱呼巴拿巴的「約瑟」。徒4:36。參Ἰωσῆς－SG2500三。八、稱呼巴撒巴的「約瑟」（見Βαρσα&amp; β(β)ᾶς－SG923一）又名猶士都（Ἰοῦστος－SG2459一）徒1:23。九、一位馬利亞的兒子，太27:56（見參Ἰωσῆς－SG2500二）。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of Hebrew origin ( );<br/>Joseph, the name of seven Israelites</p>
+<p>2501 Ioseph {ee-o-safe&#x27;}<br/>of Hebrew origin<br/>03130<br/>;; n pr m<br/>AV - Joseph (husband of Mary) 16, Joseph (son of Jacob) 9,<br/>Joseph of Arimathaea 6, Joseph (son of Judas) 1,<br/>Joseph of Barsabas 1, Joseph son of Jonan 1,<br/>Joseph (son of Mattathias) 1; 35<br/>Joseph = &quot;let him add&quot;<br/>1) the patriarch, the eleventh son of Jacob<br/>2) the son of Jonan or Jonam, one of the ancestors of Christ, Lk 3:30<br/>3) the son of Judah [or Judas; better Joda] another ancestor of<br/>Jesus, Lk 3:26<br/>4) the son of Mattathias, another ancestor of Christ, Lk 3:24<br/>5) the husband of Mary, the mother of Jesus<br/>6) a half-brother of Jesus Mat. 13:55<br/>7) Joseph of Arimathaea, a member of the Sanhedrin, who favoured<br/>Jesus. Mt. 27:57,59; Mk 15:43,45<br/>8) Joseph surnamed Barnabas Acts 4:36<br/>9) Joseph call Barsabas and surnamed Justus, Acts 1:23</p></div></div></details>
+</div></details>
+<hr/>
+
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="66_啟示錄_Revelation rev_07_08_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">金標要義修訂・未經獨立驗收</div>
+<div class="ds">本頁是啟示錄 第7章8節的金標要義修訂：已按金標要義重寫讀稿與查經欄，字典與數值仍取本機統一庫已裁定值、未自算。這不是金標完成，亦未經獨立驗收，不得稱為全書金標，亦不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-12 23:22:57 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・金標要義修訂・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

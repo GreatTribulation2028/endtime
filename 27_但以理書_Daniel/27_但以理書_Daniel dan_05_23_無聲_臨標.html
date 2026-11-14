@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>但以理書 5:23 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="27_但以理書_Daniel dan_05_23_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p class="verse-lead">但以理書 第5章23節</p>
+<p class="verse-cuv">竟向天上的主自高，使人將他殿中的器皿拿到你面前，你和大臣、皇后、妃嬪用這器皿飲酒。你又讚美那不能看、不能聽、無知無識、金、銀、銅、鐵、木、石所造的　神，卻沒有將榮耀歸與那手中有你氣息，管理你一切行動的　神。</p>
+<p>竟向天上的主自高，使人將他殿中的器皿拿到你面前，你和大臣、皇后、妃嬪用這器皿飲酒。知道了仍不自卑，就會把殿裏的杯拿到自己桌上。杯子原是為稱頌那一位用的，今夜卻盛了酒，在大臣、皇后、妃嬪中間傳著喝。人不是不知道這些器皿從哪裏來，是知道了，仍把它們變成筵席上的器具。</p>
+<p>你又讚美那不能看、不能聽、無知無識、金、銀、銅、鐵、木、石所造的　神，卻沒有將榮耀歸與那手中有你氣息，管理你一切行動的　神。一邊是人手造出來的，不能看，不能聽，什麼也不知道；一邊是手中握著他氣息的那一位，連他一切道路都在他那裏。稱頌卻走向了不能看的那邊。本節只寫到這項指控，牆上的字還沒有被解釋，指頭也要到下一句才再被提起。人先要看見：人可以把榮耀送給所造的，卻不能把氣息從那一位手裏奪回來。氣息還在他手裏的時候，稱頌已經走偏了。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<p class="mech-flag">本頁為機械層臨標稿，金標未達。這不是金標完成。</p>
+<nav class="verse-nav"><a href="27_%E4%BD%86%E4%BB%A5%E7%90%86%E6%9B%B8_Daniel%20dan_05_22_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　但以理書 第5章22節</a><a href="index.html">但以理書目錄</a><a href="../index.html">總目錄</a><a href="27_%E4%BD%86%E4%BB%A5%E7%90%86%E6%9B%B8_Daniel%20dan_05_24_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　但以理書 第5章24節</a></nav>
+<h2 class="ntitle">但以理書 第5章23節 原文逐節查經（臨標）</h2>
+<blockquote>但以理書 第5章23節<br/>竟向天上的主自高，使人將他殿中的器皿拿到你面前，你和大臣、皇后、妃嬪用這器皿飲酒。你又讚美那不能看、不能聽、無知無識、金、銀、銅、鐵、木、石所造的　神，卻沒有將榮耀歸與那手中有你氣息，管理你一切行動的　神。
+<p>竟向天上的主自高，使人將他殿中的器皿拿到你面前，你和大臣、皇后、妃嬪用這器皿飲酒。知道了仍不自卑，就會把殿裏的杯拿到自己桌上。杯子原是為稱頌那一位用的，今夜卻盛了酒，在大臣、皇后、妃嬪中間傳著喝。人不是不知道這些器皿從哪裏來，是知道了，仍把它們變成筵席上的器具。</p>
+<p>你又讚美那不能看、不能聽、無知無識、金、銀、銅、鐵、木、石所造的　神，卻沒有將榮耀歸與那手中有你氣息，管理你一切行動的　神。一邊是人手造出來的，不能看，不能聽，什麼也不知道；一邊是手中握著他氣息的那一位，連他一切道路都在他那裏。稱頌卻走向了不能看的那邊。本節只寫到這項指控，牆上的字還沒有被解釋，指頭也要到下一句才再被提起。人先要看見：人可以把榮耀送給所造的，卻不能把氣息從那一位手裏奪回來。氣息還在他手裏的時候，稱頌已經走偏了。</p>
+</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 但以理書 5:23 &gt;</div>
+<div class="orig-he">וְ/עַ֣ל מָרֵֽא־ שְׁמַיָּ֣/א׀ הִתְרוֹמַ֡מְתָּ וּ/לְ/מָֽאנַיָּ֨/א דִֽי־ בַיְתֵ֜/הּ הַיְתִ֣יו קָֽדָמָ֗/ךְ וְ/אַ֨נְתְּ וְ/רַבְרְבָנָ֜/ךְ שֵֽׁגְלָתָ֣/ךְ וּ/לְחֵנָתָ/ךְ֮ חַמְרָ/א֮ שָׁתַ֣יִן בְּ/הוֹן֒ וְ/לֵֽ/אלָהֵ֣י כַסְפָּֽ/א־ וְ֠/דַהֲבָ/א נְחָשָׁ֨/א פַרְזְלָ֜/א אָעָ֣/א וְ/אַבְנָ֗/א דִּ֠י לָֽא־ חָזַ֧יִן וְ/לָא־ שָׁמְעִ֛ין וְ/לָ֥א יָדְעִ֖ין שַׁבַּ֑חְתָּ וְ/לֵֽ/אלָהָ֞/א דִּֽי־ נִשְׁמְתָ֥/ךְ בִּ/ידֵ֛/הּ וְ/כָל־ אֹרְחָתָ֥/ךְ לֵ֖/הּ לָ֥א הַדַּֽרְתָּ׃</div>
+<p>本節原文詞（依資料庫詞序；英語詞義取自資料庫既有欄位，不另撰中文。）</p>
+<ul class="wlist">
+<li>וְ/עַ֣ל　and/ against　AC/R</li>
+<li>מָרֵֽא־　[the] lord of　ANcbsc</li>
+<li>שְׁמַיָּ֣/א׀　heavens/ the　ANcmpd/Ta</li>
+<li>הִתְרוֹמַ֡מְתָּ　you have lifted yourself up　AVMp2ms</li>
+<li>וּ/לְ/מָֽאנַיָּ֨/א　and/ &lt;obj.&gt;/ vessels/ the　AC/R/Ncmpd/Ta</li>
+<li>דִֽי־　of　AC</li>
+<li>בַיְתֵ֜/הּ　house/ his　ANcbsc/Sp3ms</li>
+<li>הַיְתִ֣יו　they have brought　AVhp3mp</li>
+<li>קָֽדָמָ֗/ךְ　before/ you　ANcbsc/Sp2ms</li>
+<li>וְ/אַ֨נְתְּ　and/ you　AC/Pp2ms</li>
+<li>וְ/רַבְרְבָנָ֜/ךְ　and/ nobles/ your　AC/Ncmpc/Sp2ms</li>
+<li>שֵֽׁגְלָתָ֣/ךְ　wives/ your　ANcfpc/Sp2ms</li>
+<li>וּ/לְחֵנָתָ/ךְ֮　and/ concubines/ your　AC/Ncfpc/Sp2ms</li>
+<li>חַמְרָ/א֮　&lt;the&gt;/ wine　ANcbsd/Ta</li>
+<li>שָׁתַ֣יִן　[are] drinking　AVqrmpa</li>
+<li>בְּ/הוֹן֒　with/ them　AR/Sp3mp</li>
+<li>וְ/לֵֽ/אלָהֵ֣י　and/ &lt;obj.&gt;/ [the] gods of　AC/R/Ncmpc</li>
+<li>כַסְפָּֽ/א־　&lt;the&gt;/ silver　ANcbsd/Ta</li>
+<li>וְ֠/דַהֲבָ/א　and/ &lt;the&gt;/ gold　AC/Ncbsd/Ta</li>
+<li>נְחָשָׁ֨/א　&lt;the&gt;/ bronze　ANcbsd/Ta</li>
+<li>פַרְזְלָ֜/א　&lt;the&gt;/ iron　ANcbsd/Ta</li>
+<li>אָעָ֣/א　&lt;the&gt;/ wood　ANcbsd/Ta</li>
+<li>וְ/אַבְנָ֗/א　and/ &lt;the&gt;/ stone　AC/Ncbsd/Ta</li>
+<li>דִּ֠י　who　AC</li>
+<li>לָֽא־　not　ATn</li>
+<li>חָזַ֧יִן　[are] seeing　AVqrmpa</li>
+<li>וְ/לָא־　and/ not　AC/Tn</li>
+<li>שָׁמְעִ֛ין　[are] hearing　AVqrmpa</li>
+<li>וְ/לָ֥א　and/ not　AC/Tn</li>
+<li>יָדְעִ֖ין　[are] knowing　AVqrmpa</li>
+<li>שַׁבַּ֑חְתָּ　you have praised　AVpp2ms</li>
+<li>וְ/לֵֽ/אלָהָ֞/א　and/ &lt;obj.&gt;/ God/ the　AC/R/Ncbsd/Ta</li>
+<li>דִּֽי־　who　ATr</li>
+<li>נִשְׁמְתָ֥/ךְ　breath/ your　ANcfsc/Sp2ms</li>
+<li>בִּ/ידֵ֛/הּ　[is] in/ hand/ his　AR/Ncbsc/Sp3ms</li>
+<li>וְ/כָל־　and/ all　AC/Ncbsc</li>
+<li>אֹרְחָתָ֥/ךְ　ways/ your　ANcfpc/Sp2ms</li>
+<li>לֵ֖/הּ　[are] to/ him　AR/Sp3ms</li>
+<li>לָ֥א　not　ATn</li>
+<li>הַדַּֽרְתָּ׃　you have glorified　AVpp2ms</li>
+</ul>
+</div>
+<h2>二、原文字典</h2>
+<details class="ntfold"><summary><span class="heb">רוּם</span> <span class="tl">ruwm</span> <span class="sn">H07313</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07313</li><li>詞形 רוּם</li><li>音譯 ruwm</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 升起、高舉、讚揚</li><li>字源 相當於 SH7311</li><li>中文用法 升1 尊崇1 自高1 高...傲1 (4)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 升高</li><li>1a (P&#x27;al) 被高舉 (驕縱) (<br/>但 5:20<br/>)</li><li>1b (Aphel) 擢升 (<br/>但 5:19<br/>)</li><li>1c (Hithpolel) 對著 ... 自高自大 (<br/>但 5:23<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Peal完成式3單陽רִם他心高氣傲，但5:20。</p>
+<p>二、Polel主動分詞單陽מְרוֹמֵם尊崇，但4:37。</p>
+<p>三、Aphel分詞單陽מָרִים隨意升降，但5:19。</p>
+<p>四、Hitpolel完成式2單陽הִתְרוֹמַמְתָּ自高，但5:23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 7311 ;</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">עַל</span> <span class="tl">`al</span> <span class="sn">H05922</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H05922</li><li>詞形 עַל</li><li>音譯 `al</li><li>約 舊約</li><li>詞類 介詞</li><li>中文詞義 在上、以上、對著、管理</li><li>字源 相當於 SH5921</li><li>中文用法 在18 上5 到3 向3 於3 管理3 見3 治理2 的2 中1 以1 加1 叫1 因1 在其上1 執掌1 將1 帶1 控告1 曉諭1 有1 歸1 治1 為1 用1 管1 臨1 題1 (59)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>介</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 在上, 在...之上, 由於, 之上, 到, 向著</li><li>1a 在上, 在...之上, 由於, 至於, 關於, 為了</li><li>1b 之上 (與動詞&quot;治理&quot;並用)</li><li>1c 之上, 之外 (比較)</li><li>1d 到, 向著, 對著 (方向)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>介+2單陽詞尾עֲלָיךְ 拉7:18。介+3單陽詞尾עֲלוֹהִי 但3:28；עֲלֹהִי 拉6:11。介+3單陰詞尾עֲלַיהּ 但4:17 5:21。介+1複詞尾עֲלֶינָא 拉4:12,18 5:17。介+3複陽詞尾עֲלֵיהֹם 拉7:24；עֲלֵיהוֹן 拉5:1,3。</p>
+<p>1.在上、在...之上、由於、至於： 但2:10,28,46 5:5,7 6:10 拉7:24 但3:28。關於、為了： 但2:18 5:14,29 6:5,12。</p>
+<p>2.之上。與動詞「治理」並用： 但2:48,49 3:12 4:17 拉4:20 6:18。</p>
+<p>3.之上、之外： 但3:19 6:3。</p>
+<p>4.到、向著、對著（方向）： 但2:24 4:34,36 6:6,15 拉4:12,23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 5921</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">מָרֵא</span> <span class="tl">mare&#x27;</span> <span class="sn">H04756</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H04756</li><li>詞形 מָרֵא</li><li>音譯 mare&#x27;</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 主人</li><li>字源 來自一相當於 SH4754 之字根，含極權之意</li><li>中文用法 主4 (4)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 主</li><li>1a 用以對王的稱呼</li><li>1b 用以稱呼　神</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、對王的稱呼：單陽1單詞尾מָרִאי我主，但4:19,24。</p>
+<p>二、稱呼　神：單陽וּמָרֵא מַלְכִין萬王之主，但2:47；單陽附屬形מָרֵא-שְׁמַיָּא天上的主，但5:23。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) from a root corresponding to 4754 in the sense of domineering;<br/>a master</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">שָׁמַיִן</span> <span class="tl">shamayin</span> <span class="sn">H08065</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08065</li><li>詞形 שָׁמַיִן</li><li>音譯 shamayin</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 天、天空、天上</li><li>字源 相當於 SH8064</li><li>中文用法 天28 天上6 天空3 諸天1 (38)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 天</li><li>1a 天空</li><li>1b 　神所居住的地方</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>複陽＋定冠詞שְׁמַיָּא,אָ 拉5:11。</p>
+<p>1. 可見的天空，耶10:11 但4:11,13,20,22,23,31；עוֹף-שְׁמַיָּא天空的飛鳥，但2:38；צִפֲּרֵי שְׁמַיָּא天空的飛鳥，但4:12,21；טַל שְׁמַיָּא天露，但4:15,23,25,33 5:21；רוּחֵי שְׁמַיָּא天的四風，但7:2；עֲנָנֵי שְׁמַיָּא天雲，但7:13；天＋地＝宇宙，耶10:11；　神已施行神蹟奇事，但6:27。</p>
+<p>2.天是　神的居所，但2:28 4:34；作為天使的居所，但4:35。片語：אֱלָהּ שְׁמַיָּא天上的　神，但2:18,19,37,44 拉5:11,12 6:9,10 7:12,21,23,23；מֶלֶךְ שְׁמַיָּא天上的王，但4:37；מָרֵא-שְׁמַיָּא天上的主，但5:23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 8064</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">אָתָה</span> <span class="tl">&#x27;athah</span> <span class="sn">H00858</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00858</li><li>詞形 אָתָה</li><li>音譯 &#x27;athah</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 來到、拿來</li><li>字源 相當於 SH857</li><li>中文用法 來5 帶來2 帶2 拿2 擄來1 搬1 拿來1 到1 (16)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 來</li><li>1a (P&#x27;al) 過來</li><li>1b (Aphel) 帶來</li><li>1c (Hophal) 被帶到</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Peal過來。</p>
+<p>完成式－3單陽אֲתָא 拉5:3,16 但7:22。3複陽אֲתוֹ 拉4:12。</p>
+<p>祈使式－複陽אֱתוֹ 但3:26。</p>
+<p>不定詞－附屬形מֵתֵא 但3:2。</p>
+<p>主動分詞－單陽אָתֵה 但7:13。</p>
+<p>來、到達，拉4:12 5:3 但3:26。</p>
+<p>二、Haphel帶來。</p>
+<p>完成式－3複陽הַיְתִיו所掠的金器皿拿來，但5:3,23。3單陽הַיְתִי從猶大擄來的，但5:13。</p>
+<p>不定詞－附屬形הַיְתָיָה帶過來，但3:13 5:2。</p>
+<p>三、Hephal被帶到。</p>
+<p>完成式－3單陰הֵיתָיִת有人搬一塊石頭，但6:17。3複陽הֵיתָיוּ帶到王面前，但3:13。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) or אָתָא ; (Aramaic), corresponding to 857</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">מָאן</span> <span class="tl">ma&#x27;n</span> <span class="sn">H03984</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03984</li><li>詞形 מָאן</li><li>音譯 ma&#x27;n</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 器皿</li><li>字源 或許來自相當於 SH579 之字根，含周圍有沿的容器之意</li><li>中文用法 器皿7 (7)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 容器, 器皿</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>複陽+定冠詞מָאנַיָּא , א器皿，拉5:14,15 7:19 但5:23；複陽附屬形מָאנֵי器皿，拉6:5 但5:2,3。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) probably from a root corresponding to 579 in the sense of an inclosure by sides;<br/>a utensil</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">בַּיִת</span> <span class="tl">bayith</span> <span class="sn">H01005</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01005</li><li>詞形 בַּיִת</li><li>音譯 bayith</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 房屋、家、殿、家人、內部</li><li>字源 相當於 SH1004</li><li>中文用法 殿31 房屋4 宮2 府2 庫2 家1 居所1 都1 (44)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 房子 (人的)</li><li>2 聖殿 (　神的)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽+定冠詞בַּיְתָא , א 拉5:3。單陽附屬形בֵּית 拉4:24 5:2。單陽3單陽詞尾בַיְתֵהּ 但2:17。單陽1單詞尾בֵיתִי 但4:4。複陽2複陽詞尾בָּתֵּיכוֹן 但2:5。</p>
+<p>一、屋子。人的，拉6:11 但2:5,17 3:29 6:10；王庫，拉6:4；宮中，但4:4；בֵית מִשְׁתְּיָא宴宮，但5:10；בְּבֵית גִּנְזַיָּא דִּי-מַלְכָּא王的府庫，拉5:17；拉7:20＝בְּבֵית סִפְרַיָּא典籍庫，拉6:1；בֵית מַלְכוּ京都，但4:30（巴比倫的）。</p>
+<p>二、　神的聖殿。耶路撒冷的聖殿，但5:3,23 拉4:24。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 1004</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">קֳדָם</span> <span class="tl">qodam</span> <span class="sn">H06925</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06925</li><li>詞形 קֳדָם</li><li>音譯 qodam</li><li>約 舊約</li><li>詞類 介系詞</li><li>中文詞義 前面</li><li>字源 相當於 SH6924</li><li>中文用法 在...面前 10 到...面前 6 面前9 到...前 2 在...前 2 從...面前 1 向1 對1 那裡1 (33)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>介</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 之前, 在...面前</li><li>1a 之前</li><li>1b 從以前</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>3單陽詞尾קָדָמוֹהִי 但6:22。3單陰詞尾קֳדָמַיהּ 但7:7,8,20。3複陽詞尾קֳדָמֵיהוֹן 但4:7。2單陽詞尾קָדָמָיךְ 但5:23。1詞尾קָדָמַי 但2:9；קֳדָמָי 但2:6。</p>
+<p>1.在...面前（＝希伯來文לפְנֵי）。向位份高者或管理者回答、祈求，但2:9；קֳדָם-מַלְכָּא在王面前，但2:10,11,27 6:10,11,12,13；קֱרִי קָדָמָי讀在我面前，拉4:18,23；שְׁפַר קֳדָם隨心所願，但6:1。在動詞之後，הַעֵלְנִי קֳדָם מַלְכָּא求你領我到王面前，但2:24,25 3:13 4:6。</p>
+<p>2. מִן-קֳדָמָי從以前。與קְבַל（得到）合用，但2:6；בְּעָא（請求），但2:18 拉7:14。出於　神：בֵּאדַיִן מִן-קֳדָמוֹהִי שְׁלִיַחַ פַּסָּא דִי-יְדָא從　神那裡顯出手指頭，但5:24 7:10 5:19 6:26；在這角前，但7:8,20。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) or קְדָם ; (Aramaic) (Daniel 7:13), corresponding to 6924 ;<br/>before</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">אַנְתָּה</span> <span class="tl">&#x27;antah</span> <span class="sn">H00607</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00607</li><li>詞形 אַנְתָּה</li><li>音譯 &#x27;antah</li><li>約 舊約</li><li>詞類 代名詞</li><li>中文詞義 你</li><li>字源 相當於 SH859</li><li>中文用法 你14 (14)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>人稱</li><li>代</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 你 (寫型為 &#x27;antah {an-ta:&#x27;})</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>代名詞2單陽אַנְתְּ 拉7:25 但2:29,29,31,37,38 3:10 4:18,18,22 5:13,22,23 6:16,20。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 859 ;<br/>thou</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">רַבְרְבָן</span> <span class="tl">rabrᵉban</span> <span class="sn">H07261</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07261</li><li>詞形 רַבְרְבָן</li><li>音譯 rabrᵉban</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 主、貴族</li><li>字源 來自 SH7260</li><li>中文用法 大臣8 (8)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 主上, 貴族</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>大臣，複陽1單詞尾רַבְרְבָנַי 但4:36 5:1,2,3,9,10；複陽3單陽詞尾רַבְרְבָנוֹהִי 但6:17；複陽2單陽詞尾רַבְרְבָנָיךְ 但5:23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) from 7260 ;<br/>a magnate</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">שֵׁגָל</span> <span class="tl">shegal</span> <span class="sn">H07695</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07695</li><li>詞形 שֵׁגָל</li><li>音譯 shegal</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 王后、嬪妃</li><li>字源 相當於 SH7694</li><li>中文用法 皇后3 (3)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 (王室的)配偶</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>皇后，複陰3單陽詞尾שֵׁגְלָתֵהּ 但5:2,3；複陰2單陽詞尾שֵׁגְלָתָךְ 但5:23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 7694 ;<br/>a (legitimate) queen</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">לְחֵנָה</span> <span class="tl">lechenah</span> <span class="sn">H03904</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03904</li><li>詞形 לְחֵנָה</li><li>音譯 lechenah</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 妾</li><li>字源 來自一未定意義的不用字根</li><li>中文用法 妃嬪3 (3)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 妃嬪</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>妃嬪。複陰3單陽詞尾לְחֵנָתֵהּ 但5:2,3。複陰2單陽詞尾לְחֵנָתָךְ 但5:23。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) from an unused root of uncertain meaning;<br/>a concubine</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">שְׁתָה</span> <span class="tl">shᵉthah</span> <span class="sn">H08355</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08355</li><li>詞形 שְׁתָה</li><li>音譯 shᵉthah</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 喝</li><li>字源 相當於 SH8354</li><li>中文用法 飲5 (5)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 (P&#x27;al) 飲用</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Peal</p>
+<p>完成式－3複陽，前綴詞א+動詞אִשְׁתִּיו 但5:3,4。</p>
+<p>未完成式－3複陽יִשְׁתּוֹן 但5:2。</p>
+<p>主動分詞－單陽שָׁתֵה 但5:1。</p>
+<p>飲酒，但5:1,2,3,4,23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 8354</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">חֲמַר</span> <span class="tl">chamar</span> <span class="sn">H02562</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02562</li><li>詞形 חֲמַר</li><li>音譯 chamar</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 酒</li><li>字源 相當於 SH2561</li><li>中文用法 酒5 (5)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 酒</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽חֲמַר酒，拉6:9 7:22 但5:1,2,4,23。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 2561 ;<br/>wine</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">שְׁבַח</span> <span class="tl">shᵉbach</span> <span class="sn">H07624</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07624</li><li>詞形 שְׁבַח</li><li>音譯 shᵉbach</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 崇拜、奉承、讚美</li><li>字源 相當於 SH7623</li><li>中文用法 讚美5 (5)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 (Pael) 宣揚, 讚美</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>Pael</p>
+<p>完成式－2單陽שַׁבַּחְתָּ 但5:23。1單שַׁבְּחֵת 但4:34。3複陽שַׁבַּחוּ 但5:4。</p>
+<p>主動分詞－單陽מְשַׁבַּח 但2:23 4:37。</p>
+<p>讚美。　神，但2:23 4:34,37。偶像，但5:4,23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 7623 ;<br/>to adulate , i.e. adore</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">אֱלָהּ</span> <span class="tl">&#x27;elahh</span> <span class="sn">H00426</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00426</li><li>詞形 אֱלָהּ</li><li>音譯 &#x27;elahh</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 　神、神祇</li><li>字源 相當於 SH433</li><li>中文用法 　神93 神明1 (94)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 　神, 獨一的　神</li><li>1a 　神, 異教徒的　神</li><li>1b (以色列人的) 唯一真　神</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽אֱלָהּ 但2:28。單陽附屬形אֱלָהּ 但2:18。單陽+定冠詞אֱלָהָא , א 但2:20。單陽3單陽詞尾אֱלָהֵהּ 但6:5。單陽3複陽詞尾אֱלָהֲהֹם 拉5:5 7:16。單陽2複陽詞尾אֱלָהֲכֹם 拉7:17。單陽1單詞尾אֱלָהִי 但6:22。複陽אֱלָהִין 但3:28。複陽+冠詞אֱלָהַיָּא , אָ 耶10:11。介לְ+複陽附屬形לֵאלָהֵי 但5:4。介לְ+複陽1單詞尾לֵאלָהַי 但3:14。</p>
+<p>1. 泛指一般的神明，但6:7,12；外邦　神，耶10:11 但2:11 3:15；金和銀、銅、鐵、木和石所造的，但5:4,23；בַר-אֱלָהִין　神子，但3:25。</p>
+<p>2. 指以色列的獨一真　神，但2:28 拉5:2；אֱלָהּ יִשְׂרָאֵל以色列　神，拉5:1 6:14 7:15；אֱלָהּ יְרוּשְׁלֶם耶路撒冷　神，拉7:19；אֱלָהּ אֲבָהָתִי我列祖的　神，但2:23；אֱלָהּ שְׁמַיָּא וְאַרְעָא天地之　神，拉5:11,12；天上的　神，拉6:9,10 但2:18,19,28,37,44；אֱלָהּ רַב至大的　神，但2:45；אֱלָהּ אֱלָהִין萬　神之　神，但2:47；אֱלָהָא עִלָּיאָ至高　神，但3:26 4:2 5:18,21；אֱלָהָא חַיָּא永生　神，但6:20,26；בֵית אֱלָהָא　神殿，但5:3 拉4:24 5:2；עֲבִידַת אֱלָהָא事奉　神，拉6:18。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 433 ;<br/>God</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">כְּסַף</span> <span class="tl">kecaph</span> <span class="sn">H03702</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03702</li><li>詞形 כְּסַף</li><li>音譯 kecaph</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 銀子、錢</li><li>字源 相當於 SH3701</li><li>中文用法 銀12 銀子1 (13)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 銀子</li><li>1a 材料</li><li>1b 銀錢</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽כְּסַף 拉7:15。單陽+定冠詞כַּסְפָּא , א 拉7:18。</p>
+<p>1. 作為材料，但2:32,35,45 拉5:14 6:5。</p>
+<p>2. 作為金錢或其等價物，拉7:15,16,17,18,22。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 3701</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">דְּהַב</span> <span class="tl">dehab</span> <span class="sn">H01722</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01722</li><li>詞形 דְּהַב</li><li>音譯 dehab</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 金子</li><li>字源 相當於 SH2091</li><li>中文用法 金23 (23)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 金子</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>金子，單陽דְהַב 但2:32 3:1 拉7:15,16。單陽+定冠詞א，定冠詞א有時以ה代替，דַהֲבָה 拉5:14 6:5 7:18；דַהֲבָא 但2:35,38,45 3:5,7,10,12,14,18 5:2,3,4,7,16,23,29。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 2091 ;<br/>gold</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">נְחָשׁ</span> <span class="tl">nechash</span> <span class="sn">H05174</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H05174</li><li>詞形 נְחָשׁ</li><li>音譯 nechash</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 銅</li><li>字源 相當於 SH5154</li><li>中文用法 銅9 (9)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 銅, 青銅</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>銅，單陽נְחָשׁ 但2:32 4:15,23 7:19。單陽+定冠詞נְחָשָׁא , א但2:,35,39,45 5:4,23。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 5154 ;<br/>copper</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">פַּרְזֶל</span> <span class="tl">parzel</span> <span class="sn">H06523</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06523</li><li>詞形 פַּרְזֶל</li><li>音譯 parzel</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 鐵</li><li>字源 相當於 SH1270</li><li>中文用法 鐵19 (19)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 鐵</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽פַּרְזֶל 但2:33 4:15。單陽+定冠詞פַרְזְלָא , א 但2:34。</p>
+<p>鐵，但2:35,40,41,42,43,45 4:15,23 5:4,23 7:7,19。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 1270 ;<br/>iron</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">אָע</span> <span class="tl">&#x27;a</span> <span class="sn">H00636</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00636</li><li>詞形 אָע</li><li>音譯 &#x27;a</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 木柴、樹木</li><li>字源 相當於 SH6086</li><li>中文用法 木2 木頭1 梁1 梁木1 (5)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 木材</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>1. 用於建造。單陽אָע梁木，拉5:8；木頭，拉6:4；梁，拉6:11。</p>
+<p>2. 製造偶像的材料。單陽+定冠詞אָעָא ,א木，但5:4,23。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 6086 ;<br/>a tree or wood</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">אֶבֶן</span> <span class="tl">&#x27;eben</span> <span class="sn">H00069</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00069</li><li>詞形 אֶבֶן</li><li>音譯 &#x27;eben</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 石頭</li><li>字源 相當於 SH68</li><li>中文用法 石頭5 石3（8）</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 石頭</li><li>1a 一塊石頭</li><li>1b 製造偶像和建築物的石頭材料</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>字義與SH68同，也可用作雕刻偶像及建築用石材，僅出現於 拉5:8 6:4及 但2:34,35,45 5:4,23 6:17共8次。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 68</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">חֲזָא</span> <span class="tl">chaza&#x27;</span> <span class="sn">H02370</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02370</li><li>詞形 חֲזָא</li><li>音譯 chaza&#x27;</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 看哪、注視、做夢</li><li>字源 相當於 SH2372</li><li>中文用法 見13 觀看7 看3 看見3 做2 作1 尋常1 知道1 (31)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 看, 瞧</li><li>1a (P&#x27;al)</li><li>1a1 看</li><li>1a2 看見, 瞧著, 見證</li><li>1a3 瞧見 (在夢或異象中)</li><li>1a4 依慣例的, 適宜的 (被動) （<br/>但 3:19<br/>）</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Peal</p>
+<p>完成式－3單陽חֲזָה 但4:23。2單陽חֲזַיְתָ 但2:43；חֲזַיְתָה 但2:41,41。2複陽חֲזֵיתוֹן 但2:8。1單חֲזֵית 但4:5。</p>
+<p>不定詞－附屬形מֶחֱזֵא 拉4:14。</p>
+<p>主動分詞－單陽חָזֵה 但2:31。複陽חָזַיִן 但3:27 5:23。</p>
+<p>被動分詞－單陽חֲזֵה 但3:19。</p>
+<p>1.看。有視覺，但5:23。</p>
+<p>2.看見、看哪。</p>
+<p>A. 直接受詞：人，我見有四個人，但3:25,27。直接受詞：事物，王看見寫字的手指頭，但5:5。</p>
+<p>B.見證。不忍見王吃虧，拉4:14。</p>
+<p>3. 在夢或異象中看見。但2:41,41,43 4:20 7:4,6,7,9,11,11,13,21；אֲלוּ瞧！ 但2:31 4:10,13；אֲרוּ看、瞧，但7:2,6,13；帶受詞子句，但2:8,45；受詞חֵלֶם夢，但2:26 4:5 7:1。</p>
+<p>4. 依慣例的、適宜的。被動：比尋常更加七倍，但3:19。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) or חֲזָה ; (Aramaic), corresponding to 2372 ;<br/>to gaze upon ; mentally to dream , be usual (i.e. seem)</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">לָא</span> <span class="tl">la&#x27;</span> <span class="sn">H03809</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03809</li><li>詞形 לָא</li><li>音譯 la&#x27;</li><li>約 舊約</li><li>詞類 副詞</li><li>中文詞義 不、無、沒有</li><li>字源 相當於 SH3808</li><li>中文用法 不48 沒有9 無9 沒3 非3 免得2 不可1 不得1 不是1 免1 未1 虛無1 (80) 參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>副</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 不, 否, 無</li></ol></div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) or לָה ; (Aramaic) (Daniel 4:32), corresponding to 3808</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">שְׁמַע</span> <span class="tl">shᵉma`</span> <span class="sn">H08086</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08086</li><li>詞形 שְׁמַע</li><li>音譯 shᵉma`</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 聽見</li><li>字源 相當於 SH8085</li><li>中文用法 聽見5 聽說2 聽1 順從1 (9)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 聽</li><li>1a (P&#x27;al) 聽, 聽到</li><li>1b (Ithpael) 表現對...的服從 (<br/>但 7:27<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Peal</p>
+<p>完成式－3單陽שְׁמַע 但6:14。1單שִׁמְעֵת 但5:14,16。</p>
+<p>未完成式－3單陽יִשְׁמַע 但3:10。2複陽תִשְׁמְעוּן 但3:5,15。</p>
+<p>分詞－複陽שָׁמְעִין 但3:7 5:23。</p>
+<p>聽到。有聽力，但5:23；受詞：聲音，但3:5,7,10,15 6:14；聽說，但5:14,16。</p>
+<p>二、Hithpaal</p>
+<p>未完成式－3複陽יִשְׁתַּמְּעוּן順從他，但7:27。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 8085</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">יְדַע</span> <span class="tl">yeda`</span> <span class="sn">H03046</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03046</li><li>詞形 יְדַע</li><li>音譯 yeda`</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 知道</li><li>字源 相當於 SH3045</li><li>中文用法 知道16 告訴13 指明2 指示2 明白2 知1 允准1 告1 奏1 奏告1 教訓1 曉諭1 聰1 說明1 知...識1 (45)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 知道</li><li>1a (P&#x27;al) 知道</li><li>1b (Aphel) 使之知道, 通知</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Peal</p>
+<p>完成式－3單陽יְדַע 但5:21 6:10。3複陽יִנְדְּעוּן 但4:17。2單陽יְדַעְתָּ 但5:22。1單יִדְעֵת 但4:9。</p>
+<p>未完成式－2單陽תִנְדַּע 拉4:15。1單אִנְדַּע 但2:9。</p>
+<p>祈使式－單陽דַּע 但6:15。</p>
+<p>主動分詞－單陽יָדַע 但2:8。複陽יָדְעִין 但5:23。複陽附屬形יָדְעֵי 拉7:25。</p>
+<p>被動分詞－單陽יְדִיעַ 拉4:12。</p>
+<p>知道。後面接著受詞，וְרַעְיוֹנֵי לִבְבָךְ תִּנְדַּע知道你自己心裡的意念，但2:30 5:22；受詞省略，拉7:25；יָדְעֵי דָּתֵי אֱלָהָךְ明白　神律法的人，拉7:25；יָדְעֵי בִינָה知識，但2:21。帶受詞子句： 但2:8,9,22 4:6,17,26,32 5:21 6:10,15 拉4:15。主動分詞獨立使用：וְלָא יָדְעִין毫無知識的，但5:23。</p>
+<p>二、Aphel</p>
+<p>完成式－3單陽הוֹדַע 但2:15。3單陽2單陽詞尾הוֹדְעָךְ 但2:29。2單陽1單詞尾הוֹדַעְתַּנִי 但2:23。2單陽1複詞尾הוֹדַעְתֶּנָא 但2:23。1複הוֹדַעְנָא 拉4:14。</p>
+<p>未完成式－3單陽יְהוֹדַע 但2:25。3單陽1單詞尾יְהוֹדְעִנַּנִי 但7:16。3複陽יְהוֹדְעוּן 但2:30。3複陽1單詞尾יְהוֹדְעֻנַּנִי 但4:6。2複陽תְּהוֹדְעוּן 拉7:25。2複陽1單詞尾תְהוֹדְעוּנַּנִי 但2:5。1單3單陽詞尾אֲהוֹדְעִנֵּהּ 但5:17。</p>
+<p>不定詞－附屬形הוֹדָעָה 但5:8。附屬形2單陽詞尾הוֹדָעוּתָךְ 拉5:10。附屬形1單詞尾הוֹדָעֻתַנִי 但4:18。</p>
+<p>主動分詞－複陽מְהוֹדְעִין 但4:7。</p>
+<p>使之知道、告知。לְ對人，奏告於王，拉4:14；後跟著受詞表告知某事，告訴但以理，但2:15,17,25,30 4:7 5:8,17 但2:5,9,26 4:6,18 5:15,16 7:16；（主詞是　神），但2:23；לְ對人＋受詞子句，拉4:16 7:24。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 3045</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">יַד</span> <span class="tl">yad</span> <span class="sn">H03028</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03028</li><li>詞形 יַד</li><li>音譯 yad</li><li>約 舊約</li><li>詞類 名、陰</li><li>中文詞義 手</li><li>字源 相當於 SH3027</li><li>中文用法 手11 人手1 口1 (13)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 手</li><li>2 權力 (比喻用法)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰附屬形יַד 拉5:12。單陰+定冠詞יְדָא , א 但5:24。單陰3單陽詞尾יְדֵהּ 拉6:12。單陰3複陽詞尾יֶדְהֹם 拉5:8。單陰2單陽詞尾יְדָךְ 但3:17。介בְּ+雙陰בִידַיִן 但2:34,45。雙陰1單詞尾יְדָי 但3:15。</p>
+<p>1. 人的手，但2:34,45 拉5:8 6:12；在異象中，但5:5,5,24；בִידָךְ在你身上，拉7:14,25；比喻　神בִידֵהּ，無人能攔住他的手，但4:35。</p>
+<p>2.權力。人的，但2:38 3:15,17 7:25 拉5:12。　神的，但5:23。獅子的力量，但6:27。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 3027</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">נִשְׁמָא</span> <span class="tl">nishma&#x27;</span> <span class="sn">H05396</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H05396</li><li>詞形 נִשְׁמָא</li><li>音譯 nishma&#x27;</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 (生命的)氣息、生命</li><li>字源 相當於 SH5397</li><li>中文用法 氣息1 (1)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 氣息 （<br/>但 5:23<br/>）</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰2單陽詞尾נִשְׁמְתָךְ有你氣息，但5:23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 5397 ;<br/>vital breath</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">כֹּל</span> <span class="tl">kol</span> <span class="sn">H03606</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03606</li><li>詞形 כֹּל</li><li>音譯 kol</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 全部、每一、整個</li><li>字源 相當於 SH3605</li><li>中文用法 一切15 各12 全8 凡7 都6 無論3 眾3 不拘2 所有的2 毫2 通2 列1 別1 既1 有1 百1 所...的1 能1 諸1 諸事1 (71)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 所有的, 全部, 全體</li><li>1a 全部, 所有</li><li>1b 每一個, 任一個, 一個也沒有</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>全部、每一、整個，拉4:20 5:7 6:11,12,17 7:13,14,16,21,23,25,26 但2:12,30,38,40,44,48 3:2 4:1 5:8 6:1 7:14。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 3605</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">אֹרַח</span> <span class="tl">&#x27;orach</span> <span class="sn">H00735</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00735</li><li>詞形 אֹרַח</li><li>音譯 &#x27;orach</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 道路</li><li>字源 相當於 SH734</li><li>中文用法 所行的1 行動1 (2)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 道路 (比喻用法) (<br/>但 4:37<br/><br/>5:23<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>複陽3單陽詞尾אֹרְחָתֵהּ他所行的也都公平，但4:37。複陽2單陽詞尾אֹרְחָתָךְ管理你一切行動的　神，但5:23。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 734 ;<br/>a road</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">הֲדַר</span> <span class="tl">hadar</span> <span class="sn">H01922</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01922</li><li>詞形 הֲדַר</li><li>音譯 hadar</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 榮耀(　神)</li><li>字源 相當於 SH1921</li><li>中文用法 榮耀1 尊敬1 恭敬1 (3)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li><li>亞</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 (Pael) 榮耀(上帝)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Pael榮耀　神</p>
+<p>完成式－2單陽הַדַּרְתָּ將榮耀歸　神，但5:23。1單הַדְּרֵת尊敬活到永遠的　神，但4:34。</p>
+<p>分詞－單陽מְהַדַּר尊崇恭敬天上的　神，但4:37。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Aramaic) corresponding to 1921 ;<br/>to magnify (figuratively)</p></div></div></details>
+<h2>三、數值備考</h2>
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">רוּם</span><span class="gid">H07313</span></div><ul><li><b>主數值</b> 246</li><li><b>H小數</b> 12</li><li><b>H標準</b> 246</li><li><b>H序數</b> 39</li><li><b>H_Atbash</b> 93</li><li><b>H_Sofit擴展</b> 806</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">עַל</span><span class="gid">H05922</span></div><ul><li><b>主數值</b> 100</li><li><b>H小數</b> 10</li><li><b>H標準</b> 100</li><li><b>H序數</b> 28</li><li><b>H_Atbash</b> 27</li><li><b>H_Sofit擴展</b> 100</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">מָרֵא</span><span class="gid">H04756</span></div><ul><li><b>主數值</b> 241</li><li><b>H小數</b> 7</li><li><b>H標準</b> 241</li><li><b>H序數</b> 34</li><li><b>H_Atbash</b> 413</li><li><b>H_Sofit擴展</b> 241</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">שָׁמַיִן</span><span class="gid">H08065</span></div><ul><li><b>主數值</b> 400</li><li><b>H小數</b> 13</li><li><b>H標準</b> 400</li><li><b>H序數</b> 58</li><li><b>H_Atbash</b> 61</li><li><b>H_Sofit擴展</b> 1050</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">אָתָה</span><span class="gid">H00858</span></div><ul><li><b>主數值</b> 406</li><li><b>H小數</b> 10</li><li><b>H標準</b> 406</li><li><b>H序數</b> 28</li><li><b>H_Atbash</b> 491</li><li><b>H_Sofit擴展</b> 406</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">מָאן</span><span class="gid">H03984</span></div><ul><li><b>主數值</b> 91</li><li><b>H小數</b> 10</li><li><b>H標準</b> 91</li><li><b>H序數</b> 28</li><li><b>H_Atbash</b> 419</li><li><b>H_Sofit擴展</b> 741</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">בַּיִת</span><span class="gid">H01005</span></div><ul><li><b>主數值</b> 412</li><li><b>H小數</b> 7</li><li><b>H標準</b> 412</li><li><b>H序數</b> 34</li><li><b>H_Atbash</b> 341</li><li><b>H_Sofit擴展</b> 412</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">קֳדָם</span><span class="gid">H06925</span></div><ul><li><b>主數值</b> 144</li><li><b>H小數</b> 9</li><li><b>H標準</b> 144</li><li><b>H序數</b> 36</li><li><b>H_Atbash</b> 114</li><li><b>H_Sofit擴展</b> 704</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">אַנְתָּה</span><span class="gid">H00607</span></div><ul><li><b>主數值</b> 456</li><li><b>H小數</b> 15</li><li><b>H標準</b> 456</li><li><b>H序數</b> 42</li><li><b>H_Atbash</b> 500</li><li><b>H_Sofit擴展</b> 456</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">רַבְרְבָן</span><span class="gid">H07261</span></div><ul><li><b>主數值</b> 454</li><li><b>H小數</b> 13</li><li><b>H標準</b> 454</li><li><b>H序數</b> 58</li><li><b>H_Atbash</b> 615</li><li><b>H_Sofit擴展</b> 1104</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">שֵׁגָל</span><span class="gid">H07695</span></div><ul><li><b>主數值</b> 333</li><li><b>H小數</b> 9</li><li><b>H標準</b> 333</li><li><b>H序數</b> 36</li><li><b>H_Atbash</b> 222</li><li><b>H_Sofit擴展</b> 333</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">לְחֵנָה</span><span class="gid">H03904</span></div><ul><li><b>主數值</b> 93</li><li><b>H小數</b> 21</li><li><b>H標準</b> 93</li><li><b>H序數</b> 39</li><li><b>H_Atbash</b> 179</li><li><b>H_Sofit擴展</b> 93</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">שְׁתָה</span><span class="gid">H08355</span></div><ul><li><b>主數值</b> 705</li><li><b>H小數</b> 12</li><li><b>H標準</b> 705</li><li><b>H序數</b> 48</li><li><b>H_Atbash</b> 93</li><li><b>H_Sofit擴展</b> 705</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">חֲמַר</span><span class="gid">H02562</span></div><ul><li><b>主數值</b> 248</li><li><b>H小數</b> 14</li><li><b>H標準</b> 248</li><li><b>H序數</b> 41</li><li><b>H_Atbash</b> 73</li><li><b>H_Sofit擴展</b> 248</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">שְׁבַח</span><span class="gid">H07624</span></div><ul><li><b>主數值</b> 310</li><li><b>H小數</b> 13</li><li><b>H標準</b> 310</li><li><b>H序數</b> 31</li><li><b>H_Atbash</b> 362</li><li><b>H_Sofit擴展</b> 310</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">אֱלָהּ</span><span class="gid">H00426</span></div><ul><li><b>主數值</b> 36</li><li><b>H小數</b> 9</li><li><b>H標準</b> 36</li><li><b>H序數</b> 18</li><li><b>H_Atbash</b> 510</li><li><b>H_Sofit擴展</b> 36</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">כְּסַף</span><span class="gid">H03702</span></div><ul><li><b>主數值</b> 160</li><li><b>H小數</b> 16</li><li><b>H標準</b> 160</li><li><b>H序數</b> 43</li><li><b>H_Atbash</b> 44</li><li><b>H_Sofit擴展</b> 880</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">דְּהַב</span><span class="gid">H01722</span></div><ul><li><b>主數值</b> 11</li><li><b>H小數</b> 11</li><li><b>H標準</b> 11</li><li><b>H序數</b> 11</li><li><b>H_Atbash</b> 490</li><li><b>H_Sofit擴展</b> 11</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">נְחָשׁ</span><span class="gid">H05174</span></div><ul><li><b>主數值</b> 358</li><li><b>H小數</b> 16</li><li><b>H標準</b> 358</li><li><b>H序數</b> 43</li><li><b>H_Atbash</b> 71</li><li><b>H_Sofit擴展</b> 358</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">פַּרְזֶל</span><span class="gid">H06523</span></div><ul><li><b>主數值</b> 317</li><li><b>H小數</b> 20</li><li><b>H標準</b> 317</li><li><b>H序數</b> 56</li><li><b>H_Atbash</b> 99</li><li><b>H_Sofit擴展</b> 317</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">אָע</span><span class="gid">H00636</span></div><ul><li><b>主數值</b> 71</li><li><b>H小數</b> 8</li><li><b>H標準</b> 71</li><li><b>H序數</b> 17</li><li><b>H_Atbash</b> 407</li><li><b>H_Sofit擴展</b> 71</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">אֶבֶן</span><span class="gid">H00069</span></div><ul><li><b>主數值</b> 53</li><li><b>H小數</b> 8</li><li><b>H標準</b> 53</li><li><b>H序數</b> 17</li><li><b>H_Atbash</b> 709</li><li><b>H_Sofit擴展</b> 703</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">חֲזָא</span><span class="gid">H02370</span></div><ul><li><b>主數值</b> 16</li><li><b>H小數</b> 16</li><li><b>H標準</b> 16</li><li><b>H序數</b> 16</li><li><b>H_Atbash</b> 530</li><li><b>H_Sofit擴展</b> 16</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">לָא</span><span class="gid">H03809</span></div><ul><li><b>主數值</b> 31</li><li><b>H小數</b> 4</li><li><b>H標準</b> 31</li><li><b>H序數</b> 13</li><li><b>H_Atbash</b> 420</li><li><b>H_Sofit擴展</b> 31</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">שְׁמַע</span><span class="gid">H08086</span></div><ul><li><b>主數值</b> 410</li><li><b>H小數</b> 14</li><li><b>H標準</b> 410</li><li><b>H序數</b> 50</li><li><b>H_Atbash</b> 19</li><li><b>H_Sofit擴展</b> 410</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">יְדַע</span><span class="gid">H03046</span></div><ul><li><b>主數值</b> 84</li><li><b>H小數</b> 12</li><li><b>H標準</b> 84</li><li><b>H序數</b> 30</li><li><b>H_Atbash</b> 147</li><li><b>H_Sofit擴展</b> 84</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">יַד</span><span class="gid">H03028</span></div><ul><li><b>主數值</b> 14</li><li><b>H小數</b> 5</li><li><b>H標準</b> 14</li><li><b>H序數</b> 14</li><li><b>H_Atbash</b> 140</li><li><b>H_Sofit擴展</b> 14</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">נִשְׁמָא</span><span class="gid">H05396</span></div><ul><li><b>主數值</b> 391</li><li><b>H小數</b> 13</li><li><b>H標準</b> 391</li><li><b>H序數</b> 49</li><li><b>H_Atbash</b> 421</li><li><b>H_Sofit擴展</b> 391</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">כֹּל</span><span class="gid">H03606</span></div><ul><li><b>主數值</b> 50</li><li><b>H小數</b> 5</li><li><b>H標準</b> 50</li><li><b>H序數</b> 23</li><li><b>H_Atbash</b> 50</li><li><b>H_Sofit擴展</b> 50</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">אֹרַח</span><span class="gid">H00735</span></div><ul><li><b>主數值</b> 209</li><li><b>H小數</b> 11</li><li><b>H標準</b> 209</li><li><b>H序數</b> 29</li><li><b>H_Atbash</b> 463</li><li><b>H_Sofit擴展</b> 209</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">הֲדַר</span><span class="gid">H01922</span></div><ul><li><b>主數值</b> 209</li><li><b>H小數</b> 11</li><li><b>H標準</b> 209</li><li><b>H序數</b> 29</li><li><b>H_Atbash</b> 193</li><li><b>H_Sofit擴展</b> 209</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div></div>
+<h2>四、一行中文語意直譯</h2><p>竟向天上的主自高，又使人將他殿中的器皿拿到你面前，你和你的大臣、王后、妃嬪用這些器皿喝酒。你又讚美金、銀、銅、鐵、木、石所造的　神，它們不能看、不能聽、也不能知道；卻沒有把榮耀歸給那手中有你氣息、你一切道路都在他那裏的　神。</p>
+<h2>五、逐句剖析</h2>
+<p>二十二節說他不自卑，本節把不自卑怎樣行出來一一數過。先是וְעַל מָרֵא שְׁמַיָּא הִתְרוֹמַמְתָּ，「向天上的主自高」。מָרֵא①作主人，和合本譯「主」。שָׁמַיִן①作天、天空、天上，③兼列天空與　神所居住的地方。רוּם①作升起、高舉，此處是反身，自己把自己抬起來。然後是器皿：מָאן①作器皿，בַּיִת①作房屋、家、殿，本節取「殿」。הַיְתִיו，「他們把這些器皿帶到你面前」。這是五章二至四節已經發生的事，也可回想一章二節器皿從　神殿被取到巴比倫；本節只作內證回想，不重開那些已完成的頁。飲酒的人被列出來：אַנְתְּ וְרַבְרְבָנָךְ שֵׁגְלָתָךְ וּלְחֵנָתָךְ。רַבְרְבָן①作主、貴族，和合本譯「大臣」。שֵׁגָל①作王后、嬪妃，和合本譯「皇后」。לְחֵנָה①作妾，和合本譯「妃嬪」。חֲמַר①作酒。שְׁתָה①作喝。用的是這些殿中的器皿。</p>
+<p>接著是讚美的對象：לֵאלָהֵי כַסְפָּא וְדַהֲבָא נְחָשָׁא פַרְזְלָא אָעָא וְאַבְנָא，「銀、金、銅、鐵、木、石的神祇」。原文אֱלָהֵי是複數構詞。H00426①兼列　神與神祇，③兼有獨一的　神與異教的神祇。本節按「所造的」取神明、神祇這一邊，同時保留和合本「所造的　神」的寫法，單詞「　神」前的全形空格不改，經文用不改。引用字典寫「兼列　神與神祇」；複合詞神明、神祇、男神、女神不插空格。這些所造的，לָא חָזַיִן וְלָא שָׁמְעִין וְלָא יָדְעִין，不能看、不能聽、不能知道。חֲזָא①作看哪、注視、做夢，本節取「看」。שְׁמַע作聽見。יְדַע作知道。和合本譯「無知無識」。人卻向這些שַׁבַּח，①作崇拜、奉承、讚美。另一邊是他沒有歸榮耀的那一位：לֵאלָהָא דִּי נִשְׁמְתָךְ בִּידֵהּ וְכָל אֹרְחָתָךְ לֵהּ。נִשְׁמָא①作生命的氣息、生命。יַד①作手。אֹרַח①作道路，和合本譯「行動」。הֲדַר此處作動詞「歸榮耀」。和合本譯「管理你一切行動的　神」，單詞空格保留。本節只寫這項指控，不解釋彌尼、提客勒、烏法珥新，指頭寫字要到下一節才說。</p>
+<p>淺白地說：你向天上的主自高，使人把祂殿中的器皿拿到你面前，你和大臣、王后、妃嬪用這些器皿喝酒；又讚美那不能看、不能聽、不能知道、用金銀銅鐵木石所造的　神，卻沒有把榮耀歸給那手中有你氣息、你一切道路都在他那裏的　神。一邊是所造的，一邊是管理氣息的。</p>
+<h2>六、對照經文</h2>
+<p>本節把二至四節取用器皿、讚美所造之神的事，收成對伯沙撒本人的指控，也可回想一章二節器皿從　神殿被取來的記載。這是本書內證，不重開那些已完成的頁。必須與二十二節「知道了仍不自卑」連讀：不自卑不是一句空話，是向天上的主自高，並把殿中的杯拿來稱頌所造的。指頭寫字屬二十四節，牆上的字怎樣講解，不在本節寫出。和合本「所造的　神」「管理你一切行動的　神」單詞空格都不改。</p>
+<h2>七、語意</h2>
+<p>字面上，這是他向天上的主自高，用殿中的器皿喝酒，讚美那不能看、不能聽、不能知道、所造的　神，卻不把榮耀歸給手中有他氣息、管理他一切道路的　神。語意是：人把當稱頌的放下，把稱頌送給不能看也不能聽的；自己的氣息卻仍在那一位手裏。</p>
+<p>界限必須標明。字典①兼列　神與神祇，本節按「所造的」取神明、神祇、男神、女神這一邊，同時保留和合本「所造的　神」的寫法，不改經文。「管理你一切行動的　神」是真　神，單詞空格保留。不可把後來彌尼等字的講解提前填進來，也不可把這場筵席認成後來書卷裏的宴會。語意收在「稱頌走錯了方向，氣息卻仍在他手裏」這一事上。</p>
+<h2>八、總意</h2>
+<p>竟向天上的主自高，使人將他殿中的器皿拿到你面前，你和大臣、皇后、妃嬪用這器皿飲酒。知道了仍不自卑，就會把殿裏的杯拿到自己桌上。杯子原是為稱頌那一位用的，今夜卻盛了酒，在大臣、皇后、妃嬪中間傳著喝。人不是不知道這些器皿從哪裏來，是知道了，仍把它們變成筵席上的器具。</p>
+<p>你又讚美那不能看、不能聽、無知無識、金、銀、銅、鐵、木、石所造的　神，卻沒有將榮耀歸與那手中有你氣息，管理你一切行動的　神。一邊是人手造出來的，不能看，不能聽，什麼也不知道；一邊是手中握著他氣息的那一位，連他一切道路都在他那裏。稱頌卻走向了不能看的那邊。本節只寫到這項指控，牆上的字還沒有被解釋，指頭也要到下一句才再被提起。人先要看見：人可以把榮耀送給所造的，卻不能把氣息從那一位手裏奪回來。氣息還在他手裏的時候，稱頌已經走偏了。</p>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="27_但以理書_Daniel dan_05_23_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">機械層臨標・金標未達</div>
+<div class="ds">本頁是但以理書 第5章23節的臨標工作稿。經文按已核對的和合本新標點抄錄，原文字典與數值只抄錄本機統一庫已有且已裁定的資料，不自算、不選邊。人手層（直譯、剖析、語意、總意）已寫入，尚未收貨，不是金標完成，亦未經獨立驗收，不得稱為全書金標，亦不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-12 21:51:08 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified・數值＝gematria_unified・機械層臨標・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

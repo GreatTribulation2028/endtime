@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 4:8 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_04_08_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第4章8節<br/>我的新婦，求你與我一同離開黎巴嫩，與我一同離開黎巴嫩。從亞瑪拿頂，從示尼珥與黑門頂，從有獅子的洞，從有豹子的山往下觀看。</p>
+<p>上一節還稱她為佳偶，這一節改口叫「新婦」。和合本寫：「我的新婦，求你與我一同離開黎巴嫩，與我一同離開黎巴嫩。從亞瑪拿頂，從示尼珥與黑門頂，從有獅子的洞，從有豹子的山往下觀看。」「與我一同離開黎巴嫩」說了兩次，隨後要她從幾處山巔往下觀看。</p>
+<p>原文開頭是 אִתִּי מִלְּבָנוֹן כַּלָּה「與我從黎巴嫩，新婦啊」，隨後再重複 אִתִּי מִלְּבָנוֹן，接上 תָּבוֹאִי「你要來」。動詞是「來」，介詞是「從」。和合本寫「求你與我一同離開黎巴嫩」，把「從黎巴嫩來」讀成「離開黎巴嫩」，又加上「求你」與「我的」。稱呼 כַּלָּה 是「新婦」，原文沒有「我的」；這是本卷第一次用這個稱呼。黎巴嫩重複兩次，是本節自己的節奏，不是衍文要刪。</p>
+<p>隨後是 תָּשׁוּרִי「你要觀看、凝視」，起點是亞瑪拿頂，示尼珥與黑門頂，以及獅子的洞穴、豹子的那些山。和合本寫「往下觀看」，補上了「往下」的方向；又寫「從有獅子的洞，從有豹子的山」，把「獅子的洞穴」「豹子的那些山」寫成「有……的」。本頁字典記亞瑪拿為黎巴嫩之北的一座山，字義作「支持」；示尼珥為亞摩利人對黑門山的稱呼，字義作「帶尖的、山峰」；黑門字義作「粗率的」。這些是名稱上的資料，不可用來改定經文中的專名，也不可因為示尼珥曾是黑門的別名，就把本節並列的兩個名字改成一座山。經文把兩處都寫出來，就按兩處來讀。</p>
+<p>本節經文沒有角色標示。上一節的總評剛說完「全然美麗、毫無瑕疵」，這一節卻把人放到高而險的山嶺上：與我從黎巴嫩來，並從那些有獅子與豹子的高處觀看。新的稱呼與新的地勢，是一起出現的。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_04_07_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第4章7節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_04_09_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第4章9節</a></nav>
+<h2 class="ntitle">雅歌 第4章8節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第4章8節<br/>我的新婦，求你與我一同離開黎巴嫩，與我一同離開黎巴嫩。從亞瑪拿頂，從示尼珥與黑門頂，從有獅子的洞，從有豹子的山往下觀看。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 4:8 &gt;</div>
+<div class="orig-he">אִתִּ֤/י מִ/לְּבָנוֹן֙ כַּלָּ֔ה אִתִּ֖/י מִ/לְּבָנ֣וֹן תָּב֑וֹאִי תָּשׁ֣וּרִי׀ מֵ/רֹ֣אשׁ אֲמָנָ֗ה מֵ/רֹ֤אשׁ שְׂנִיר֙ וְ/חֶרְמ֔וֹן מִ/מְּעֹנ֣וֹת אֲרָי֔וֹת מֵֽ/הַרְרֵ֖י נְמֵרִֽים׃</div>
+<div class="orig-zh">與我從黎巴嫩來吧，新婦啊，與我從黎巴嫩來。你要從亞瑪拿頂，從示尼珥與黑門頂，從獅子的洞穴，從豹子的那些山觀看。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_04_08</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>我的新婦，求你與我一同離開黎巴嫩，與我一同離開黎巴嫩。從亞瑪拿頂，從示尼珥與黑門頂，從有獅子的洞，從有豹子的山往下觀看。</p>
+<p>原文是「與我從黎巴嫩，新婦啊；與我從黎巴嫩，你要來。你要從亞瑪拿頂，從示尼珥與黑門頂，從獅子的洞穴，從豹子的那些山觀看」。כַּלָּה 是「新婦」，原文沒有「我的」；和合本寫「我的新婦」。תָּבוֹאִי 是「你要來」，介詞 מִן 是「從」；和合本寫「求你與我一同離開黎巴嫩」，加上「求你」，並把「從……來」讀成「離開」。這一句在原文裏重複「與我從黎巴嫩」，和合本也重複「與我一同離開黎巴嫩」。תָּשׁוּרִי 是「你要觀看、凝視」，和合本寫「往下觀看」，補上了「往下」。מְעֹנוֹת אֲרָיוֹת、הַרְרֵי נְמֵרִים 是「獅子的洞穴」「豹子的那些山」，和合本寫「有獅子的洞」「有豹子的山」。專名按和合本讀作亞瑪拿、示尼珥、黑門、黎巴嫩。原文此節沒有角色標示。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 與我從黎巴嫩來，新婦啊｜אִתִּי מִלְּבָנוֹן כַּלָּה אִתִּי מִלְּבָנוֹן תָּבוֹאִי</h3>
+<blockquote>אִתִּ֤/י מִ/לְּבָנוֹן֙ כַּלָּ֔ה אִתִּ֖/י מִ/לְּבָנ֣וֹן תָּב֑וֹאִי</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>אִתִּ֤/י</strong>（介詞加第一人稱單數詞尾，與我。不另造編號）</li>
+<li><strong>מִ/לְּבָנוֹן֙</strong>（介詞加專有名詞，從黎巴嫩，<code><span class="sn">H03844</span></code> Levanon；本頁字典記作「白山」（由於山上的雪），和合本寫「黎巴嫩」）</li>
+<li><strong>כַּלָּ֔ה</strong>（陰性名詞單數絕對形，新婦，<code><span class="sn">H03618</span></code> kallah；字義「新婦」。原文沒有「我的」，這是本卷第一次用此稱呼）</li>
+<li><strong>אִתִּ֖/י מִ/לְּבָנ֣וֹן</strong>（再次：與我從黎巴嫩）</li>
+<li><strong>תָּב֑וֹאִי</strong>（動詞 Qal 未完成式第二人稱陰性單數，你要來，<code><span class="sn">H00935</span></code> bo；字義「來、去」）</li>
+</ul>
+<p>本節先發出邀請：與我從黎巴嫩來，新婦啊；與我從黎巴嫩，你要來。「與我從黎巴嫩」重複一次，節奏本身就是強調。動詞是「來」，方向是「從」那座山出來、與他同行。和合本寫「我的新婦，求你與我一同離開黎巴嫩，與我一同離開黎巴嫩」，加上「我的」與「求你」，又把「從……來」譯成「離開」。意思都在寫離開那高處、與他同行，只是原文的重心在「來」，不在「離開」這個中文動詞。稱呼在上一節還是「佳偶」，本節改為「新婦」，是本卷第一次。本頁字典記黎巴嫩為「白山」，因山巔積雪與淡白的灰石得名；這是名稱上的資料，不可用來把經文改成別的稱呼。</p>
+<h3>2️⃣ 從亞瑪拿、示尼珥與黑門頂觀看｜תָּשׁוּרִי מֵרֹאשׁ אֲמָנָה מֵרֹאשׁ שְׂנִיר וְחֶרְמוֹן</h3>
+<blockquote>תָּשׁ֣וּרִי מֵ/רֹ֣אשׁ אֲמָנָ֗ה מֵ/רֹ֤אשׁ שְׂנִיר֙ וְ/חֶרְמ֔וֹן</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>תָּשׁ֣וּרִי</strong>（動詞 Qal 未完成式第二人稱陰性單數，你要觀看、凝視，<code><span class="sn">H07789</span></code> shur；字義「觀看、視查」。本頁字典記本節為「看、凝視」）</li>
+<li><strong>מֵ/רֹ֣אשׁ</strong>（介詞加陽性名詞單數附屬形，從……的頂、從……的頭，<code><span class="sn">H07218</span></code> rosh；字義「頭、頂點」）</li>
+<li><strong>אֲמָנָ֗ה</strong>（專有名詞，亞瑪拿，<code><span class="sn">H00549</span></code> Amanah；本頁字典記作黎巴嫩之北的一座山，字義「支持」。同一編號下另有敘利亞河名「亞罷拿」，不是本節這個山名）</li>
+<li><strong>מֵ/רֹ֤אשׁ</strong>（再次：從……的頂，<code><span class="sn">H07218</span></code>）</li>
+<li><strong>שְׂנִיר֙</strong>（專有名詞，示尼珥，<code><span class="sn">H08149</span></code> Senir；本頁字典記作亞摩利人對黑門山的稱呼，字義「帶尖的、山峰」）</li>
+<li><strong>וְ/חֶרְמ֔וֹן</strong>（連接詞加專有名詞，與黑門，<code><span class="sn">H02768</span></code> Hermon；本頁字典記作敘利亞西南邊的山名，字義「粗率的」）</li>
+</ul>
+<p>來了以後，還要從這些山的頂上看。תָּשׁוּרִי 是觀看、凝視，不是下行的動詞；和合本寫「往下觀看」，把「從頂上看」補成「往下」的方向。亞瑪拿、示尼珥、黑門都按和合本的專名來讀。字典所記的字義（「支持」「帶尖的、山峰」「粗率的」）只作說明，不改經文。示尼珥在申命記 3:9 被記為亞摩利人對黑門山的別名，這是字典與舊約內證已有的記錄；本節卻把「示尼珥與黑門」並列寫出，仍按兩個名字來讀，不選邊把經文改成一座山。同一編號下的河名「亞罷拿」是另一個指稱，不可與本節的山頂混為一處。</p>
+<h3>3️⃣ 從獅子的洞穴、豹子的那些山｜מִמְּעֹנוֹת אֲרָיוֹת מֵהַרְרֵי נְמֵרִים</h3>
+<blockquote>מִ/מְּעֹנ֣וֹת אֲרָי֔וֹת מֵֽ/הַרְרֵ֖י נְמֵרִֽים׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>מִ/מְּעֹנ֣וֹת</strong>（介詞加陰性名詞複數附屬形，從……的洞穴、住處，<code><span class="sn">H04585</span></code> meonah；字義「居所、洞穴」。本頁字典記本節為「獅子的洞」）</li>
+<li><strong>אֲרָי֔וֹת</strong>（名詞複數絕對形，獅子們，<code><span class="sn">H00738</span></code> ari；字義「獅子」）</li>
+<li><strong>מֵֽ/הַרְרֵ֖י</strong>（介詞加陽性名詞複數附屬形，從……的那些山，<code><span class="sn">H02042</span></code> harar；字義「山」。與常見的 הַר 同義，本節用這一形式）</li>
+<li><strong>נְמֵרִֽים׃</strong>（陽性名詞複數絕對形，豹子們，<code><span class="sn">H05246</span></code> namer；字義「豹」）</li>
+</ul>
+<p>觀看的起點不只是有名字的山巔，也包括獅子的洞穴、豹子的那些山。和合本寫「從有獅子的洞，從有豹子的山」，補上「有」，並把複數的山寫成「山」。這些是野獸出沒的高處，與前面亞瑪拿、示尼珥、黑門的頂同在一句裏，把地勢寫得又高又險。本節要她從這樣的地方觀看，並且是與他同行地從黎巴嫩出來。險不是用來把人留在洞裏，乃是被點名為觀看的起點。</p>
+<h3>4️⃣ 收束｜本節歸納</h3>
+<p>本節第一次稱她為新婦，要她與他從黎巴嫩來，並從亞瑪拿、示尼珥與黑門的頂上，從獅子的洞穴與豹子的那些山觀看。和合本寫「我的新婦，求你與我一同離開黎巴嫩」，把「從……來」讀成「離開」，又補上「往下觀看」。稱呼改了，地勢也改成高而險的山嶺。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H00935、H03844、H03618、H07789、H07218、H00549、H08149、H02768、H00738、H04585、H02042、H05246。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">בּוֹא</span><span class="gid">H00935</span></div><ul><li><b>主數值</b> 9</li><li><b>H小數</b> 9</li><li><b>H標準</b> 9</li><li><b>H序數</b> 9</li><li><b>H_Atbash</b> 780</li><li><b>H_Sofit擴展</b> 9</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 9 的詞條共 21 個（含本詞）。其中已有中文詞義者如 H00111 אֲדַד「我應該去愛」、H00178 אוֹב「交鬼的、靈媒、巫師、盛水皮袋」、H00228 אֲזָא「點燃、加熱」、H00251 אָח「兄弟、手足之情、親戚、朋友、同伴」、H00252 אַח「兄弟」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　תָּבוֹאִי 是「你要來」。和合本寫「與我一同離開」，把「從黎巴嫩來」讀成離開那地、與他同行。原文的動詞是「來」。</p>
+<p><span class="gl">④精意</span>　邀請的重心是來，是與他同行。本節不要她獨自留在高處，乃是從那裏出來，走到他這一邊。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">לְבָנוֹן</span><span class="gid">H03844</span></div><ul><li><b>主數值</b> 138</li><li><b>H小數</b> 21</li><li><b>H標準</b> 138</li><li><b>H序數</b> 48</li><li><b>H_Atbash</b> 418</li><li><b>H_Sofit擴展</b> 788</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 138 的詞條共 29 個（含本詞）。其中已有中文詞義者如 H02505 חָלַק「分配、分開、分享、使光滑、諂媚」、H02506 חֵלֶק「油滑的(舌頭)、分配、部份、產業、分享」、H02507 חֵלֶק「一部份」、H02508 חֲלָק「一部份」、H02509 חָלָק「油滑的、諂媚的」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　לְבָנוֹן 在本節出現兩次，都作「從黎巴嫩」。和合本寫「黎巴嫩」。本頁字典記作「白山」（由於山上的雪）。不可用字義改定專名。</p>
+<p><span class="gl">④精意</span>　同一個地名被喚了兩次，邀請就有了節奏。本節把她要離開、又要與他同行的那個地方，說得很清楚。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">כַּלָּה</span><span class="gid">H03618</span></div><ul><li><b>主數值</b> 55</li><li><b>H小數</b> 10</li><li><b>H標準</b> 55</li><li><b>H序數</b> 28</li><li><b>H_Atbash</b> 140</li><li><b>H_Sofit擴展</b> 55</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 55 的詞條共 30 個（含本詞）。其中已有中文詞義者如 H00129 אֲדָמִי「泥土的」、H00130 אֱדֹמִי「紅」、H00134 אֶדֶן「（建築、支柱等的）基礎、座基、底部的根基」、H00135 אַדָּן「堅固的」、H01374 גֵּבִים「蓄水池」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　כַּלָּה 是「新婦」，本卷第一次出現。原文沒有「我的」，和合本寫「我的新婦」。上一節的稱呼還是「佳偶」。</p>
+<p><span class="gl">④精意</span>　名字一換，關係被說得更近。本節用這個新的稱呼來發出邀請，不是再作一場從眼到乳的稱讚。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">שׁוּר</span><span class="gid">H07789</span></div><ul><li><b>主數值</b> 506</li><li><b>H小數</b> 11</li><li><b>H標準</b> 506</li><li><b>H序數</b> 47</li><li><b>H_Atbash</b> 85</li><li><b>H_Sofit擴展</b> 506</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 506 的詞條共 18 個（含本詞）。其中已有中文詞義者如 H00842 אֲשֵׁרָה「歡樂、小樹林」、H07221 רִאשָׁה「起頭、開漿」、H07222 רֹאשָׁה「頂端」、H07326 רוּשׁ「使貧困」、H07608 שַׁאֲרָה「母系血親」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　תָּשׁוּרִי 是「你要觀看、凝視」。和合本寫「往下觀看」，補上了「往下」的方向。本頁字典記本節為看、凝視。</p>
+<p><span class="gl">④精意</span>　觀看是從高處發出的。本節讓她的眼睛從山巔看下來，而不是把她留在看不見的險地裏。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">רֹאשׁ</span><span class="gid">H07218</span></div><ul><li><b>主數值</b> 501</li><li><b>H小數</b> 6</li><li><b>H標準</b> 501</li><li><b>H序數</b> 42</li><li><b>H_Atbash</b> 405</li><li><b>H_Sofit擴展</b> 501</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 501 的詞條共 27 個（含本詞）。其中已有中文詞義者如 H00574 אֵמְתָּנִי「可怕的」、H00781 אָרַשׂ「訂婚、聘定」、H00833 אָשַׁר「坦白、公正、誠實、直行」、H00834 אֲשֶׁר「就是、的、為要、何處、如何、因為、每一個」、H00835 אֶשֶׁר「蒙福、幸福、福氣」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　רֹאשׁ 在本節兩次作「頂」：亞瑪拿的頂，示尼珥與黑門的頂。和合本寫「頂」。</p>
+<p><span class="gl">④精意</span>　頂把觀看安放在最高的那一點。本節要人從真正的高處看，不是從平地隨便一望。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">אֲמָנָה</span><span class="gid">H00549</span></div><ul><li><b>主數值</b> 96</li><li><b>H小數</b> 15</li><li><b>H標準</b> 96</li><li><b>H序數</b> 33</li><li><b>H_Atbash</b> 509</li><li><b>H_Sofit擴展</b> 96</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 96 的詞條共 23 個（含本詞）。其中已有中文詞義者如 H00374 אֵיפָה「伊法（穀物的計量單位）」、H00375 אֵיפֹה「什麼地方、何處」、H00545 אׇמְנָה「養育、教導」、H00546 אׇמְנָה「實在、誠然」、H00547 אֹמְנָה「柱子」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　אֲמָנָה 本頁字典記為黎巴嫩之北的山名「亞瑪拿」，字義「支持」。同一編號下另有河名「亞罷拿」，不是本節所指。不可用字義改定專名。</p>
+<p><span class="gl">④精意</span>　名字可以帶著「支持」一類的記錄，本節卻仍把它當作一個山頭來喚。觀看需要一個可以被說出的頂。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">שְׁנִיר</span><span class="gid">H08149</span></div><ul><li><b>主數值</b> 560</li><li><b>H小數</b> 11</li><li><b>H標準</b> 560</li><li><b>H序數</b> 65</li><li><b>H_Atbash</b> 54</li><li><b>H_Sofit擴展</b> 560</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 560 的詞條共 8 個（含本詞）。其中已有中文詞義者如 H01181 בַּעֲלֵי בָּמוֹת「高地之主」、H03461 יִשְׁמְרַי「保護物」、H04700 מְצֵלֶת「鈸」、H06554 פַּרְפַּר「激流、快速的」、H07083 קֶסֶת「墨水瓶」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　שְׂנִיר 和合本寫「示尼珥」。本頁字典記作亞摩利人對黑門山的稱呼，字義「帶尖的、山峰」。本節與黑門並列寫出，仍按兩個名字來讀，不選邊改定。</p>
+<p><span class="gl">④精意</span>　即使別名曾經指過同一座山，本節還是把兩個名字都說出來。觀看的起點被寫成可數的幾個頂，不是一個含混的山系。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">חֶרְמוֹן</span><span class="gid">H02768</span></div><ul><li><b>主數值</b> 304</li><li><b>H小數</b> 25</li><li><b>H標準</b> 304</li><li><b>H序數</b> 61</li><li><b>H_Atbash</b> 162</li><li><b>H_Sofit擴展</b> 954</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 304 的詞條共 21 個（含本詞）。其中已有中文詞義者如 H01856 דָּקַר「刺穿、剌傷」、H01857 דֶּקֶר「剌傷」、H02222 זַרְזִיף「滴落、浸透」、H02674 חָצוֹר「村莊」、H02695 חֶצְרוֹ「圍牆、庭院」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　חֶרְמוֹן 和合本寫「黑門」。本頁字典記作敘利亞西南邊的山名，字義「粗率的」。與示尼珥並列。不可用字義改定專名。</p>
+<p><span class="gl">④精意</span>　黑門是可以把名字叫出來的那一座。本節讓邀請落在具體的山頂上，不停留在空洞的「高處」。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">אֲרִי</span><span class="gid">H00738</span></div><ul><li><b>主數值</b> 211</li><li><b>H小數</b> 4</li><li><b>H標準</b> 211</li><li><b>H序數</b> 31</li><li><b>H_Atbash</b> 443</li><li><b>H_Sofit擴展</b> 211</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 211 的詞條共 28 個（含本詞）。其中已有中文詞義者如 H00508 אֶלְפַּעַל「　神在行事」、H00712 אַרְגָּז「盒子、箱子」、H00719 אַרְוַד「漂泊的難民」、H00720 אֲרוֹד「逃亡者」、H01368 גִּבּוֹר「大能的勇士、戰士」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　אֲרָיוֹת 是獅子們，作洞穴的所屬。和合本寫「有獅子的洞」。</p>
+<p><span class="gl">④精意</span>　獅子把那洞穴寫成險地。本節不是要人去與野獸同住，乃是點出她被請離開、並從那裏觀看的那種高而險的地方。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">מְעוֹנָה</span><span class="gid">H04585</span></div><ul><li><b>主數值</b> 171</li><li><b>H小數</b> 27</li><li><b>H標準</b> 171</li><li><b>H序數</b> 54</li><li><b>H_Atbash</b> 196</li><li><b>H_Sofit擴展</b> 171</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 171 的詞條共 7 個（含本詞）。其中已有中文詞義者如 H00045 אֲבִי־עַלְבוֹן「力量之父」、H00593 אֲנִיעָם「百姓的怨聲」、H03131 יוֹסִפְיָה「耶和華在增添」、H03703 כָּסִפְיָא「銀白色的」、H03981 מַאֲמָץ「力量（人所能積累的能力或財力）」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　מְעֹנוֹת 是洞穴、住處。和合本寫「洞」。本頁字典記本節為「獅子的洞」。</p>
+<p><span class="gl">④精意</span>　洞穴是野獸的住處。本節把它當作觀看的起點之一，讓人看見那地勢不只是風景，也有危險。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">הָרָר</span><span class="gid">H02042</span></div><ul><li><b>主數值</b> 405</li><li><b>H小數</b> 9</li><li><b>H標準</b> 405</li><li><b>H序數</b> 45</li><li><b>H_Atbash</b> 96</li><li><b>H_Sofit擴展</b> 405</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 405 的詞條共 10 個（含本詞）。其中已有中文詞義者如 H01883 דֶּתֶא「嫩草、草地」、H03146 יוֹשָׁפָט「耶和華已審判」、H04637 מַעֲרָצָה「可怕、驚駭」、H04933 מְשִׁסָּה「掠奪之物」、H07184 קָשָׂה「細頸瓶、罐子」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　הַרְרֵי 是那些山，作「豹子的那些山」。和合本寫「有豹子的山」，把複數收成「山」。</p>
+<p><span class="gl">④精意</span>　山在本節再次出現，卻是豹子出沒的那些山。高處與險處被寫在一起，邀請就不是一場平地上的散步。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">נָמֵר</span><span class="gid">H05246</span></div><ul><li><b>主數值</b> 290</li><li><b>H小數</b> 11</li><li><b>H標準</b> 290</li><li><b>H序數</b> 47</li><li><b>H_Atbash</b> 22</li><li><b>H_Sofit擴展</b> 290</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 290 的詞條共 22 個（含本詞）。其中已有中文詞義者如 H00044 אֲבִיעֶזֶר「幫助之父」、H01909 הֲדַדְעֶזֶר「哈達(是他的)幫助」、H03759 כַּרְמֶל「果園、園地的出產、新鮮水果」、H03760 כַּרְמֶל「花園」、H03766 כָּרַע「彎腰、屈膝、蹲伏、斜靠」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　נְמֵרִים 是豹子們。和合本寫「有豹子的山」。本頁字典記本節與「獅子的洞」平行。</p>
+<p><span class="gl">④精意</span>　豹子與獅子並列，把山寫成有野獸的地方。本節要她從這樣的山上觀看，並且是與他同行地出來。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>雅歌 4:7 剛用「我的佳偶」作總評，本節改稱「新婦」，並把場面從當面的稱讚轉到黎巴嫩一帶的山嶺。兩節宜連著讀，看見稱呼與地勢一同轉換，卻不要把「毫無瑕疵」再寫進這些山頂。</p>
+<p>申命記 3:9 記示尼珥為亞摩利人對黑門山的稱呼，是外引，可與本節並列的兩個名字對讀。對讀只說明名稱上的記錄，不可用來把本節改定為一座山。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。後來的讀者若把獅子、豹子或黎巴嫩讀成別卷中的審判或復興圖像，那是後世的讀法，不可倒填進本節。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「與我從黎巴嫩，新婦啊；與我從黎巴嫩，你要來。你要從亞瑪拿頂，從示尼珥與黑門頂，從獅子的洞穴，從豹子的那些山觀看」。和合本寫「我的新婦，求你與我一同離開黎巴嫩」，把「從……來」讀成「離開」，並補上「往下觀看」。</p>
+<p><strong>本書用法</strong>　「新婦」是本卷第一次出現，上一節還稱「佳偶」。黎巴嫩在後文還會再出現（4:11、4:15），本節是「從黎巴嫩來」的邀請。不要把 4:6 的沒藥山、乳香岡與這些北方山嶺混成一處。</p>
+<p><strong>舊約根源</strong>　黎巴嫩、黑門、示尼珥都是舊約已經叫得出的北方山地。字典所記字義與別名只作說明。本節用這些專名標出高而險的地勢，不另拉爭戰記事來改寫這一句邀請。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把「新婦」或這些山嶺讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<p><strong>跨篇深意</strong>　全然美麗被說完，並不表示人已經到了他那邊。本節改口稱她為新婦，要她從黎巴嫩與那些有獅子、豹子的高處出來，與他同行，並從山頂觀看。愛在這裏不只是稱讚，也是一句把人從險處喚來的邀請。</p>
+<h2>六、總意</h2>
+<p>稱呼換了。上一節還是「我的佳偶」，這一節第一次叫她「新婦」。名字一改，邀請就跟著來：與我從黎巴嫩來。同一句話說了兩次，像是怕她聽漏。</p>
+<p>和合本寫「求你與我一同離開黎巴嫩」。原文的動詞是「來」，介詞是「從」。離開那高處，與到他這裏來，是同一條路的兩面。譯文把「離開」說得更明顯，原文把「來」放在句末。兩種寫法都不要人獨自留在山上。</p>
+<p>觀看的起點被一個一個點名：亞瑪拿頂，示尼珥與黑門頂，獅子的洞穴，豹子的那些山。這些是有名字、也有野獸的高處。字典裏的字義與別名只幫助我們認得這些名字，不能把經文改成別的稱呼，也不能把並列的兩座頂改成一座。</p>
+<p>讀到這裏，稱讚已經說過「全然美麗」。本節卻不再數身體的部位，只把她從高而險的地方喚來，並請她往下看。新婦這個名字，是連著這一句邀請一起出現的。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H00935 — בּוֹא「去或來(應用變化廣泛)」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00935</li><li>詞形 בּוֹא</li><li>音譯 bow</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 去或來(應用變化廣泛)</li><li>字源 一原形字根</li><li>中文用法 來450 到177 到了164 來到153 進入114 進107 臨到103 進去82 帶70 入62 領61 去59 帶到39 進了32 回來29 回27 帶來26 往24 拿24 來了22 奉18 落18 送18 降17 同房16 進來16 口12 拿來12 歸11 上10 應驗10 見10 放9 送來9 前來8 成就8 獻8 臨8 臨近8 牽7 赴7 送到7 運7 上來6 出來6 取6 奉到6 帶入6 牽到6 親近6 走6 進到6 領進6 回到5 回去5 引導5 ...(約用2570次)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 進入, 進去, 來, 去, 進來</li><li>1a (Qal)</li><li>1a1 進來</li><li>1a1a 進出, 特別是指辦事</li><li>1a1b 參與群體敬拜, 或祭司進入會幕</li><li>1a1c 進入正式職責 (<br/>王下 11:9<br/><br/>代上 27:1<br/><br/>代下 23:8<br/>)</li><li>1a1d 新娘進入新郎的家 (<br/>書 15:18<br/>)</li><li>1a1e 進入女子的帳篷或住處, 表示與女子同房</li><li>1a1f 進入特殊的關係 (<br/>撒上 25:26<br/>)</li><li>1a1g 進入墳墓 (<br/>王上 13:22<br/><br/>14:13<br/>), 歸到列祖 (<br/>創 15:15<br/>)</li><li>1a1h 收成 (<br/>利 25:22<br/>), 收入 (<br/>王上 10:14<br/>)</li><li>1a2 來</li><li>1a2a 與...一起來</li><li>1a2b 來到, 遭遇, 攻擊 (敵人)</li><li>1a2c 發生</li><li>1a2d 被數點</li><li>1a3 去</li><li>1b (Hiphil)</li><li>1b1 使之進來, 帶進來</li><li>1b2 使之前來, 帶來靠近</li><li>1c (Hophal)</li><li>1c1 被帶來, 被引進</li><li>1c2 被引介, 被安置</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－3單陽בָּא 詩41:6。3單陰בָּאָה 創15:17。3單陰1複詞尾בָּאַתְנוּ 詩44:17。3複בָּאוּ 創7:9。2單陽בָּאתָ 書13:1;בָּאתָה 撒下3:7。2單陰בָאת 創16:8 得2:12。2複陽בָּאתֶם 創26:27。1單בָאתִי 詩40:7。1複בָּאנוּ 創32:6。連續式3複וּבָאוּ 出8:3。連續式3單陽וּבָא 結41:3。連續式3單陰וּבָאָה 結30:4。連續式2單陽וּבָאתָ 王下9:2。連續式2單陰וּבָאת 得3:4 撒下14:3 彌4:10。連續式2複陽וּבָאתֶם 申4:1。連續式1複וּבָאנוּ 撒下17:12。連續式1單וּבָאתִי 王上18:12。</p>
+<p>未完成式－3單陽יָבוֹא 創32:8；יָבֹא 創49:10。3單陽3單陽詞尾יְבוֹאֶנּוּ 伯15:21；יְבֹאֶנּוּ 箴28:22。3單陽1複詞尾יְבוֹאֵנוּ 賽28:15。3單陰תָּבוֹא 創41:50。3單陰3單陽詞尾תְבוֹאֶנּוּ 箴10:24。3單陰2單陽詞尾תְּבוֹאַתְךָ 伯22:21；תְּבוֹאֶךָ 結32:11。3複陽יָבֹאוּ 創6:4。3複陽+古代的詞尾יְבֹאוּן , ן 詩95:11。3複陰תָּבֹאןָ 創30:38；תָבֹאינָה 撒上10:7；תְּבֹאֶינָה 詩45:15。2單陽תָּבוֹא 創15:15；תָּבֹא 箴23:10。2單陰תָּבוֹאִי 得3:17。2複陽תָבֹאוּ 出12:25。1單אָבֹא 創33:14。1複נָבוֹא 王下7:4。敘述式3單陽וַיָּבֹא 出3:1。敘述式3單陰וַתָּבוֹא 士4:21。敘述式3單陰3單陽詞尾וַתְּבוֹאֵהוּ 詩109:17。敘述式3複陽וַיָּבֹאוּ 出2:17。敘述式3複陰וַתָּבֹאנָה 出2:16。敘述式2單陰וַתָּבֹאִי 結16:7。敘述式2複陽וַתָּבֹאוּ 申29:7。敘述式1單וָאָבוֹא 尼2:9。敘述式1複וַנָּבוֹא 撒上10:14。祈願式3單陽יָבוֹא 書6:19。祈願式3單陰תָּבֹא 撒下13:5。祈願式3單陰+指示方向的詞尾תָּבוֹאתָה , ָה 申33:16。祈願式3單陰3單陽詞尾תְּבוֹאֵהוּ 詩35:8。祈願式3單陰1單詞尾תְּבוֹאֵנִי 詩36:11。祈願式3複陽יָבֹאוּ 詩69:27。祈願式3複陽1單詞尾יְבֹאוּנִי 詩119:77；וִיבֹאֻנִי 詩119:41。祈願式2單陽תָּבוֹא 箴27:10。祈願式1複נָבוֹא 耶35:11。鼓勵式3單陰וְתָבוֹאָה 賽5:19。鼓勵式1單אָבֹאָה 士15:1 創29:21。鼓勵式1複נָבֹאָה 王下7:9。</p>
+<p>祈使式－單陽הָבֵא 創43:16；הָבֵיא 撒上20:40；הָבִיאָה 創27:4。單陰הָבִיאִי 撒下13:10。複陽הָבִיאוּ 創42:19；הָבִיאָה 摩4:1。2單陽הָבִיאָה 創27:7。</p>
+<p>不定詞－獨立形וְהָבֵא 該1:6。附屬形הָבִיא 創18:19。附屬形3複陽詞尾הֲבִיאָם 申9:28。附屬形2單陽詞尾הֱבִיאֲךָ 撒下3:13。附屬形2複陽詞尾הֲבִיאֲכֶם 結44:7。</p>
+<p>分詞－單陽מֵבִיא 出10:4；מֵבִי 王上21:21。單陽2單陽詞尾מְבִיאֲךָ 申8:7。複陽מְבִאִים 王上10:25。複陽附屬形וּמְבִאֵי 耶17:26。複陽3單陰詞尾מְבִיאֶיהָ 但11:6。</p>
+<p>1.進入。帶介系詞אֶל：進入方舟，創6:18 7:9,13。與בְּ： 創19:8 結2:2 37:10。與לְ： 斯6:4；與指示方向的 ָה＋地點： 創12:11 41:57 民14:24。與直接受詞（בַּיִת房屋）士18:18 王下11:19 詩100:4（שַׁעַר門）；בָּאֵי שַׁעַר-עִירוֹ在城門出入，創23:10,18；刺透他的手，王下18:21；בָא אֶל-פִּי入我的口，但10:3 創41:21（肥牛被瘦牛吃掉）；民5:22,24,27。獨立使用，創7:16 24:31 王上1:42 14:6 王下11:5,9 代下23:4,8。</p>
+<p>A. 與יָצָא（出去）相反。出入，書6:1 王下11:8 代下23:7。特別是指處理事務：入也蒙福，申28:6,19 亞8:10 詩121:8；וְשִׁבְתְּךָ וְצֵאתְךָ וּבֹאֲךָ你坐下，你出去，你進來，王下19:27；לִפְנֵיהֶם在他們面前出，在他們面前入，民27:17 代下1:10；לֹא אֵדַע צֵאת וָבֹא不知道應當怎樣出入，王上3:7；領兵出入，撒上18:13,16 書14:11 申31:2 撒上29:6。</p>
+<p>B.參加會眾敬拜：入耶和華的會，申23:1,2,2,3。祭司進入聖所或會幕：亞倫進聖所，出28:29,35 利16:23。</p>
+<p>C.輪班服事：進班出班的人，王下11:9 代上27:1 代下23:8。</p>
+<p>D. 新娘進入新郎的家：押撒過門，書15:18 士1:14。</p>
+<p>E.進入女子的帳篷或住處：我要進內室見我的妻，士15:1；與她親近，士16:1。表示與女子同房：交合生子，創6:4；和我的使女同房，創16:2 30:3 38:8,9 39:14 申22:13 撒下12:24 16:21 20:3 結23:44,44；הַבָּא אֶל-אֵשֶׁת同房，箴6:29；לָבוֹא עָלֵינוּ來到我們這裡，創19:31；יָבֹא עָלֶיהָ וּלְקָחָהּ לוֹ לְאִשָּׁה與她同房，娶她為妻，申25:5 箴2:19。</p>
+<p>F. 與外人交往：不可與你們中間所剩下的這些國民攙雜，書23:7 23:12。</p>
+<p>G.進入特殊的關係：取流血的罪，撒上25:26。</p>
+<p>H. 埋葬，進入墳墓，王上13:22 14:13；歸到你列祖那裡，創15:15。</p>
+<p>I. 日出日落，創15:12,17 28:11 出17:12 22:26 利22:7 申16:6 23:11 24:13,15 書8:29 10:13,27 士19:14 傳1:5。</p>
+<p>J. 收割，農作收成，利25:22；貢品收入：所羅門每年所得的金子，王上10:14 代下9:13。</p>
+<p>2.來（接近、到達），與הָלַךְ（去）相反。你從哪裡來要往哪裡去，創16:8 撒上20:21 尼6:17 傳5:15,16；與אֶל： 創14:7 37:23；與עַל-： 出18:23 代下20:24（出現）；利21:11 民6:6；與לְ： 撒上9:12 代下29:17；與עַד： 民13:22 士15:14 撒下16:5；בָאוּ בָנִים עַד-מַשְׁבֵּר孩子已經來到子宮口，王下19:3＝賽37:3；與עַד +אֶל ：他到了他們那裡，王下9:20；帶指示方向的 ָה ：來到加低斯，士11:16；到了約旦河，王下6:4；與直接受詞： 撒上4:12 王下8:7 耶32:24；בָּאֵי מוֹעֵד來過節的，哀1:4；約瑟的弟兄們來了，創45:16；耶和華的約櫃到了，撒上4:6；狂風從曠野颳來，伯1:19；כַּסְפְּכֶם בָּא אֵלָי你的錢來到我手裡，創43:23＝我收到了你的錢了；我們的產業是坐落在約但河東邊，民32:19；我民的哀聲上達於我，撒上9:16 創18:21 出3:9 哀1:22。指時間的，通常是指迫在眉睫的未來，尤其是片語הִנֵּה יָמִים בָּאִים看哪，日子必到，賽39:6＝王下20:17 耶7:32 9:25 16:14 19:6；死期到了，撒上26:10 結7:7；耶和華的日子，珥2:1,31 亞14:1 瑪3:2 4:1,5。分詞作形容詞：הַיָּמִים הַבָּאִים在將來的日子，傳2:16 耶47:4；作實名詞הַבָּאוֹת將來的事，賽41:22。</p>
+<p>A.與...一起來。用燔祭進你的殿，詩66:13 詩71:16；亞倫進聖所要帶一隻公牛，利16:3。</p>
+<p>B.來到、遭遇。仇敵攻擊，創34:27 伯15:21 20:22 結32:11；災難等，臨到，箴10:24 28:22 詩44:17；福氣，臨到你們，書23:15 伯22:21 詩119:41。</p>
+<p>C.發生</p>
+<p>神蹟或預言。應驗，申13:2 書23:14 撒上9:6 賽42:9 耶28:9 箴13:12 伯6:8。</p>
+<p>D.達到。עַד־הַשְּׁלֹשָׁה לֹא־בָא不及前三個勇士，撒下23:19 代上11:21。</p>
+<p>E. 片語עַד-בּוֹאֲךָ עַזָּה直到迦薩，士6:4 11:34 撒上17:52 撒下5:25 王上18:46；בֹּאֲכָה單獨指方向，創10:19,19 10:30 13:10 25:18 撒上27:8（後面都是指示方向的ָָה）；民13:21；לְבֹא חֲמָת 民34:8 結48:1；עַד לְבוֹא חֲמָת直到哈馬口，書13:5 士3:3 代上13:5 代下26:8 結47:20；מִלְּבוֹא חֲמָת 摩6:14 王上8:65 王下14:25 代下7:8。</p>
+<p>F.被數點。以上所記的人名，代上4:38。</p>
+<p>3.與…聯結。與瞞哄人的同群，詩26:4；與他來往，箴22:24。</p>
+<p>二、Hifil</p>
+<p>完成式－3單陽הֵבִיא 創4:4。3單陰הֵבִיאָה 代下9:12。3單陽1單詞尾הֱבִיאַנִי 申9:4。3單陽3單陽詞尾הֱבִיאוֹ 詩78:71。3複הֵבִיאוּ 創43:2。3複3單陽詞尾הֱבִיאֻהוּ 代下28:27。3複3複陽詞尾הֱבִיאוּם 撒上15:15。3複2單陰詞尾הֱבִיאוּךְ 結27:26。2單陽הֵבֵיאתָ 賽43:23；הֵבֵאתָ 創20:9。2單陽1單詞尾הֲבִיאֹתַנִי 撒下7:18 代上17:16。2單陽1複詞尾הֲבִיאֹתָנוּ 民16:14；הֲבֵאתָנוּ 詩66:11。2複陽הֲבֵאתֶם 民20:4。1單הֵבֵאתִי 創31:39。1單3單陽詞尾הֲבֵיאתִיו 歌3:4。1單3單陰詞尾הֲבֵאתִיהָ 賽37:26。1複3複陽詞尾הֲבִיאֹנֻם 民32:17。連續式3單陰וְהֵבִיאָה 利15:29。連續式3單陽3單陰詞尾וֶהֱבִיאָהּ 利2:2。連續式3複陽3複陽詞尾וֶהֱבִיאֻם 利17:5。連續式3單陽2單陽詞尾וֶהֱבִיאֲךָ 出23:23。連續式3複וְהֵבִיאוּ 利4:14。連續式2單陰3單陽詞尾וַהֲבֵאתוֹ 撒下14:10。連續式2複陽וַהֲבִיאוֹתֶם 撒上16:17。連續式1單וְהֵבֵאיתִי 耶25:13。連續式1單3單陽詞尾וַהֲבִיאֹתִיו 民14:24。連續式1單3複陽詞尾וַהֲבִואֹתִים 尼1:9。連續式1單2單陽詞尾וַהֲבִאוֹתִיךָ 結38:16。</p>
+<p>未完成式－3單陽יָבִיא 利4:32。3單陰תָּבִיא 箴31:14。3單陽3單陽詞尾יְבִיאֶנּוּ 利17:9。3單陽3單陰詞尾יְבִיאֶנָּה 利4:32。3單陽3複陽詞尾יְבִיאֵם 民27:17。3單陽2單陽詞尾יְבִיאֲךָ 出13:5。3複陽יָבִיאוּ 出16:5。3複陽+古代的詞尾  יְבִיאוּן , ן 出18:26。2單陽תָבִיא 伯14:3；הָבִיאָה 創27:7。2單陽3單陽詞尾תְבִאֵהוּ 耶13:1。2單陽3單陰詞尾תְּבִיאֶנָּה 利6:21。2單陽3複陽詞尾תְּבִאֵמוֹ 出15:17。2單陽1單詞尾תְבִיאֵנִי 撒上20:8。2複陽תָּבִיאוּ 利23:17。1單אָבִיא 出11:1；אָבִי 王上21:29 彌1:15。1單3單陽詞尾אֲבִיאֶנּוּ 創44:32。1單3單陰詞尾הֲבֵאתִיהָ 賽37:26。1單3複陽詞尾אֲבִיאֵם 亞10:10。1單2單陽詞尾אֲבִיאֲךָ 歌8:2。1複נָּבִיא 撒上9:7。1複3複陽詞尾נְבִיאֵם 代下2:16。敘述式3單陽וַיָּבֵא 創2:19。敘述式3單陽3單陽詞尾וַיְבִיאֵהוּ 創29:13。敘述式3單陽3單陰詞尾וַיְבִאֶהָ 創2:22。敘述式3單陰3單陽詞尾וַתְּבִאֵהוּ 出2:10。敘述式3單陽3複陽詞尾וַיְבִיאֵם 撒上9:22。敘述式3單陽1單詞尾וַיְבִיאֵנִי 結40:17。敘述式3單陰1單詞尾וַתְּבִיאֵנִי 結43:5。敘述式3單陽1複詞尾וַיְבִאֵנוּ 申26:9。敘述式3複陽וַיָּבִיאוּ 創19:10。敘述式3複陽3複陽詞尾וַיְבִאוּם 書7:23。敘述式3複陽3單陽詞尾וַיְבִיאֻהוּ 士1:7。敘述式2單陽3複陽詞尾וַתְּבִיאֵם 尼9:23。敘述式1單וָאָבִא 出19:4。敘述式1單3複陽詞尾וָאֲבִיאֵם 撒下1:10。祈願式3單陽3單陰詞尾יְבִיאֶהָ 出35:5。祈願式3複陽1單詞尾יְבִיאוּנִי 詩43:3。</p>
+<p>祈使式－單陽הָבֵא 創43:16 出4:6；הָבֵיא 撒上20:40。2單陽הָבִיאָה 創27:7。單陰הָבִיאִי 撒下13:10。</p>
+<p>不定詞－獨立形וְהָבֵא 該1:6。附屬形הָבִיא 創18:19。</p>
+<p>分詞－單陽מֵבִיא 出10:4；מֵבִי 王上21:21。單陽2單陽詞尾מְבִיאֲךָ 申8:7。複陽מְבִאִים 王上10:25。複陽附屬形וּמְבִאֵי 耶17:26。複陽3單陰詞尾מְבִיאֶיהָ 但11:6。</p>
+<p>1.使...進來、帶進來，創6:19 歌2:4 3:4。與בְּ ： 利26:41 詩66:11；與לְ： 士19:21 撒上9:22；與לִפְנֵי： 斯1:11,17；與指示方向的 ָה＋地點： 創24:67 46:7；指示方向的 ָה+ 受詞記號אֶת-： 創19:10；帶來、攜帶＋直接受詞חֶדֶר房間，歌1:4 王下9:2；與אֶל： 民31:54 瑪3:10；射箭，הֵבִיא בְּכִלְיוֹתָי射入我的肺腑，哀3:13（比喻）；利26:36；我必使氣息進入你們裡面，結37:5 尼13:12；指示方向的 ָה＋地點：抬進那裡，出26:33；וַיָּבֵא אֶת-הַמַּיִם הָעִירָה他引水入城，王下20:20 撒下13:10 代下15:18。</p>
+<p>A. 與הוֹצִיא（帶出）相反。領進他所應許之地，申9:28。有時與הוֹצִיא連用，引導他們，民27:17；以色列人出入；代1:2。</p>
+<p>B.娶媳婦。娶了三十個媳婦，士12:9。</p>
+<p>C.帶來審判，伯14:3。</p>
+<p>D. 使太陽落下，摩8:9。</p>
+<p>E.收成、聚集。所產的拿來，撒下9:10；收的卻少，該1:6。</p>
+<p>F. 槓穿入環內，出25:14 37:5 38:7 利14:42；把手放在懷裡，出4:6,6；放在水中，耶13:1。</p>
+<p>G. 其他片語：הֵבִיאוּ צַוָּרָם בַּעֲבֹדַת אֲדֹנֵיהֶם用肩擔他們主的工作，尼3:5；比喻用法：הָבִיאוּ אֶת־צַוְּארֵיכֶם בְּעֹל מֶלֶךְ־בָּבֶל你們要來把你們的頸項放在巴比倫王的軛下，耶27:12；הָבִיאָה לַמּוּסָר לִבֶּךָ要使訓誨進入你的心，箴23:12；וְנָבִא לְבַב חָכְמָה好叫我們得著智慧的心，詩90:12。</p>
+<p>2使...前來、帶來、靠近。與אֶל：帶到那人面前，創2:19,22 43:9 利24:11 民5:15；領以色列人進迦南，出6:8 23:23 賽14:2 56:7 尼1:9。獨立使用：領你進去，申4:38 6:23。與לְ： 創39:14,17；帶地名+表示方向的 ָה： 結12:13；帶副詞הֲלֹם在這裡： 士18:3；עַד-הֲלֹם到這(地步)，撒下7:18＝代上17:16你竟使我到這地步呢（比喻耶和華豐盛的眷顧）；獨立用法：一切所有的都帶來了，創46:32；也包含無生命的東西，創27:10 代下36:7 創31:39；帶直接受詞： 王下12:4 代下36:18 但1:2,2；帶指示方向的 ָה： 出26:33 耶20:5；與לִפְנֵי： 代下24:14；烏鴉早晚給他叼餅，王上17:6；禮物拿進屋，創43:26 撒上9:7 10:27 17:18；尤其是祭物，與לְ ：獻給耶和華，創4:3 民15:25 尼10:35,37（給利未人）等等；帶到亞倫子孫作祭司的那裡，利2:2。獨立用法： 創4:4 利4:32 23:14,15 瑪1:13,13 代下31:5 出35:21,22,23,24,27,29 36:3。</p>
+<p>A.帶來攻擊，耶25:9；使他們來在你四圍攻擊你，結23:22。受詞：刀劍，臨到你們，利26:25 結5:17 11:8 14:17 33:2；災禍，出11:1；咒詛，創27:12 申29:27 王上9:9 代下7:22 伯42:11 耶25:13 36:31 44:2 49:8,37 結14:22；罪，創20:9 26:10 出32:21 耶32:42；使四風從天的四方颳來，耶49:36。</p>
+<p>B.帶來，帶來面前，彌1:15 亞3:8。</p>
+<p>C.帶來、取得。בְּנַפְשֵׁנוּ נָבִיא לַחְמֵנוּ冒著險才得糧食，哀5:9。</p>
+<p>三、Hofal</p>
+<p>完成式－3單陽הוּבָא 利10:18。3單陰הֻבָאת 創33:11。3複הוּבְאוּ 創43:18。2單陽הֻבָאתָה 結40:4。連續式3單陽וְהוּבָא 出27:7。</p>
+<p>未完成式－3單陽יוּבָא 利6:30。3複陽יוּבָאוּ 耶27:22。</p>
+<p>分詞－單陽בְּבוֹא 王下12:9。複陽מוּבָאִים 創43:18 結30:11。複陰מוּבָאוֹת 詩45:14。</p>
+<p>1.被領進。屋裡，創43:18,18；殿，王下12:4,9,13,16 22:4 代下34:9,14。</p>
+<p>2.被帶來，創33:11；將血帶進會幕，利6:30 10:18 13:2,9 14:2；參 結23:42；與副詞הֵנָּה，結40:4；בָּבֶלָה יוּבָאוּ被帶到巴比倫，耶27:22；與不定詞，הוּבָא אֶת-דָּמָם לְכַפֵּר בַּקֹּדֶשׁ牠們的血被帶入聖所贖罪的，利16:27 結30:11；與מִן，從烏法而來，耶10:9。</p>
+<p>3.被引入。這槓要穿在壇兩旁的環子內，出27:7；器皿須要放在水中，利11:32。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>to go or come (in a wide variety of applications)</p></div></div></div></details>
+<details class="ntfold"><summary>H03844 — לְבָנוֹן「白山(由於山上的雪)」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03844</li><li>詞形 לְבָנוֹן</li><li>音譯 Lebanown</li><li>約 舊約</li><li>詞類 專有名詞</li><li>中文詞義 白山(由於山上的雪)</li><li>字源 來自 SH3835</li><li>中文用法 利巴嫩71 (71)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>專</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 以色列北方邊界山區, 樹木茂密</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>〔利巴嫩〕地名</p>
+<p>山名，山巔終年積雪，上部之灰石亦為淡白色，故名白山，申1:7 3:25 11:24 書1:4 9:1 11:17 12:7 13:5,6 王上9:19 代下8:6 耶22:20 亞10:10。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 3825 ; (the) white mountain (from its snow);<br/>Lebanon , a mountain range in Palestine</p></div></div></div></details>
+<details class="ntfold"><summary>H03618 — כַּלָּה「新婦(有完美之意)、兒婦」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03618</li><li>詞形 כַּלָּה</li><li>音譯 kallah</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 新婦(有完美之意)、兒婦</li><li>字源 來自 SH3634</li><li>中文用法 新婦17 兒婦16 媳婦1 (34)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 新娘, 媳婦</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰כַּלָּה 耶2:32。單陰3單陽詞尾כַּלָּתוֹ 創11:31。單陰3單陰詞尾כַלָּתָהּ 得1:22。複陰3單陰詞尾כַלֹּתֶיהָ 得1:6,7,8。複陰2複陽詞尾כַּלּוֹתֵיכֶם 何4:13,14。</p>
+<p>1.媳婦，創11:31 38:11,16,24 利18:15 20:12 得1:6,7,8,22 2:20,22 4:15 撒上4:19 代上2:4 結22:11 彌7:6。</p>
+<p>2.新娘或新婦，歌4:8,9,10,11,12 5:1 賽49:18 61:10 62:5 耶2:32 7:34 16:9 25:10 33:11 何4:13,14 珥2:16。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 3634 ;<br/>a bride (as if perfect); hence, a son&#x27;s wife</p></div></div></div></details>
+<details class="ntfold"><summary>H07789 — שׁוּר「觀看、視查、潛伏、關心」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07789</li><li>詞形 שׁוּר</li><li>音譯 shuwr</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 觀看、視查、潛伏、關心</li><li>字源 一原形字根</li><li>中文用法 見4 望3 伏1 歌唱1 理會1 看見1 眷顧1 窺探1 見...著1 觀看1 顧念1 (16)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 看, 觀看, 觀察</li><li>1a (Qal)</li><li>1a1 看</li><li>1a2 小心觀察</li><li>1a3 暗地觀看, 蹲伏</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>未完成式－3單陽יָשׁוּר 耶5:26。3單陽3單陽詞尾יְשׁוּרֶנּוּ 伯34:29。3單陽3單陰詞尾יְשׁוּרֶנָּה 伯33:14。3單陰3單陽詞尾תְּשׁוּרֶנּוּ 伯20:9。3單陰1單詞尾תְשׁוּרֵנִי 伯20:9。2單陰תָּשׁוּרִי 歌4:8。2單陽3單陽詞尾תְשׁוּרֶנּוּ 伯35:14。1單אָשׁוּר 何13:7。1單3單陽詞尾אֲשׁוּרֶנּוּ 民23:9。</p>
+<p>祈使式－單陽שׁוּר 伯35:5。</p>
+<p>1.看，民23:9 24:17；主詞是眼睛，伯24:15 7:8 20:9 伯17:15；　神作受詞，伯34:29 35:14；看、凝視，歌4:8。</p>
+<p>2.小心觀察：主詞是耶和華，何14:8＝眷顧，伯35:13；關注，觀察：　神的話，伯33:14。</p>
+<p>3.暗地觀看、蹲伏：כְּנָמֵר עַל-דֶּרֶךְ אָשׁוּר如豹伏在道旁，何13:7（主詞是　神）；耶5:26（主詞是惡人）；他在人前歌唱，伯33:27。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root (identical with through the idea of going round for inspection);<br/>to spy out, i.e. (generally) survey , (for evil) lurk for , (for good) care for</p></div></div></div></details>
+<details class="ntfold"><summary>H07218 — רֹאשׁ「頭、頂點、首領、在前的、起初、開始、總數」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07218</li><li>詞形 רֹאשׁ</li><li>音譯 ro&#x27;sh</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 頭、頂點、首領、在前的、起初、開始、總數</li><li>字源 來自一不用的字根</li><li>中文用法 頭251 長68 頂43 首領30 首17 首級16 隊13 山頂11 族長11 統領7 總數7 大6 長子6 上4 口上4 領袖4 元首3 數3 率領3 羅施3 起初3 高3 上半截2 初2 山上2 朔2 梢2 上品1 上好1 上等1 上面1 儘上的1 儘尖的1 元帥1 初次1 口1 士1 太初1 太子1 始1 官長1 尖1 引導1 最1 正1 第一1 總綱1 至寶1 起頭1 道1 長者1 頂上1 領1 頭目1 頭頂1 首位1 首先1 (556)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 頭, 頂, 高階, 上面, 首領, 全部, 極點, 高處, 前面,<br/>開始</li><li>1a 人或動物的頭</li><li>1b 山頂或山峰</li><li>1c 高處(星宿)</li><li>1d 首領, 領袖 (人的, 城的, 國家的, 地方的, 家庭的, 祭司的)</li><li>1e 起頭, 前面, 開始</li><li>1f 首領, 精選的, 最好的</li><li>1g 頭, 宗, 群, 隊</li><li>1h 極點</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽רֹאשׁ 創3:15。單陽附屬形רֹאשׁ 創40:20。單陽3單陽詞尾רֹאשׁוֹ 出12:9。單陽3複陽詞尾רֹאשָׁם 賽35:10。單陽2單陽詞尾רֹאשְׁךָ 申28:23。單陽2複陽詞尾רֹאשְׁכֶם 利19:27。單陽1單詞尾רֹאשִׁי 創40:16。單陽1複詞尾רֹאשֵׁנוּ 書2:19。複陽רָאשִׁים 出18:25。複陽附屬形רָאשֵׁי 何4:13。複陽3單陽詞尾רָאשָׁיו 書23:2。複陽3複陽詞尾רָאשֵׁיהֶם 出36:38。複陽2複陽詞尾רָאשֵׁיכֶם 賽29:10。複陽1複詞尾רָאשֵׁינוּ 代上12:19。</p>
+<p>一、頭：</p>
+<p>1. 人類的： 創40:16,17；לְרֹאשׁ גֶּבֶר男人的頭，士5:30；女人的，王下9:30 申21:12 民5:18 斯2:17；男孩的，王下4:19,19 創48:14,14。比喻以色列地的主權是　神的，詩60:7＝詩108:8。偶像的，撒上5:4。擬人化用法： 詩24:7,9。</p>
+<p>2. 動物的：蛇的，創3:15；狗的，撒下3:8；驢的，王下6:25；活物的，結1:22,22,26；基路伯，結10:1,11；鱷魚，伯41:7；לִוְיָתָן海中大怪獸，詩74:14；תַנִּינִים大海怪，詩74:13；祭牲，出12:9 29:15,19 利1:4,8,12,15 3:2,8。</p>
+<p>二、山頂或山峰：山的，創8:5 出19:20,20 24:17 34:2；在道旁高處的頂上，箴8:2；街頭，箴1:21；רֹאשׁ גֵּיא-שְׁמָנִים在肥美谷的山上，賽28:1,4；高峰，民23:9；塔頂，創11:4；堡壘頂端，士6:26；梯子的頭，創28:12；樹梢，撒下5:24＝代上14:15；儘上的枝梢，賽17:6；香柏樹儘尖，結17:4,22；桅杆上，箴23:34；穀粒的頂端，伯24:24；澆油在上面，創28:18；床頭，創47:31；寶座的圓頂，王上10:19；帳幕的頂端，出26:24＝出36:29；柱頭的頂端，王上7:16,17；盆座頂端，王上7:35；燈的頂上，亞4:2；大祭司的外袍上，出28:32；房角的頭塊石頭，詩118:22；星宿的高處，伯22:12。</p>
+<p>三、首領、領袖：</p>
+<p>1. 人的： 士10:18 11:8,9,11 出18:25 民1:16 申1:15 彌3:1。</p>
+<p>2. 城的： 書11:10 賽7:8,8,9,9。</p>
+<p>3. 國家的： 耶31:7。</p>
+<p>4. 地方的： 撒上9:22 王上21:9,12 申20:9 代上4:42。</p>
+<p>5. 祭司的：</p>
+<p>大祭司，王下25:18＝耶52:24 代下19:11 24:11 26:20 代上27:5 代下31:10 拉7:5。</p>
+<p>6. 家庭的：家長，出6:14；族長，民7:2 17:3 書22:14 代上5:24 7:7,9,40 民1:4 代上5:15,24 7:2 9:13 24:4 民32:28 書 14:1 21:1 出6:25。</p>
+<p>四、起頭、前面、開始：</p>
+<p>1.起頭、前面。耶和華引導他們，彌2:13；率領，代下20:27；首先，摩6:7。</p>
+<p>2. 指時間：開始。在三更之初，士7:19 哀2:19；起初，賽40:21 41:4,26 48:16；太初，箴8:23；從始至終，傳3:11；正月，出12:2；月朔，民10:10 28:11；初次，代上16:7。</p>
+<p>3. 河流的源頭，創2:10；上好的香料，結27:22 出30:23 歌4:14；我所最喜樂的，詩137:6。</p>
+<p>五、頭＝群、隊。分作三隊，士7:16,20 9:34,37,43,44 撒上11:11 13:17,18 伯1:17。</p>
+<p>六、片語：נָשָׂא אֶת-רֹאשׁ בְּנֵי-יִשְׂרָאֵל數點以色列人的人頭，出30:12計算總數；民1:2,49 4:2,22 26:2 31:26,49；如數歸還，利6:5 民5:7；其數何等眾多，詩139:17；得以昂首高過四面的仇敵，詩27:6；抬起頭來，詩3:3；מְנוֹד-רֹאשׁ搖頭，詩44:14；גְּמֻלְךָ יָשׁוּב בְּרֹאשֶׁךָ你的報應必歸到你頭上，俄1:15 詩7:16 王上2:33 斯9:25 士9:57 撒上25:39 王上2:44。</p>
+<p>〔羅施〕</p>
+<p>傳統譯本把此字當做一個出自瑪各民族的北方國家。但近代譯本多把它當作一般名詞，將נְשִׂיא רֹאשׁ譯為主要的王，結38:2,3 39:1。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root apparently meaning to shake;<br/>the head (as most easily shaken), whether literal or figurative (in many applications, of place, time, rank, itc.)</p></div></div></div></details>
+<details class="ntfold"><summary>H00549 — אֲמָנָה「支持」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00549</li><li>詞形 אֲמָנָה</li><li>音譯 &#x27;Amanah</li><li>約 舊約</li><li>詞類 專有名詞</li><li>中文詞義 支持</li><li>字源 同 SH548</li><li>中文用法 亞瑪拿1 亞罷拿1 (2)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>專</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 一條從安替黎巴嫩山脈流入大馬色平原的河流<br/>(<br/>王下 5:12<br/>; 中文聖經採取用<br/>071<br/>, 譯作&quot;亞罷拿&quot;)</li><li>2 河流源頭山區的範圍 (<br/>歌 4:8<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>〔亞罷拿〕河名</p>
+<p>從敘利亞流經大馬色，是大馬色的兩大河之一，王下5:12。</p>
+<p>〔亞瑪拿〕地名</p>
+<p>利巴嫩之北的一山，歌4:8。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] the same as 548 ;<br/>Amanah , a mountain near Damascus</p></div></div></div></details>
+<details class="ntfold"><summary>H08149 — שְׁנִיר「意為帶尖的、山峰」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08149</li><li>詞形 שְׁנִיר</li><li>音譯 Shᵉniyr</li><li>約 舊約</li><li>詞類 專有名詞</li><li>中文詞義 意為帶尖的、山峰</li><li>字源 來自一不用的字根</li><li>中文用法 示尼珥4 (4)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>專</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 &quot;黑門山&quot;的亞摩利名</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>〔示尼珥〕地名</p>
+<p>亞摩利人稱黑門山之別名，申3:9 代上5:23 歌4:8 結27:5。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or שְׂנִיר ; from an unused root meaning to be pointed; peak ;<br/>Shenir or Senir , a summit of Lebanon</p></div></div></div></details>
+<details class="ntfold"><summary>H02768 — חֶרְמוֹן「粗率的」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02768</li><li>詞形 חֶרְמוֹן</li><li>音譯 Chermown</li><li>約 舊約</li><li>詞類 專有名詞</li><li>中文詞義 粗率的</li><li>字源 來自 SH2763</li><li>中文用法 黑門12 黑門山1 (13)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>專</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 巴勒斯坦和利巴嫩東北邊界上的一座山, 俯瞰但城的邊界</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>〔黑門〕山名</p>
+<p>亦作黑們，在敘利亞的西南邊，申3:8,9 4:48 書11:3,17 12:1,5 13:5,11 代上5:23 詩89:12 133:3 歌4:8。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 2763 ; abrupt ;<br/>Chermon , a mount of Palestine</p></div></div></div></details>
+<details class="ntfold"><summary>H00738 — אֲרִי「獅子」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00738</li><li>詞形 אֲרִי</li><li>音譯 &#x27;ariy</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 獅子</li><li>字源 SH717 (含兇猛之意)</li><li>中文用法 獅子69 公獅5 獅4 壯獅1 (79)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 獅子</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽אֲרִי 摩3:12。複陽אֲרָיִים 王上10:20。</p>
+<p>1.獅子，士14:5 撒上17:34,36,37 撒下23:20＝代上11:22 王下17:25,26 箴22:13 26:13 歌4:8 摩3:12 5:19。</p>
+<p>2.獅子圖像，王上7:29,29,36 10:19,20 代下9:18,19。</p>
+<p>3. 隱喻： 鴻2:12 番3:3 耶50:17 結19:2,6 箴28:15。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or (prolonged) אַרְיֵה ; from 717 (in the sense of violence);<br/>a lion</p></div></div></div></details>
+<details class="ntfold"><summary>H04585 — מְעוֹנָה「居所、住處」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H04585</li><li>詞形 מְעוֹנָה</li><li>音譯 me`ownah</li><li>約 舊約</li><li>詞類 名、陰</li><li>中文詞義 居所、住處</li><li>字源 SH4583 之陰性</li><li>中文用法 洞5 居所2 住處1 穴1 (9)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 住處, 居所, 避難所</li><li>1a 洞穴, 巢穴 (動物的)</li><li>1b 居所 (上帝的) (比喻用法)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰מְעֹנָה 申33:27。單陰3單陽詞尾מְעוֹנָתוֹ 詩76:2。複陰מְעוֹנוֹת 伯38:40。複陰附屬形מְעֹנוֹת 歌4:8。複陰3單陰詞尾מְעוֹנֹתֶיהָ 伯37:8。複陰3複陽詞尾מְעוֹנֹתָם 詩104:22。複陰1複詞尾מְעוֹנוֹתֵינוּ 耶21:13。</p>
+<p>1.洞穴、巢穴。野獸的：הֲיִתֵּן כְּפִיר קוֹלוֹ מִמְּעֹנָתוֹ少壯獅子豈會從洞裡吼叫，摩3:4；וּבִמְעוֹנֹתֶיהָ תִשְׁכֹּן臥在洞內，伯37:8；יָשֹׁחוּ בַמְּעוֹנוֹת在洞中蹲伏，伯38:40 詩104:22；מִמְּעֹנוֹת אֲרָיוֹת獅子的洞，歌4:8；וּמְעֹנֹתָיו牠的洞穴，鴻2:13（平行詞חֹרָיו洞，比喻尼尼微是掠奪者的巢穴）。比喻人的居所，מְעוֹנוֹתֵינוּ我們的住處，耶21:13；比喻　神的居所，וּמְעוֹנָתוֹ בְצִיּוֹן在錫安有他的居所，詩76:2。</p>
+<p>2. 比喻用法：מְעֹנָה אֱלֹהֵי קֶדֶם永生的　神是你的居所，申33:27。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or מְעֹנָה ; feminine of 4583 , and meaning the same</p></div></div></div></details>
+<details class="ntfold"><summary>H02042 — הָרָר「山」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02042</li><li>詞形 הָרָר</li><li>音譯 harar</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 山</li><li>字源 來自一不用字根</li><li>中文用法 山13 (13)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 山, 小山, 山丘地</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>山，單陽3複陽詞尾הַרְרָם 創14:6；單陽1單詞尾הַרְרִי 詩30:7 耶17:3。複陽附屬形הַרְרֵי 民23:7 申33:15 詩36:6 50:10 76:4 87:1 133:3 歌4:8 哈3:6。複陽3單陰詞尾הֲרָרֶיהָ 申8:9。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root meaning to loom up;<br/>a mountain</p></div></div></div></details>
+<details class="ntfold"><summary>H05246 — נָמֵר「豹」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H05246</li><li>詞形 נָמֵר</li><li>音譯 namer</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 豹</li><li>字源 來自一不用的字根</li><li>中文用法 豹子3 豹3 (6)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 豹</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽נָמֵר 賽11:6 耶5:6 13:23 何13:7；複陽נְמֵרִים 歌4:8 哈1:8。</p>
+<p>豹子、豹。身上有斑點，耶13:23；動作迅速，哈1:8；目光敏銳，耶5:6（比喻以色列的審判）；何13:7（耶和華的比喻）；וְנָמֵר עִם־גְּדִי יִרְבָּץ豹與山羊羔且一同躺臥，賽11:6（預言）；הַרְרֵי נְמֵרִים豹子的山，歌4:8（平行經文מְּעֹנוֹת אֲרָיוֹת獅子的洞）。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root meaning properly, to filtrate , i.e. be limpid (comp 5247 and 5249 ); and thus to spot or stain as if by dripping;<br/>a leopard (from its stripes)</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_04_08_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第4章8節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 01:41:04 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

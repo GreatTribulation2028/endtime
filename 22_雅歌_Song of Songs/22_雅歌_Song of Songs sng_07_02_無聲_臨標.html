@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 7:2 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_07_02_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第7章2節<br/>你的肚臍如圓杯，不缺調和的酒；你的腰如一堆麥子，周圍有百合花。</p>
+<p>腳與大腿之後，稱讚來到腹這一段。和合本寫：「你的肚臍如圓杯，不缺調和的酒；你的腰如一堆麥子，周圍有百合花。」先是圓杯與酒，再是麥堆與百合花。本節沒有角色標示。</p>
+<p>前半原文是 שָׁרְרֵךְ אַגַּן הַסַּהַר「你的肚臍是圓形的杯」。שֹׁרֶר 在舊約只見於本節，尋根欄在本節作「肚臍」；英文欄記字義為臍帶，並可引申為胸衣。和合本與尋根在本節都取「肚臍」。杯是 אַגָּן，圓是 סַהַר，兩個詞在本節合成「圓杯」。隨後是一句願望或禁令：אַל־יֶחְסַר הַמָּזֶג「不要讓這調和的酒短缺」。מֶזֶג 只見於本節，指調和過的酒。和合本寫「不缺調和的酒」，把這願望收成對杯的說明。</p>
+<p>後半是 בִּטְנֵךְ עֲרֵמַת חִטִּים「你的腹是一堆麥子」。בֶּטֶן 是肚腹、子宮，字典把本節記在「美麗的外形」之下；和合本寫「你的腰」，把腹寫成腰，部位不同，這一點必須留下。麥堆被 סוּגָה בַּשּׁוֹשַׁנִּים 圍著，這個「圍上」的分詞只見於本節；和合本寫「周圍有百合花」。百合花是本卷已經用過的花，本節把它寫成圍著麥堆的邊。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_07_01_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第7章1節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_07_03_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第7章3節</a></nav>
+<h2 class="ntitle">雅歌 第7章2節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第7章2節<br/>你的肚臍如圓杯，不缺調和的酒；你的腰如一堆麥子，周圍有百合花。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 7:2 &gt;</div>
+<div class="orig-he">שָׁרְרֵ/ךְ֙ אַגַּ֣ן הַ/סַּ֔הַר אַל־ יֶחְסַ֖ר הַ/מָּ֑זֶג בִּטְנֵ/ךְ֙ עֲרֵמַ֣ת חִטִּ֔ים סוּגָ֖ה בַּ/שּׁוֹשַׁנִּֽים׃</div>
+<div class="orig-zh">你的肚臍是圓形的杯，不要讓調和的酒短缺；你的腹是一堆麥子，有百合花圍著。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_07_02</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>你的肚臍如圓杯，不缺調和的酒；你的腰如一堆麥子，周圍有百合花。</p>
+<p>原文前半是「你的肚臍是圓形的杯，不要讓調和的酒短缺」。שָׁרְרֵךְ 尋根欄在本節作「肚臍」；英文欄記字義為臍帶，並可引申為胸衣。和合本寫「你的肚臍如圓杯」，取了肚臍，並把「是圓形的杯」寫成「如圓杯」。אַל־יֶחְסַר הַמָּזֶג 是「不要讓這調和的酒短缺」，帶著願望或禁令的語氣；和合本寫「不缺調和的酒」，收成對杯的說明。後半 בִּטְנֵךְ 是「你的腹」，字典本義為肚腹、子宮，本節記在外形的用法下；和合本寫「你的腰」，部位從腹改到腰，差別要留下意思：原文稱讚的是腹，和合本把這一處寫成腰。עֲרֵמַת חִטִּים 是「一堆麥子」；סוּגָה בַּשּׁוֹשַׁנִּים 是「被百合花圍著」，和合本寫「周圍有百合花」。本節沒有角色標示。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 你的肚臍是圓杯，不缺調和的酒｜שָׁרְרֵךְ אַגַּן הַסַּהַר אַל־יֶחְסַר הַמָּזֶג</h3>
+<blockquote>שָׁרְרֵ/ךְ֙ אַגַּ֣ן הַ/סַּ֔הַר אַל־ יֶחְסַ֖ר הַ/מָּ֑זֶג</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>שָׁרְרֵ/ךְ֙</strong>（陽性名詞單數附屬形加第二人稱陰性單數詞尾，你的肚臍，<code><span class="sn">H08326</span></code> shorer；尋根欄在本節作「肚臍」。英文欄記字義為臍帶，並可引申為胸衣。舊約只見於本節。和合本寫「你的肚臍」）</li>
+<li><strong>אַגַּ֣ן</strong>（陽性名詞單數附屬形，……的碗、杯，<code><span class="sn">H00101</span></code> aggan；字義「碗、盆」。字典把本節記在身體弧線的比喻下；和合本寫「杯」）</li>
+<li><strong>הַ/סַּ֔הַר</strong>（冠詞加陽性名詞單數絕對形，圓形、圓，<code><span class="sn">H05469</span></code> sahar；字義「圓形」。舊約只見於本節。和合本寫「圓杯」的「圓」）</li>
+<li><strong>אַל־</strong>（否定詞，不要、不可。形態標記 HTn。本節 gcard 未給此詞編號。帶未完成式，作願望或禁令）</li>
+<li><strong>יֶחְסַ֖ר</strong>（動詞 Qal 未完成式第三人稱陽性單數，它短缺，<code><span class="sn">H02637</span></code> haser；字義「缺少、缺乏」。和合本寫「不缺」）</li>
+<li><strong>הַ/מָּ֑זֶג</strong>（冠詞加陽性名詞單數絕對形，那調和的酒，<code><span class="sn">H04197</span></code> mezeg；字義「混合、調和酒」。舊約只見於本節）</li>
+</ul>
+<p>肚臍被比成一隻圓杯。שֹׁרֶר 只在本節出現，尋根與和合本都取「肚臍」；英文欄另有臍帶及胸衣的引申，那是字典裏已有的義項，本節並列記下，不據此改寫和合本已經取定的部位。杯要圓，酒是調和過的。אַל־יֶחְסַר 不是僅僅陳述「現在不缺」，乃是一句「不要讓它缺」的願望。和合本寫「不缺調和的酒」，把願望收成說明，圓杯仍是滿的，語氣卻少了一層祈求。獻祭用盆、家族榮耀的杯子，是此詞在別處的用法，不可倒填成本節這一口杯的出典。</p>
+<h3>2️⃣ 你的腹是一堆麥子，有百合花圍著｜בִּטְנֵךְ עֲרֵמַת חִטִּים סוּגָה בַּשּׁוֹשַׁנִּים</h3>
+<blockquote>בִּטְנֵ/ךְ֙ עֲרֵמַ֣ת חִטִּ֔ים סוּגָ֖ה בַּ/שּׁוֹשַׁנִּֽים׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>בִּטְנֵ/ךְ֙</strong>（陰性名詞單數附屬形加第二人稱陰性單數詞尾，你的腹，<code><span class="sn">H00990</span></code> beten；字義「肚腹、子宮、身體」。字典把本節記在外形的用法下。和合本寫「你的腰」）</li>
+<li><strong>עֲרֵמַ֣ת</strong>（陰性名詞單數附屬形，一堆、一垛，<code><span class="sn">H06194</span></code> arem；字義「堆」，也可指禾束之堆）</li>
+<li><strong>חִטִּ֔ים</strong>（陽性名詞複數絕對形，麥子，<code><span class="sn">H02406</span></code> chittah；字義「小麥」）</li>
+<li><strong>סוּגָ֖ה</strong>（動詞 Qal 被動分詞陰性單數絕對形，被圍著、被籬笆圍上，<code><span class="sn">H05473</span></code> sug；字義「圍上籬笆」。舊約只見於本節。和合本寫「周圍有」）</li>
+<li><strong>בַּ/שּׁוֹשַׁנִּֽים׃</strong>（介詞加冠詞加陽性名詞複數絕對形，在那些百合花中、以百合花，<code><span class="sn">H07799</span></code> shoshan；字義「百合花」）</li>
+</ul>
+<p>腹被比成一堆麥子，周圍有百合花圍著。和合本寫「你的腰」，與原文的 בֶּטֶן 部位不同：原文稱讚的是腹，和合本把這一處寫成腰。差別要留下，不可只用「譯法不同」一筆帶過。麥堆給人豐盛、收成的畫面；「圍上」這個分詞只在本節出現，和合本寫「周圍有」，把圍住寫成環繞。百合花在 2:1、2:2、2:16 已經出現，本節不是重寫花中的牧放，乃是讓這些花來圍住這一堆麥子。花在這裏作邊，不作他所在的花叢。</p>
+<h3>3️⃣ 收束｜本節歸納</h3>
+<p>本節上半把肚臍比作不缺調和酒的圓杯，原文還有「不要讓它短缺」的語氣；下半把腹比作被百合花圍著的麥堆，和合本寫成「腰」。杯與麥、酒與花並置，都是具體的畫面。本節沒有角色標示。關於肚臍一詞的其他字典義項，只並列記下，不據以改寫本節已經取用的部位。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H08326、H05469、H00101、H02637、H04197、H00990、H06194、H02406、H05473、H07799。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">שֹׁרֶר</span><span class="gid">H08326</span></div><ul><li><b>主數值</b> 700</li><li><b>H小數</b> 7</li><li><b>H標準</b> 700</li><li><b>H序數</b> 61</li><li><b>H_Atbash</b> 8</li><li><b>H_Sofit擴展</b> 700</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 700 的詞條共 23 個（含本詞）。其中已有中文詞義者如 H03727 כַּפֹּרֶת「蓋子(僅用於約櫃的遮蓋)、遮罪蓋、施恩座」、H03730 כַּפְתֹּר「使環繞、戴在頭上的花環（但僅用於建築術的含意，柱頂或枝狀大燈臺的花冠似的球）」、H03731 כַּפְתֹּר「花環狀島嶼」、H03762 כַּרְמְלִית「園地」、H04365 מִכְמֶרֶת「網、漁網」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　שָׁרְרֵךְ 尋根與和合本在本節都作「你的肚臍」。英文欄另有臍帶及胸衣的引申。舊約只見於本節。</p>
+<p><span class="gl">④精意</span>　稱讚來到這一處身體的中心。本節按和合本與尋根已經取用的「肚臍」來讀，其他義項只作為字典裏的記錄留下。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">סַהַר</span><span class="gid">H05469</span></div><ul><li><b>主數值</b> 265</li><li><b>H小數</b> 13</li><li><b>H標準</b> 265</li><li><b>H序數</b> 40</li><li><b>H_Atbash</b> 101</li><li><b>H_Sofit擴展</b> 265</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 265 的詞條共 14 個（含本詞）。其中已有中文詞義者如 H00314 אַחֲרוֹן「在後頭、向後」、H02040 הָרַס「拆除、打破、毀壞、拆毀」、H02041 הֶרֶס「毀壞」、H03414 יִרְמְיָה「耶和華定舉起」、H04379 מִכְרֶה「坑」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　הַסַּהַר 是圓形，舊約只見於本節，與杯連用。和合本寫「圓杯」。</p>
+<p><span class="gl">④精意</span>　圓把杯的形狀說清楚。本節用它來寫那一口杯，也用來寫被比的那一處身體。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">אַגָּן</span><span class="gid">H00101</span></div><ul><li><b>主數值</b> 54</li><li><b>H小數</b> 9</li><li><b>H標準</b> 54</li><li><b>H序數</b> 18</li><li><b>H_Atbash</b> 609</li><li><b>H_Sofit擴展</b> 704</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 54 的詞條共 26 個（含本詞）。其中已有中文詞義者如 H01824 דְּמִי「靜止、休息」、H01835 דָּן「審判官」、H01836 דֵּן「這」、H02068 זַבְדִּיאֵל「　神的賞賜」、H02345 חוּם「黑色」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　אַגַּן 是碗、杯。字典把本節記在身體弧線的比喻下。和合本寫「杯」。</p>
+<p><span class="gl">④精意</span>　杯是可以盛酒的器皿。本節先把它說圓，再盼望裏面的酒不缺。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">חָסֵר</span><span class="gid">H02637</span></div><ul><li><b>主數值</b> 268</li><li><b>H小數</b> 16</li><li><b>H標準</b> 268</li><li><b>H序數</b> 43</li><li><b>H_Atbash</b> 71</li><li><b>H_Sofit擴展</b> 268</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 268 的詞條共 15 個（含本詞）。其中已有中文詞義者如 H01186 בַּעַל מְעוֹן「居民之主」、H02638 חָסֵר「缺乏的、需要的」、H02639 חֶסֶר「缺乏、貧困」、H02640 חֹסֶר「貧困、窮乏」、H02772 חֹרֹנִי「洞穴」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　אַל־יֶחְסַר 是「不要讓它短缺」。和合本寫「不缺」，把願望收成說明。</p>
+<p><span class="gl">④精意</span>　不缺，在原文裏還帶著一句盼望。杯不只是形狀美，還被願它常常是滿的。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">מֶזֶג</span><span class="gid">H04197</span></div><ul><li><b>主數值</b> 50</li><li><b>H小數</b> 14</li><li><b>H標準</b> 50</li><li><b>H序數</b> 23</li><li><b>H_Atbash</b> 280</li><li><b>H_Sofit擴展</b> 50</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 50 的詞條共 24 個（含本詞）。其中已有中文詞義者如 H00126 אַדְמָה「泥土的」、H00127 אֲדָמָה「土壤、土地、地上」、H00128 אֲדָמָה「土地」、H00331 אָטַם「關閉、阻塞」、H00348 אִיזֶבֶל「無住處」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　הַמָּזֶג 是調和過的酒，舊約只見於本節。和合本寫「調和的酒」。</p>
+<p><span class="gl">④精意</span>　酒在本節是杯中當有的內容。調和過，不是生酒，乃是已經調和、可以飲的。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">בֶּטֶן</span><span class="gid">H00990</span></div><ul><li><b>主數值</b> 61</li><li><b>H小數</b> 16</li><li><b>H標準</b> 61</li><li><b>H序數</b> 25</li><li><b>H_Atbash</b> 359</li><li><b>H_Sofit擴展</b> 711</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 61 的詞條共 24 個（含本詞）。其中已有中文詞義者如 H00113 אָדוֹן「耶和華、主人、主、最高統治者、擁有者」、H00114 אַדּוֹן「強有力的」、H00257 אַחְבָן「聰明的弟兄」、H00369 אַיִן「除了..之外、沒有、無有、不存在、不、幾乎、從不、其他、一點也不、用盡」、H00370 אַיִן「何處」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　בִּטְנֵךְ 是你的腹。字典把本節記在外形的用法下。和合本寫「你的腰」，部位不同。</p>
+<p><span class="gl">④精意</span>　稱讚在這裏落在腹上。和合本寫成腰，讀的人要記得原文所寫的部位，不要把腹直接說成腰。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">עָרֵם</span><span class="gid">H06194</span></div><ul><li><b>主數值</b> 310</li><li><b>H小數</b> 13</li><li><b>H標準</b> 310</li><li><b>H序數</b> 49</li><li><b>H_Atbash</b> 20</li><li><b>H_Sofit擴展</b> 870</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 310 的詞條共 50 個（含本詞）。其中已有中文詞義者如 H00794 אֲשֵׁדָה「根基、斜坡、泉水、深谷」、H01758 דּוּשׁ「踹(穀)或打(穀)」、H01759 דּוּשׁ「踹(穀)」、H02280 חָבַשׁ「纏裹、捆住、上鞍、使負重、統治」、H02693 חֲצַר גַּדָּה「命運女神(陰性)之村莊」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　עֲרֵמַת 是一堆，與麥子連用。和合本寫「一堆」。</p>
+<p><span class="gl">④精意</span>　堆把豐盛寫成可以看見的形狀。腹被比成這樣的一堆，是收成，不是空的。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">חִטָּה</span><span class="gid">H02406</span></div><ul><li><b>主數值</b> 22</li><li><b>H小數</b> 22</li><li><b>H標準</b> 22</li><li><b>H序數</b> 22</li><li><b>H_Atbash</b> 200</li><li><b>H_Sofit擴展</b> 22</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 22 的詞條共 15 個（含本詞）。其中已有中文詞義者如 H00190 אוֹיָה「禍哉」、H01418 גְּדוּדָה「切口」、H01428 גִּדְיָה「河岸、河邊」、H01429 גְּדִיָּה「母山羊羔」、H01762 דְּחִי「跌倒」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　חִטִּים 是那些麥子。和合本寫「麥子」。本節用麥堆來比腹的外形。</p>
+<p><span class="gl">④精意</span>　麥是食糧，也是田裏的收成。本節把這一層豐盛放在身體的比喻裏。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">סוּג</span><span class="gid">H05473</span></div><ul><li><b>主數值</b> 69</li><li><b>H小數</b> 15</li><li><b>H標準</b> 69</li><li><b>H序數</b> 24</li><li><b>H_Atbash</b> 288</li><li><b>H_Sofit擴展</b> 69</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 69 的詞條共 19 個（含本詞）。其中已有中文詞義者如 H00018 אֵבוּס「飼料槽、馬槽」、H00034 אֶבְיוֹן「貧窮的、困苦的、急需的」、H00041 אֲבִינָדָב「慷慨之父」、H00291 אַחְיָן「手足之情」、H01476 גּוּנִי「保護好的」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　סוּגָה 是被圍著，舊約只見於本節。和合本寫「周圍有」。</p>
+<p><span class="gl">④精意</span>　圍住，是給麥堆加上一道邊。美在本節不只是堆起來，還被花圍著。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">שׁוּשַׁן</span><span class="gid">H07799</span></div><ul><li><b>主數值</b> 656</li><li><b>H小數</b> 17</li><li><b>H標準</b> 656</li><li><b>H序數</b> 62</li><li><b>H_Atbash</b> 93</li><li><b>H_Sofit擴展</b> 1306</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 656 的詞條共 8 個（含本詞）。其中已有中文詞義者如 H03412 יַרְמוּת「晉升」、H04812 מְרָיוֹת「叛逆的」、H04953 מַשְׁרוֹקִי「(來自其口哨聲)笛子」、H07800 שׁוּשַׁן「百合花」、H08342 שָׂשׂוֹן「高興、快樂」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　בַּשּׁוֹשַׁנִּים 是那些百合花，作圍住麥堆的邊。本卷先前已用百合花來比人、寫處所，本節用來環繞麥堆。</p>
+<p><span class="gl">④精意</span>　百合花在這裏不作他所在的花叢，乃是圍在麥堆四周的花。熟悉的花，被放在新的位置上。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>雅歌 2:1、2:2、2:16 已用百合花來比人，或寫他在百合花中牧放。本節是百合花圍著麥堆，花的位置改成環繞，不宜與花中牧放合成一句。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。杯、調和的酒與麥堆，只按本節的比喻來讀，不另拉祭禮中的盆或律法中的酒麥條例來改定這一節。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「你的肚臍是圓形的杯，不要讓調和的酒短缺；你的腹是一堆麥子，被百合花圍著」。和合本寫「你的肚臍如圓杯，不缺調和的酒；你的腰如一堆麥子，周圍有百合花」，把願望收成說明，並把腹寫成腰。</p>
+<p><strong>本書用法</strong>　百合花是本卷已經用過的花，本節拿來圍住麥堆。稱讚承接 7:1 的腳與大腿，來到腹與肚臍。本節沒有角色標示。</p>
+<p><strong>舊約根源</strong>　杯、酒、麥與腹，都是舊約裏可以明白的事物。肚臍、圓、調和的酒、圍上，這幾個詞在舊約都只見於本節或本節這種組合。不宜另拉祭禮或倉廩的條例，來改定這些比喻。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把圓杯、麥堆或百合花讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<p><strong>跨篇深意</strong>　稱讚從鞋中的腳上來，來到可以盛酒的圓杯，以及被花圍住的麥堆。一邊是願它不缺的酒，一邊是已經堆起的食糧。本節讓身體的中段被寫成豐盛，並且有花作邊。</p>
+<h2>六、總意</h2>
+<p>腳還在上一節，這一節已經來到腹。肚臍如圓杯，杯裏是調和的酒。和合本寫「不缺」，原文還有一層「不要讓它缺」的盼望。杯要圓，酒要在。</p>
+<p>隨後是一堆麥子。原文寫的是腹，和合本寫「腰」。部位不同，不可混過去。麥堆給人看見豐盛，百合花在四周圍著。花在本卷裏並不陌生，這一節卻讓它們來作邊。</p>
+<p>杯與麥並排，一個盛酒，一個堆積食糧。稱讚在這裏很具體，也不避開身體的中段。讀的人只要看見這兩幅畫，不必先把它們說成別的題目。</p>
+<p>本節沒有角色標示，也沒有解釋這些比喻以外的意思。圓、滿、堆、圍，已經夠把這一節的美放下來。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H08326 — שֹׁרֶר「臍帶」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08326</li><li>詞形 שֹׁרֶר</li><li>音譯 shorer</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 臍帶</li><li>字源 來自 SH8324</li><li>中文用法 肚臍1 (1)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 肚臍, 臍帶 (<br/>歌 7:2<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽2單陰詞尾שָׁרְרֵךְ你的肚臍如圓杯，歌7:2。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 8324 in the sense of twisting (compare 8270 );<br/>the umbilical cord , i.e. (by extension) a bodice</p></div></div></div></details>
+<details class="ntfold"><summary>H05469 — סַהַר「圓形」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H05469</li><li>詞形 סַהַר</li><li>音譯 cahar</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 圓形</li><li>字源 來自一不用的字根</li><li>中文用法 圓1 (1)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 圓 (<br/>歌7:2<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽אַגַּן הַסַּהַר圓杯，歌7:2。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root meaning to be round ;<br/>roundness</p></div></div></div></details>
+<details class="ntfold"><summary>H00101 — אַגָּן「碗、盆」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00101</li><li>詞形 אַגָּן</li><li>音譯 &#x27;aggan</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 碗、盆</li><li>字源 大概來自 SH5059</li><li>中文用法 杯子1 杯1 盆1 （3）</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 碗, 盆</li><li>1a 儀式用到的盆 (<br/>出 24:6<br/>)</li><li>1b 身體的弧線 (明喻) (<br/>歌 7:2<br/>)</li><li>1c 以利亞敬的家族 (隱喻) (<br/>賽 22:24<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽附屬形אַגַּן 歌7:2。複陽אַגָּנֹת 出24:6；אַגָּנוֹת 賽22:24。</p>
+<p>一、獻祭用的盆。摩西將血一半盛在盆中，出24:6。</p>
+<p>二、比喻：身體的弧線。你的肚臍如圓杯，歌7:2。</p>
+<p>三、隱喻：以利亞敬家族的榮耀。從杯子到酒缾掛上一樣，賽22:24。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] probably from 5059 ;<br/>a bowl (as pounded out hollow)</p></div></div></div></details>
+<details class="ntfold"><summary>H02637 — חָסֵר「缺少、缺乏、消退」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02637</li><li>詞形 חָסֵר</li><li>音譯 chacer</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 缺少、缺乏、消退</li><li>字源 一原形字根</li><li>中文用法 缺8 缺乏3 消2 缺少2 不足1 刻苦1 微小1 使...無1 短了1 缺短1 (21)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 缺少, 減少, 欠缺, 需要</li><li>1a (Qal)</li><li>1a1 缺少</li><li>1a2 欠缺</li><li>1a3 縮小, 減少</li><li>1b (Piel) 使之缺乏 (<br/>詩 8:5<br/><br/>傳 4:8<br/>)</li><li>1c (Hiphil) 使之欠缺 (<br/>出 16:18<br/><br/>賽 32:6<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－2單陽חָסַרְתָּ 申2:7。3複חָסֵרוּ 尼9:21。1複חָסַרְנוּ 耶44:18。</p>
+<p>未完成式－3單陽יֶחְסָר 傳9:8。3單陰תֶחְסָר 王上17:14 箴13:25。3複陽יַחְסְרוּ 詩34:10 結4:17。3複陽+古代的詞尾יַחְסְרוּן,ן 創18:28。2單陽תֶחְסַר 申8:9。1單אֶחְסָר 詩23:1。敘述式3複陽וַיַּחְסְרוּ 創8:3。祈願式3單陽יֶחְסַר 申15:8。</p>
+<p>不定詞－獨立形חָסוֹר 創8:5。</p>
+<p>1.缺少：這五十個義人短了五個，創18:28；你一無所缺，申2:7 8:9 耶44:18 結4:17 詩34:10 箴31:11。獨立使用：我必不至缺乏，詩23:1 箴13:25 尼9:21。</p>
+<p>2.欠缺：מַחְסֹרוֹ אֲשֶׁר יֶחְסַר לוֹ補他的不足，申15:8；שֶׁמֶן עַל-רֹאשְׁךָ אַל-יֶחְסָר你頭上也不要缺少膏油，傳9:8。獨立使用：他的食物也不致缺乏，賽51:14 歌7:2；וְצַפַּחַת הַשֶּׁמֶן לֹא תֶחְסָר油瓶必不短缺，王上17:14。</p>
+<p>3.縮小、減少：水就漸消，創8:3,5。</p>
+<p>二、Piel</p>
+<p>未完成式－敘述式2單陽3單陽詞尾וַתְּחַסְּרֵהוּ 詩8:5。</p>
+<p>分詞－單陽מְחַסֵּר 傳4:8。</p>
+<p>使之缺乏。וַתְּחַסְּרֵהוּ מְּעַט מֵאֱלֹהִים你叫他比天使微小一點，詩8:5；וּמְחַסֵּר אֶת־נַפְשִׁי מִטּוֹבָה刻苦自己，不享福樂，傳4:8。</p>
+<p>三、Hifil</p>
+<p>完成式－3單陽הֶחְסִיר 出16:18。</p>
+<p>未完成式－3單陽יַחְסִיר 賽32:6。</p>
+<p>使之欠缺。וְהַמַּמְעִיט לֹא הֶחְסִיר少收的也沒有缺，出16:18；וּמַשְׁקֶה צָמֵא יַחְסִיר使口渴的人無水可喝，賽32:6。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>to lack ; by implication, to fail , want , lessen</p></div></div></div></details>
+<details class="ntfold"><summary>H04197 — מֶזֶג「混合、調和酒」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H04197</li><li>詞形 מֶזֶג</li><li>音譯 mezeg</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 混合、調和酒</li><li>字源 自一不用字根</li><li>中文用法 調和的酒1 (1)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 混合, 調和的酒 (<br/>歌 7:2<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽אַל-יֶחְסַר הַמָּזֶג不缺調和的酒，歌7:2。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root meaning to mingle (water with wine);<br/>tempered wine</p></div></div></div></details>
+<details class="ntfold"><summary>H00990 — בֶּטֶן「肚腹、子宮、身體」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00990</li><li>詞形 בֶּטֶן</li><li>音譯 beten</li><li>約 舊約</li><li>詞類 名、陰</li><li>中文詞義 肚腹、子宮、身體</li><li>字源 來自一不用字根(可能含中空之意)</li><li>中文用法 胎17 腹15 肚腹12 身8 心2 所生2 母腹2 同胞1 所生的1 深處1 生1 生下1 肚1 胸懷1 腰1 裡面1 貪1 身體1 鼓肚1 (70)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 腹部, 子宮, 身體</li><li>1a 肚腹</li><li>1b 身體 (靈魂的對比)</li><li>1b 子宮</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰בֶּטֶן 士13:7；בָּטֶן 士13:5。單陰附屬形בֶטֶן 詩139:13。單陰3單陽詞尾בִּטְנוֹ 伯15:2。單陰3複陽詞尾בִטְנָם 伯15:35。單陰2單陽詞尾בִטְנְךָ 申7:13。單陰2單陰詞尾בִטְנֵךְ 創25:23。單陰1單詞尾בִטְנִי 伯3:10。單陰1複詞尾בִּטְנֵנוּ 詩44:25。</p>
+<p>一、肚腹。</p>
+<p>1. 人的，士3:21,22；女人的，民5:21,22,27；美麗的外形，歌7:2；飢餓的所在地，箴13:25。比喻： 結3:3 箴18:20；貪欲得不到滿足，伯20:20,23；比喻　神從勒索者的腹中掏出財富，伯20:15 詩17:14；比喻人內心深處＝靈魂深處，箴18:8＝箴26:22 20:27,30。</p>
+<p>2. 河馬的肚腹，伯40:16。</p>
+<p>3. מִבֶּטֶן שְׁאוֹל從陰間的深處，拿2:2。</p>
+<p>二、身體。靈魂נֶפֶשׁ的對比。連我的身心也不安舒，詩31:9 44:25。</p>
+<p>三、子宮，創25:23,24 38:27 伯10:19 何12:3 傳11:5；הֲלֹא-בַבֶּטֶן עֹשֵׂנִי עָשָׂהוּ造我在腹中的不也是造他嗎？ 伯31:15；תְּסֻכֵּנִי בְּבֶטֶן אִמִּי我在母腹中，你已覆庇我，詩139:13 耶1:5；מָנַע מִמֵּךְ פְּרִי-בָטֶן使妳子宮不出子嗣，創30:2的פְּרִי-בָטֶן即指後代；詩127:3 賽13:18；בַּר-בִּטְנִי＝我的兒子，箴言31:2；בֶּן-בִּטְנָהּ肚腹(所生)的兒子，賽49:15；יָצָתִי מִבֶּטֶן出於肚腹，伯1:21 3:11 傳5:15。בֶּטֶן單獨使用＝出生，何9:11；比喻：מִבֶּטֶן מִי יָצָא הַקָּרַח冰出於誰的肚子？ 伯38:29；לֹא סָגַר דַּלְתֵי בִטְנִי他沒有關閉懷我子宮的門，伯3:10即我（母親）的子宮；גֹחִי מִבָּטֶן從子宮中取出，主詞是　神（使生出），詩22:9。פְּרִי בִטְנִי也用於父親，彌6:7，參 詩132:11（大衛是彌賽亞王的祖先）；בְנֵי בִטְנִי我肚腹中的兒子們，伯19:17；也指整個以色列（陽性詞尾），פְּרִי-בִטְנְךָ你子宮的果實，申7:13</p>
+<p>28: 4,11,18,53 30:9。מַחֲמַדֵּי בִטְנָם他們所生的愛子，何9:16即心愛的人；מִן-הַבָּטֶן出胎，士13:5,7 詩58:3 71:6 賽44:2,24 46:3 48:8 49:1,5；מִבֶּטֶן אִמִּי出母胎，士16:17 伯31:18 詩22:10。</p>
+<p>四、在聖殿前的兩根銅柱，一為雅斤，一為波阿斯，這裡指橢圓形銅頂的中央比較肥大的部位。兩柱頂的鼓肚上，王上7:20。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root probably meaning to be hollow;<br/>the belly , especially the womb ; also the bosom or body of anything</p></div></div></div></details>
+<details class="ntfold"><summary>H06194 — עָרֵם</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06194</li><li>詞形 עָרֵם</li><li>約 舊約</li><li>詞類 名、陰</li><li>字源 [字源] (Jeremiah 50:26) or (feminine) עֲרֵמָה ; from 6192 ; a heap ; specifically, a sheaf</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 堆</li></ol></div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] (Jeremiah 50:26) or (feminine) עֲרֵמָה ; from 6192 ;<br/>a heap ; specifically, a sheaf</p></div></div></div></details>
+<details class="ntfold"><summary>H02406 — חִטָּה「麥子」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02406</li><li>詞形 חִטָּה</li><li>音譯 chittah</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 麥子</li><li>字源 屬未定引申語</li><li>中文用法 麥子18 小麥11 細麥1 (30)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 小麥</li><li>1a 小麥 (植物)</li><li>1b 麵粉</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰חִטָּה 出9:32。複陰חִטִּים 創30:14；חִטִּין 結4:9。複陰附屬形בְּחִטֵּי 結27:17。</p>
+<p>小麥（植物），出9:32 申8:8 伯31:40 珥1:11；播種，賽28:25；食物，申32:14；מֵחֵלֶב חִטָּה上好的麥子，詩81:16；複數：播種的小麥，耶12:13；קְצִיר-חִטִּים小麥收割，創30:14 出34:22 士15:1 撒上6:13 12:17 得2:23；חֹבֵט חִטִּים打麥子，士6:11 代上21:20,23；秤重，王上5:11 代下2:10 27:5 結45:13；儲藏（與大麥、油和蜂蜜），耶41:8；作糧食，撒下17:28；חֵלֶב חִטִּים上好的麥子，詩147:14；לֹקְחֵי חִטִּים取麥子，撒下4:6；סֹלֶת חִטִּים תַּעֲשֶׂה用細麥麵做成，出29:2 結4:9，與大麥、豆類、扁豆等混合，製成麵包。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of uncertain derivation;<br/>wheat , whether the grain or the plant</p></div></div></div></details>
+<details class="ntfold"><summary>H05473 — סוּג「圍上籬笆」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H05473</li><li>詞形 סוּג</li><li>音譯 cuwg</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 圍上籬笆</li><li>字源 一原形字根</li><li>中文用法 周圍1 (1)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 (Qal) (以圍牆, 籬笆) 圍起來 (<br/>歌 7:2<br/>;被動分詞)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>Qal被動分詞－單陰סוּגָה בַּשּׁוֹשַׁנִּים 歌7:2</p>
+<p>周圍有百合花。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root (probably rather identical with 5472 through the idea of shrinking from a hedge; compare 7735 );<br/>to hem in , i.e. bind</p></div></div></div></details>
+<details class="ntfold"><summary>H07799 — שׁוּשַׁן「百合花」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07799</li><li>詞形 שׁוּשַׁן</li><li>音譯 shuwshan</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 百合花</li><li>字源 來自 SH7797</li><li>中文用法 百合花13 百合2 (15)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 百合花</li><li>1a 任何百合花類的花</li><li>1b 詩篇的標題(調用百合花) (<br/>詩 45:1<br/><br/>60:1<br/><br/>69:1<br/><br/>80:1<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>任何百合花類的花：</p>
+<p>1. 比喻用法：יִפְרַח כַּשּׁוֹשַׁנָּה他必如百合花開放，何14:5（指以色列）；好像百合花在荊棘內，歌2:2（新娘的比喻）；附屬形שׁוֹשַׁנַּת הָעֲמָקִים谷中的百合花，歌2:1；複陽שׁוֹשַׁנִּים 歌2:16 4:5 6:2,3 7:2（情人的比喻句）。</p>
+<p>2. 作妝飾用的百合花雕： 王上7:19,22,26 代下4:5。</p>
+<p>3. 詩篇的標題：調用百合花，詩45:1 69:1。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or שׁוֹשָׁן ; or שֹׁשָׁן ; and (feminine) שׁוֹשַׁנָּה ; from 7797 ;<br/>a lily (from its whiteness), as a flower of architectural ornament ; also a (straight) trumpet (from the tubular shape)</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_07_02_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第7章2節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 01:58:28 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

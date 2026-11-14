@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>約翰一書 4:19 原文逐節查經（金標要義稿・臨標）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="62_約翰一書_1 John 1jn_04_19_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p class="verse-lead">約翰一書 第4章19節</p>
+<p class="verse-cuv">我們愛，因為　神先愛我們。</p>
+<p>和合本寫：「我們愛，因為　神先愛我們。」「因為　神先愛我們」全形空格原樣。庫文或作「上帝」，只在說明並列，不改經文欄。本句已經寫完。原文是 ἡμεῖς ἀγαπῶμεν, ὅτι αὐτὸς πρῶτος ἠγάπησεν ἡμᾶς.和合本寫「我們愛」，沒有補上受詞。有的傳本在 ἀγαπῶμεν 之後或多 αὐτόν「他」，只並列，不改經文欄；本節經文是「我們愛」。原文是 αὐτὸς πρῶτος「他自己先」，和合本寫「　神先愛我們」。</p><p>本頁字典於 ἀγαπάω 標約一4:19，又標約一4:10,19 等（出處：本頁字典）。本節和合本寫「我們愛」「　神先愛我們」。可與 4:10 已經寫出的「不是我們愛　神，乃是　神愛我們」對讀，只標對讀，不要把那一節再寫一遍。按已經寫出的「我們愛，因為　神先愛我們」來讀，不提前愛的系統。</p><p>我們的愛不是起頭。起頭的是他：　神先愛我們。本句短，卻把先後寫定了。話到這裏已經寫完。</p>
+
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<p class="mech-flag">金標要義稿・檔名仍為臨標・尚未獨立驗收。這不是金標完成。</p>
+<nav class="verse-nav"><a href="62_%E7%B4%84%E7%BF%B0%E4%B8%80%E6%9B%B8_1%20John%201jn_04_18_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　約翰一書 第4章18節</a><a href="index.html">約翰一書目錄</a><a href="../index.html">總目錄</a><a href="62_%E7%B4%84%E7%BF%B0%E4%B8%80%E6%9B%B8_1%20John%201jn_04_20_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　約翰一書 第4章20節</a></nav>
+<h2 class="ntitle">約翰一書 第4章19節 原文逐節查經（金標要義稿・臨標）</h2>
+<blockquote>約翰一書 第4章19節<br/>我們愛，因為　神先愛我們。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 約翰一書 4:19 &gt;</div>
+<div class="orig-gr">ἡμεῖς (hēmeis) ἀγαπῶμεν (agapōmen) αὐτόν, (auton) ὅτι (hoti) αὐτὸς (autos) πρῶτος (prōtos) ἠγάπησεν (ēgapēsen) ἡμᾶς. (hēmas)</div>
+<div class="orig-zh">我們愛，因為他先愛了我們。</div>
+<p>本節原文詞（依資料庫詞序；英語詞義取自資料庫既有欄位，不另撰中文。）</p>
+<ul class="wlist">
+<li>ἡμεῖς (hēmeis)　We ourselves　G3165=P-1NP</li>
+<li>ἀγαπῶμεν (agapōmen)　love　G0025=V-PAI-1P</li>
+<li>αὐτόν, (auton)　him　G0846=P-ASM</li>
+<li>ὅτι (hoti)　because　G3754H=CONJ</li>
+<li>αὐτὸς (autos)　He himself　G0846=P-NSM</li>
+<li>πρῶτος (prōtos)　first　G4413G=A-NSM</li>
+<li>ἠγάπησεν (ēgapēsen)　loved　G0025=V-AAI-3S</li>
+<li>ἡμᾶς. (hēmas)　us.　G3165=P-1AP</li>
+</ul>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>1jn_04_19</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引，並與本頁經文欄一致）</p>
+<p>我們愛，因為　神先愛我們。</p>
+<p>原文是 ἡμεῖς ἀγαπῶμεν, ὅτι αὐτὸς πρῶτος ἠγάπησεν ἡμᾶς.和合本本節寫：我們愛，因為　神先愛我們。「因為　神先愛我們」全形空格原樣。庫文或作「上帝」，只在說明並列，不改經文欄。本句已經寫完。ἡμεῖς ἀγαπῶμεν「我們愛」，ἀγαπῶμεν，現在主動陳述一複，ἀγαπάω，<code><span class="sn">G00025</span></code>。有的傳本或多 αὐτόν「他」，只並列，不改經文欄。ὅτι αὐτὸς πρῶτος ἠγάπησεν ἡμᾶς「因為　神先愛我們」，αὐτὸς，<code><span class="sn">G00846</span></code>；πρῶτος，形容詞主格單數陽性，<code><span class="sn">G04413</span></code>；ἠγάπησεν，第一簡單過去主動陳述三單，ἀγαπάω，<code><span class="sn">G00025</span></code>。原文是 αὐτὸς πρῶτος，和合本寫「　神先愛我們」。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 我們愛，｜ἡμεῖς ἀγαπῶμεν,</h3>
+<blockquote>ἡμεῖς ἀγαπῶμεν,</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>ἡμεῖς ἀγαπῶμεν</strong>（我們愛。ἀγαπῶμεν，現在主動陳述一複，ἀγαπάω，<code><span class="sn">G00025</span></code>。本頁字典於 ἀγαπάω 標約一4:19。出處：本頁字典。和合本寫「我們愛」，沒有補上受詞。有的傳本或多 αὐτόν「他」，只並列，不改經文欄）</li>
+</ul>
+<p>先寫「我們愛」，還沒有把緣故說出。</p>
+<h3>2️⃣ 因為　神先愛我們。｜ὅτι αὐτὸς πρῶτος ἠγάπησεν ἡμᾶς.</h3>
+<blockquote>ὅτι αὐτὸς πρῶτος ἠγάπησεν ἡμᾶς.</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>ὅτι αὐτὸς πρῶτος ἠγάπησεν ἡμᾶς</strong>（因為　神先愛我們。πρῶτος，<code><span class="sn">G04413</span></code>；ἠγάπησεν，第一簡單過去主動陳述三單，ἀγαπάω，<code><span class="sn">G00025</span></code>。本頁字典於 ἀγαπάω 亦標約一4:10,19。出處：本頁字典。「　神先愛我們」全形空格原樣。庫文或作「上帝」，只並列。原文是 αὐτὸς πρῶτος，和合本寫「　神先愛我們」。可與 4:10 對讀，只標對讀。簡單過去表明這先愛是已經作成的。不提前愛的系統）</li>
+</ul>
+<p>我們愛的緣故只有這一句：他先愛了我們。本句已經寫完。</p>
+<h3>4️⃣ 收束｜本節歸納</h3>
+<p>我們愛，因為　神先愛我們。全形空格原樣。有的傳本或多「他」作受詞，只並列，不改經文欄。按已經寫出的話來讀，不提前愛的系統。本句已經寫完。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 G03165、G00025、G00846、G02249、G03754、G04413、G02248。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">μέ</span><span class="gid">G03165</span></div><ul><li><b>主數值</b> 45</li><li><b>G_iso</b> 45</li><li><b>G序數</b> 17</li><li>語言：希臘文（lemma.value_status=ok）</li></ul><div class="gmean"><p><span class="gl">①等值</span>　統一庫同主數值：θήκη（G02336）。只抄錄已裁定值，不寫沒有出處的傳統象徵。</p></div></div><div class="gcard"><div class="gcard-h"><span class="gw">ἀγαπάω</span><span class="gid">G00025</span></div><ul><li><b>主數值</b> 886</li><li><b>G_iso</b> 886</li><li><b>G序數</b> 46</li><li>語言：希臘文（lemma.value_status=ok）</li></ul><div class="gmean"><p><span class="gl">①等值</span>　統一庫同主數值：διαγγέλλω（G01229）、δικαίωμα（G01345）、ἐκγαμίζω（G01547）、συμπάρειμι（G04840）。只抄錄已裁定值，不寫沒有出處的傳統象徵。</p></div></div><div class="gcard"><div class="gcard-h"><span class="gw">αὐτός</span><span class="gid">G00846</span></div><ul><li><b>主數值</b> 971</li><li><b>G_iso</b> 971</li><li><b>G序數</b> 73</li><li>語言：希臘文（lemma.value_status=ok）</li></ul><div class="gmean"><p><span class="gl">①等值</span>　統一庫同主數值：ὁράω（G03708）、ῥαντισμός（G04473）。只抄錄已裁定值，不寫沒有出處的傳統象徵。</p></div></div><div class="gcard"><div class="gcard-h"><span class="gw">ἡμεῖς</span><span class="gid">G02249</span></div><ul><li><b>主數值</b> 263</li><li><b>G_iso</b> 263</li><li><b>G序數</b> 51</li><li>語言：希臘文（lemma.value_status=ok）</li></ul><div class="gmean"><p><span class="gl">①等值</span>　統一庫同主數值：παμπληθεί（G03826）。只抄錄已裁定值，不寫沒有出處的傳統象徵。</p></div></div><div class="gcard"><div class="gcard-h"><span class="gw">ὅτι</span><span class="gid">G03754</span></div><ul><li><b>主數值</b> 380</li><li><b>G_iso</b> 380</li><li><b>G序數</b> 43</li><li>語言：希臘文（lemma.value_status=ok）</li></ul><div class="gmean"><p><span class="gl">①等值</span>　統一庫同主數值：ἀπολογέομαι（G00626）、ἐννεός（G01769）、ποίμνιον（G04168）、τοί（G05104）。只抄錄已裁定值，不寫沒有出處的傳統象徵。</p></div></div><div class="gcard"><div class="gcard-h"><span class="gw">πρῶτος</span><span class="gid">G04413</span></div><ul><li><b>主數值</b> 1550</li><li><b>G_iso</b> 1550</li><li><b>G序數</b> 109</li><li>語言：希臘文（lemma.value_status=ok）</li></ul><div class="gmean"><p><span class="gl">①等值</span>　統一庫同主數值：καταφροντής（G02707）、συγκομίζω（G04792）。只抄錄已裁定值，不寫沒有出處的傳統象徵。</p></div></div><div class="gcard"><div class="gcard-h"><span class="gw">ἡμᾶς</span><span class="gid">G02248</span></div><ul><li><b>主數值</b> 249</li><li><b>G_iso</b> 249</li><li><b>G序數</b> 38</li><li>語言：希臘文（lemma.value_status=ok）</li></ul><div class="gmean"><p><span class="gl">①等值</span>　統一庫同主數值：Ἡλίας（G02243）、μέγας（G03173）、παρίημι（G03935）。只抄錄已裁定值，不寫沒有出處的傳統象徵。</p></div></div></div>
+</div></details>
+<h2>四、對照經文</h2>
+<p>可與 4:10 已經寫出的「不是我們愛　神，乃是　神愛我們，差他的兒子……作了挽回祭」、4:11 已經寫出的「　神既是這樣愛我們，我們也當彼此相愛」對讀，只標對讀，不要把那些節再寫一遍。下一節才寫「我愛　神」，只標外引，不要把後文補進來。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　我們愛，因為　神先愛我們。「　神先愛我們」全形空格原樣。庫文或作「上帝」，只並列。和合本寫「我們愛」，沒有補上受詞。有的傳本或多 αὐτόν，只並列，不改經文欄。本句已經寫完。</p><p><strong>本書用法</strong>　「我們愛，因為　神先愛我們」按已經寫出的話來讀。可與 4:10、4:11 對讀，只標對讀。不提前愛的系統。</p><p><strong>舊約根源</strong>　本節不被某一舊約句直接引用。</p><p><strong>新約慣用</strong>　本頁字典於 ἀγαπάω 標約一4:19、約一4:10,19。分線只並列，不選邊。</p><p><strong>跨篇深意</strong>　本節已經寫出的分量，在於把我們的愛放在後面，把　神的先愛放在前頭。起頭不在我們。話只寫到這先後，不要另建愛的體系。</p>
+<h2>六、總意</h2>
+<p>和合本寫：「我們愛，因為　神先愛我們。」「　神」前有全形空格。庫文或作「上帝」，只並列。本節經文是「我們愛」，沒有寫出受詞。有的傳本或多「他」，只並列，不改經文欄。</p><p>可與 4:10 對讀，只標對讀。那一節已經把先後說過；本節用更短的一句再寫一次：我們愛，因為他先愛了我們。原文是 αὐτὸς πρῶτος，和合本寫「　神先愛我們」。簡單過去表明這先愛是已經作成的。</p><p>本節已經寫出的分量，就是這不可顛倒的先後。我們的愛不是起頭。本句已經寫完。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>G03165 — μέ</summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G03165</li><li>詞形 μέ</li><li>音譯 mé</li><li>讀音 meh</li><li>約 新約</li><li>詞類 代名詞</li><li>字源 [字源] a shorter (and probably original) form of ; me</li><li>KJV 用法 me 262, I 37, my 1, not tr 1; 301</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 我</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>03165  請見SG1437</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a shorter (and probably original) form of ;<br/>me</p>
+<p>3165 me {meh}<br/>a shorter (and probably originally) from of 1691;;pron<br/>AV - me 262, I 37, my 1, not tr 1; 301<br/>1) I, me, my, etc.</p></div></div></details>
+<details class="ntfold"><summary>G00025 — ἀγαπάω</summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G00025</li><li>詞形 ἀγαπάω</li><li>音譯 agapáō</li><li>讀音 ag-ap-ah&#x27;-o</li><li>約 新約</li><li>詞類 動詞</li><li>字源 源自 agan (多) [或參 5368 ]; TDNT - 1:21,5; 動詞</li><li>KJV 用法 love 135, beloved 7; 142</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 珍愛,喜歡,愛上</li><li>1a 人的愛</li><li>1a1 對人</li><li>1a2 對　神</li><li>1b 　神的愛</li><li>1b1 對人</li><li>1b2 對　神(例:　神對耶穌的愛)</li><li>2 以...為樂</li><li>3 證明自己的愛 (<br/>約13:1,34<br/>約一3:18<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>00025  ἀγαπάω  動詞不完ἠγάπων；未ἀγαπήσω；1不定式ἠγάπησα；完 ἠγάπηκα，分ἠγαπηκώς；完被分ἠγαπημένος；1未被 ἀγαπηθήσομαι。「愛，珍愛」。一、指對有位格者之愛。A. 源於人類者：1. 對人，帶有對象：如γυναῖκας妻子，弗5:25,28,33 西3:19。τὸν πλησίον 鄰舍，太5:43 19:19 22:39 可12:31,33 羅13:9 加5:14 雅2:8（皆引自 利19:18）;見πλησίονSG4139一。τὸν ἕτερον其他人，羅13:8。τὸν ἀδελφὸν弟兄，約一2:10 3:10 4:20,21。τοὺς ἀδελφούς弟兄們，約一3:14。 τὰ τέκνα τοῦ θεοῦ　神的兒女，約一5:2。ἀλλήλους彼此，約13:34 15:12,17約一3:11,23 4:7,11,12約二1:5 羅13:8 帖前4:9。τοὺς ἀγαπῶντας愛的人，太5:46 路6:32。 τὸ ἔθνος ἡμῶν我們的百姓，路7:5。τοὺς ἐχθροὺς仇敵，太5:44 路6:27,35;見 ἐχθρός－SG2190二B2。εἰ περισσοτέρως ὑμᾶς ἀγαπῶ, ἡσσον  ἀγαπῶμαι；難道我越愛你們，就越少得…愛嗎？ 林後12:15。ἀ. πολύ, ὀλίγον愛多，愛少，路7:47；參  πλεῖον ἀγαπήσει αὐτόν 更愛他，路7:42。獨立用法： ἡμεῖς ἀγαπῶμεν 我們愛，約一4:19。πᾶς ὁ ἀγαπῶν 凡有愛心的，約一4:7。ὁ μὴ ἀγαπῶν 沒有愛心的，約一4:8。反於 μισεῖν 恨惡（ 申21:15-17）太6:24 路16:13。2. 對超自然之位格：對耶穌，彼前1:8。特別在 約8:42 14:15,21,23,24 21:15,16（通常出於耶穌的口）。其中約21章的 ἀγαπάω 和 φιλέω 似乎可以互換；參同章中其他可互換的同義詞〔βόσκεινποιμάνειν, ἀρνίαπροβάτια, ἑλκύεινσύρειν〕。對　神，太22:37 可12:30,33 路10:27（皆引自 申6:5）;羅8:28 林前2:9 8:3。B. 指超自然者之愛。1. 對人類：　神對人的愛－ 羅8:37 9:13（ 瑪1:2）;帖後2:16 來12:6（ 箴3:12）;約14:21約一4:10,19。ἱλαρὸν δότην 捐得樂意的人，林後9:7。耶穌對人的愛－ Ἰ. ἠγάπησεν αὐτὸν 耶穌…愛他，可10:21（或指關心他）。加2:20 弗5:2 約11:5 15:9。指主所愛的門徒，約13:23 19:26 21:7,20。2. 對其他超自然者：父　神對耶穌的愛，約3:35 10:17 17:26，從創立世界以前，約17:24。耶穌對父　神的愛，約14:31。C. 指愛的實行：「證明某人的愛」，約13:1,34（或為愛筵的一種暗示）。獨立用法，指出其意義：μὴ ἀγαπῶμεν λόγῳ μηδὲ τῇ γλώσσῃ ἀλλὰ ἐν ἔργῳ我們相愛不要只在言語和舌頭上，總要在行為…上，約一3:18。D. 完成被動分詞意為被愛者。皆指被　神所愛（參 申32:15 33:5,26 賽44:2）指耶穌。弗1:6。指耶路撒冷： τὴν πόλιν τὴν ἠγαπημένην蒙愛的城，啟20:9。指基督徒：ἀδελφοὶ ἠγαπημένοι ὑπὸ τ. θεοῦ 被　神所愛的弟兄，帖前1:4 帖後2:13；ἅγιοι καὶ ἠγαπημένοι聖潔蒙愛的人，西3:12；τοῖς ἐν θεῷ πατρὶ ἠγαπημένοις 那…在父　神裡蒙愛…的人，猶1:1。蒙愛的，羅9:25（ 何2:25異版）。二、指對事物的愛或爭取：（ 詩40:16）τὴν πρωτοκαθεδρίαν καὶ τοὺς ἀσπασμοὺς首位和請安，路11:43。μισθὸν ἀδικίας 不義之工價，彼後2:15。τὸν κόσμον世界，約一2:15。τὸν νῦν αἰῶνα 現今的世代，提後4:10。δικαιοσύνην 公義，來1:9（ 詩45:7）。μᾶλλον τὸ σκότος ἢ τὸ φῶς愛黑暗勝於愛光，約3:19原文；ἀ. τὴν δόξαν τῶν ἀνθρώπων μᾶλλον ἤπερ τὴν δόξαν τοῦ θεοῦ愛人的榮耀過於愛　神的榮耀，約12:43。ζωήν愛生命，彼前3:10；或 τὴν ψυχὴν 性命，啟12:11。或指渴慕τὶ某事物：（ 詩40:16）。τὴν ἐπιφάνειαν αὐτοῦ 他的顯現，提後4:8。ἀγάπην ἀ. （ 撒下13:15）所愛…的愛，約17:26 弗2:4。</p>
+<p>本頁字典於 ἀγαπάω 記「愛」諸分線，並標約一4:19、約一4:10,19 等（出處：本頁字典／尋根版）。本節和合本寫「我們愛」「　神先愛我們」。可與 4:10 對讀，只標對讀。有的傳本或多 αὐτόν，只並列，不改經文欄。分線只並列，不選邊。不提前愛的系統。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] perhaps from (much) [or compare ];<br/>to love (in a social or moral sense)</p>
+<p>25 agapao {ag-ap-ah&#x27;-o}<br/>perhaps from agan (much) [or cf 5368]; TDNT - 1:21,5; v<br/>AV - love 135, beloved 7; 142<br/>1) of persons<br/>1a) to welcome, to entertain, to be fond of, to love dearly<br/>2) of things<br/>2a) to be well pleased, to be contented at or with a thing</p></div></div></details>
+<details class="ntfold"><summary>G00846 — αὐτός</summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G00846</li><li>詞形 αὐτός</li><li>音譯 autós</li><li>讀音 ow-tos&#x27;</li><li>約 新約</li><li>詞類 代名詞</li><li>字源 源自質詞/語助詞 au [可能與 0109 的字根相近, 取其&quot;風無定向&quot;之意]; 形容詞 第三人稱代名詞</li><li>KJV 用法 him 1947, them 1148, her 195, it 152, not tr. 36, misc 1676; 5118 形容詞</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 自己的, 甚至, 正是</li><li>2 (前面加定冠詞) 同樣的<br/>第三人稱代名詞<br/>他, 她, 它</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>00846  αὐτός, ή, ό  代名詞一、「自己，本身」。用以加強語氣，將個體從其他人事物中分別出來，加以強調或作對比；可用於所有的人稱、性、數。A. 與主詞（名詞或帶名詞）同用：1. 特別指明︰αὐτὸς Δαυίδ大衛自己，可12:36,37 路20:42；αύτὸς ὁ Ἰησοῦς 耶穌自己，馬可福音短結尾。2. 明確指出：αὐ. ὁ θεός　神親自，啟21:3；αὐ. τ. ἐπουράνια天上物體的本身，⊙ 來9:23；αὐ. ἐγώ我親自，羅15:14；αὐ. ἐγὼ Παῦλος我保羅親自，⊙ 林後10:1；αὐτοὶ ὑμεῖς你們自己，約3:28；αὐτοὶ οὖτοι這些人自己，徒24:15；ἐν ὑμῖν αὐτοῖς憑你們自己，林前11:13原文。B. 強調一已知的主題：指耶穌－ 太8:24 可8:29 路5:16,17 9:51 10:38 24:36。指　神－ 來13:5。C. 與其他主題作區分，或指明其間的對比：αὐ. καὶ οἱ μετ᾽ αὐτοῦ他跟他的隨從，⊙ 可2:25 約2:12 4:53 18:1 路24:15 林前3:15。αὐτοὶ οὐκ εἰσήλθατε καὶ τοὺς εἰσερχομένους ἐκωλύσατε自己不進去，正要進去的人你們也攔阻，路11:52。參 路11:46節。約9:21 太23:4 路6:11 徒18:15 帖前1:9 林前2:15。αὐτὸς μόνος他獨自（參μόνος－SG3441一A.2）可6:47 約6:15。αὐτὸς ἐγώ 我自己，林後12:13。εἰ μὴ αὐτός除了他自己，啟19:12。αὐτὸς  ὄγδοός ἐστιν他是第八位，啟17:11。D. 「親自」，約4:2 路24:36,39。E. 「自身」，無須外援。約2:25 4:42 6:6 徒20:34；αὐ. ᾠκοδόμησεν他獨自…建造，⊙ 路7:5；αὐ. ὁ πατὴρ φιλεῖ ὑμᾶς 父自己愛你們，約16:27。F.出於自己的意願：αὐ. ἐγὼ τῷ νοῒ δουλεύω νόμῳ θεοῦ 我自己心裡服事　神的律法，⊙ 羅7:25。參 可6:31 羅9:3。G. 加強用法：καὶ αὐτός「甚至」。καὶ αὐτὴ ἡ κτίσις甚至被造的萬物，羅8:21。καὶ αὐτὴ Σάρρα 連撒拉自己，來11:11。οὐδὲ ἡ φύσις αὐτὴ διδάσκει本性自身也不指示，⊙ 林前11:14。H. 「甚至，就是」，即強調有別於其他的一個特定人物或事件，因此αὐ.可作指示詞用（參二末）：αὐ. τὰ ἔργα就是…所做的事，約5:36；αὐ. ὁ Ἰωάννης這約翰，太3:4；ἐν αὐ. τ. καιρῷ正當那時，路13:1。－ 路23:12 24:13。－ 路2:38 10:21 12:12。－ 路10:7。αὐτὸ τοῦτο正是這事，同一件事，林後7:11 加2:10 腓1:6；εἰς αὐ. τοῦτο正在這事上，羅9:17 13:6 林後5:5 弗6:22 西4:8。τοῦτο αὐ.這事，林後2:3和αὐ. τοῦτο正因這緣故，彼後1:5是副詞直接受格：「為了這原因」。二、αὐτός或多或少強調主詞，並常重覆已提過的主詞：αὐτοὶ παρα κληθήσονται他們（非別的人）必得安慰，太5:4;參 太5:5以下。οὐκ αὐτοὶ βλασφημοῦσιν他們不是褻瀆麼？ 雅2:7。αὐτὸς σώσει他要…救出，太1:21（參 詩130:8）。αὐτὸς ἀποδώσει他…察看，太6:4公認經文。可1:8 14:15。這種強調意味常不明顯－ 太14:2 路4:15 22:23 約6:24 徒22:19（參 創12:12）。也許αὐ.漸演變為οὖτος的傾向，開始對新約有一點的影響。καὶ αὐκὸς ἦν Σαμαρίτης這人是撒瑪利亞人，路17:16（參 路3:23 19:2和上列一H.）。然而此處的αὐτὸς可指獨自，唯獨他是撒瑪利亞人。三、從格（主格，呼格以外的各種格）的αὐ.常代替第三人稱之代名詞，尤其是所有格代替所有代名詞：A. 指在前的名詞：διαφέρετε αὐτῶν你們比他們更寶貴，⊙ 太6:26；καταβάντος αὐτοῦ他下了山，太8:1；ἀπεκάλυψας αὐτά將這些事…隱藏，太11:25。－ 太26:43,44 可1:10 4:33以下;可12:19 路1:22 4:41。所有格有時無故地放在前面：αὐτοῦ τὰ σημεῖα他的神蹟，約2:23，參 約3:19,21,33 4:47 12:40。αὐτῶν τὴν συνείδησιν他們…的良心，林前8:12。類似－ 路1:36的αὐτῇ τῇ καλουμένῃ στείρᾳ那素來稱為不生育的。αὐ.的形式有時在一個系列中非固有地指不同的人：φέρουσιν αὐτῷ τυφλόν, καὶ παρακαλοῦσιν αὐτὸν ἵνα αὐτοῦ（即τοῦ τυφλοῦ）ἄψηται帶著一個瞎子來見他（耶穌），求他（耶穌）摸他（瞎子），※ 可8:22。B. 與上下文中的名詞有關：ἐν ταῖς συναγωγαῖς αὐτῶν（即τ. Γαλιλαίων）在他們的會堂裡（即加利利的），※ 太4:23。ἐν ταῖς πόλεσιν αὐτῶν在他們的市鎮裡，※ 太11:1。ἐκήρυσσεν αὐτοῖς 宣傳給他們（即當地的人），※ 徒8:5。παρακαλέσας αὐτούς鼓勵他們，※ 徒20:2。ἀποταξάμενος αὐτοῖς辭別他們，林後2:13原文。τὰ γινόμενα ὑπ᾽ αὐτῶν他們…所行的，弗5:12。ἐδημηγόρει πρὸς αὐτούς 對他們講論，徒12:21。τὸν φόβον αὐτῶν 怕他們，※ 彼前3:14（參 彼前3:13及見 賽8:12）。太12:9（參 太12:2）;路2:22 18:15 19:9 23:51 約8:44 20:15 徒4:5 羅2:26 來8:9。C. 與動詞同用並不罕見（即使屬於這動詞的名詞已在前面）。τοῖς καθημένοις ἐν σκιᾷ θανάτου φῶς ἀνέτειλεν αὐτοῖς　坐在死蔭之地的人，有光發現照著他們，太4:16。－ 太5:40 9:28 26:71 約15:2 18:11 雅4:17 啟2:7,17 6:4等。D. 冗加在關係詞之後，常在七十士譯本中出現，如 創1:11（οὗ τὸ σπέρμα αὐτοῦ ἐν αὐτῷ它的果子在其上的）：οὗ τὸ πτύον ἐν τῇ χειρὶ αὐτοῦ 那有簸箕在他手裡的，太3:12原文；路3:17。 οὗ οὐκ εἰμὶ ἱκανὸς …τῶν ὑποδημάτων αὐτοῦ這人是我沒有資格彎腰為他解鞋帶的，可1:7原文。ἧς εἶχεν τὸ θυγάτριον αὐτῆς 那她的女兒有…的，可7:25原文。πᾶν ὃ δέδωκέν… ἀναστήσω αὐτὸ 他所賜給我的…叫他復活，約6:39 徒15:17。ἣν οὐδεὶς δύναται κλεῖσαι αὐτήν是沒有人能關它的，啟3:8原文。οἷς ἐδόθη αὐτοῖς 那被賜與他們權柄的，啟7:2原文，參 啟13:12。E. 在接續關係子句的結構中：ἐξ οὗ τὰ πάντα καὶ ἡμεῖς εἰς αὐτόν萬物都本於他，我們也歸於他，林前8:6；οἷς τὸ κρίμα … καὶ ἡ ἀπώλεια αὐτῶν（代καὶ ὧν ἡ ἀπώλεια）他們的刑罰…他們的滅亡，彼後2:3。F. 帶一個轉變：1. 用於人稱的轉變－ 路1:45 啟18:24。2. 用於數目和性別的轉變－ἔθνη…αὐτούς 太28:19。τοῦ παιδίου … αὐτῇ 可5:41。φῶς…αὐτόν 約1:10。λαόν…αὐτῶν 太1:21。太14:14 可6:45,46 林後5:19。四、ὁ αὐτός, ἡ αὐτή, τὸ αὐτό：同一個。A. 帶名詞：τὸν αὐ. λόγον相同的話，太26:44 可14:39；τὸ αὐ. φύραμα同一團的泥，⊙ 羅9:21;參 路23:40 林前1:10 10:3,4 12:4以下;林前15:39 腓1:30。B. 不帶名詞：τὸ (τὰ) αὐ. ποιεῖν 行同樣的事，太5:46 路6:33 弗6:9。τὰ αὐτὰ πράσσειν 所行卻…一樣，羅2:1。τὸ αὐ. λέγειν 說一樣的話（不止是話：見λέγω－SG3004一A.）林前1:10。ἀπαγγέλλειν τὰ αὐτά 報告同樣的事，徒15:27。τὸ αὐτό 作副詞用－也是這樣的，太27:44。ἐπὶ τὸ αὐτό（ 撒下2:13 詩2:2）。指地點－在同一處，在一起，太22:34 林前11:20 14:23；εἶναι ἐπὶ τὸ αὐ.一同，路17:35 徒1:15 2:1；προστιθέναι ἐπὶ τὸ αὐ.加給他們的團體，⊙ 徒2:47。κατὰ τὸ αὐτὸ一起，意指一伙的（ 王上3:18），又指同時，徒14:1；本節亦可能指以同樣方法。ἓν καὶ τὸ αὐ. 也是一樣，林前11:5；參 林前12:11。後來所有格：τὰ αὐτὰ τῶν παθημάτων 經歷同樣的苦難，彼前5:9。非比較用：ὁ αὐτός εἶ 你仍是一樣，來1:12（ 詩102:27）;參 來13:8。αὐτοῦ和αὑτοῦ，αὐτῶν和αὐτῶν在抄本中的變易，見ἑαυτοῦ－SG1438的開始。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from the particle (perhaps akin to the base of through the idea of a baffling wind) (backward);<br/>the reflexive pronoun self, used (alone or in the compound ) of the third person , and (with the proper personal pronoun) of the other persons</p>
+<p>846 autos {ow-tos&#x27;}<br/>from the particle au [perhaps akin to the base of 109 through the<br/>idea of a baffling wind] (backward);; pron<br/>AV - him 1947, them 1148, her 195, it 152, not tr. 36, misc 1676; 5118<br/>1) himself, herself, themselves, itself<br/>2) he, she, it<br/>3) the same<br/>Wigram&#x27;s frequency count is 4913 not 5118.</p></div></div></details>
+<details class="ntfold"><summary>G02249 — ἡμεῖς</summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02249</li><li>詞形 ἡμεῖς</li><li>音譯 hēmeîs</li><li>讀音 hay-mice&#x27;</li><li>約 新約</li><li>詞類 代名詞</li><li>字源 [字源] nominative plural of ; we (only used when emphatic)</li><li>KJV 用法 we 123, us 3, we ourselves 1; 127</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 我們</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02249  ἡμεῖς見ἐγω－SG1473。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] nominative plural of ;<br/>we (only used when emphatic)</p>
+<p>2249 hemeis {hay-mice&#x27;}<br/>nom. plural of 1473;; pron<br/>AV - we 123, us 3, we ourselves 1; 127<br/>1) us, we etc.</p></div></div></details>
+<details class="ntfold"><summary>G03754 — ὅτι</summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G03754</li><li>詞形 ὅτι</li><li>音譯 hóti</li><li>讀音 hot&#x27;-ee</li><li>約 新約</li><li>詞類 連接詞</li><li>字源 [字源] neuter of as conjunction; demonstrative, that (sometimes redundant); causative, because</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 那, 因為, 既然</li><li>2 意義見<br/>3748</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>03754  ὅτι 連接詞原是ὅστις的中性。一、相當於英文的連接詞that。A. 在前述指示代名詞之後，取代表解釋之不定詞（直接受格帶不定詞），αὕτη δέ ἐστιν ἡ κρίσις, ὅτι τὸ φῶς ἐλήλυθεν 這審判在於此，就是光已經來到，約3:19。ἔστιν αὕτη ἡ ἀγγελία…, ὅτι ὁ θεὸς φῶς ἐστιν這信息是這個，就是　神是光，約一1:5，原文。參約一3:16 4:9,10。ἐν τούτῳ…, ὅτι ἐκ τοῦ πνεύματος αὐτοῦ δέδωκεν ἡμῖν在此…，就是祂（＝　神）將祂的靈賜給我們，約一4:13 5:11。περὶ τούτου … ὅτι為這話…就是，約16:19。ἔχω κατὰ σοῦ ὅτι… 在 啟2:4中，ὅτι用以說明未寫出的τοῦτο。B. 用於指示心智或感官知覺，或傳達這一類知覺，或表心智活動的動詞之後，以指明所表達的內容等：1. 在表示說話或指明等的動詞之後：ἀπαγγέλλω, ἀποκρίνομαι, δείκνυμι, δῆλόν(ἐστιν), διδάσκω, εἶπον, ἐμφα&amp; νίζω, λέγω, μαρτυρέω, ὁμολογέω, φημί等；見以上各字。同此，在表示起誓，肯定的動詞或相等的慣用語之後：μαρτύρομαι見證，徒20:26 加5:3。μάρτυρα τὸν θεὸν ἐπικαλοῦμαι我呼籲　神作見證，林後1:23。ὀμνύω起誓，啟10:6。參相似的語辭－πιστὸς ὁ θεός　神是信實的，林後1:18。ἰδοὺ ἐνώπιον τοῦ θεοῦ 在　神面前說，加1:20。林後11:10。另參φάσις…ὅτι 徒21:31。αἱ γραφαὶ ὅτι經上（所說）就是，太26:54。2. 在表示官能知覺的動詞之後：ἀκούω, θεάομαι, θεωρέω（見SG2334一）；各見該字。3. 在表示心智知覺的動詞之後：ἀγνοέω, ἀναγινώσκω, βλέπω（看見），γινώσκω, γνωστόν, ἐστιν, ἐπιγινώσκω, ἐπισταμαι, θεωρέω（見SG2334二A.） ，καταλαμβάνω, μιμνῄσκομαι, μνημονεύω, νοέω, οἶδα, ὁράω（見SG3708一C.1.），συνίημι, ὑπομιμνῄσκω；各見該字。4. 在表示思想，判斷，相信，希望的動詞之後：δοκέω（見SG1380一D.），ἐλπίζω（見SG1679二；三），κρίνω, λογίζομαι, νομίζω（見SG3543二），οἶμαι, πέπεισμαι, πέποιθα, πιστεύω（見SG4100一A.2.），ὑπολαμβάνω；各見該字。εἶχον τὸν Ἰωάννην ὅτι προφήτης ἦν他們都認為約翰是先知，可11:32。5. 在表示情緒和它的表現的動詞之後：ἀγανακτέω, ἐξομολογέομαι, ἐπαινέω, εὐχαριστέω, θαυμάζω, συγχαίρω, χαίρω, χάριν ἔχω τινί；各見該字。6. 通常ὅτι-子句的主詞常移入主要子句中，變成主要子句的受詞：ἐπεγίνωσκον αὐτοὺς ὅτι (＝ὅτι αὐτοὶ) σὺν τῷ Ἰησοῦ ἦσαν他們認出他們，（＝就是他們）曾經是跟過耶穌的，徒4:13。οἴδατε τὴν οἰκίαν Στεφανᾶ ὅτι(＝ὅτι ἡ οἰκία Σ.) ἐστὶν ἀπαρχή你們曉得司提反一家（＝就是司提反一家）是…初結果子，林前16:15。參 太25:24 可12:34 約8:54 9:8 徒3:10 林前3:20（ 詩94:11）;帖前2:1 啟17:8。有時在ὅτι子句中，主詞由指示代名詞重覆：ἐκήρυσσεν τὸν Ἰησοῦν ὅτι οὗτός ἐστιν ὁ υἱὸς τοῦ θεοῦ宣傳耶穌說祂是　神的兒子，徒9:20。被動 εἰ  Χριστὸς κηρύσσεται ὅτι ἐκ νεκρῶν ἐγήγερται ＝εἰ κηρύσσεται ὅτι Χρ. ἐκ νεκ. ἐγ. 基督既被傳講說是從死人中復活，林前15:12。C. 省略用法：τί ὅτι；那是什麼？為什麼？ 路2:49 徒5:4,9 可2:16異版。οὐχ ὅτι(＝οὐ λέγω ὅτι)不是這樣，不是好像，約6:46 7:22 林後1:24 3:5 腓3:12 4:11 帖後3:9。οὐχ οἷον ὅτι這不是說，羅9:6見οἷος。單用ὅτι取代εἰς ἐκεῖνο ὅτι 顧到這…的事實，考慮到這…的事實（ 創40:15 得2:13）；ποταπός ἐστιν οὗτος ὅτι 這是什麼樣的人（考慮到這事實），以致… 太8:27（但此處和相似的經文中，ὅτι〔見三〕可能有表示因果的意思）。τίς ὁ λόγος οὗτος ὅτι這是什麼道理，以致… 路4:36。參 路16:3 可4:41 約2:18 8:22 9:17 11:47 16:9-11。ὅτι＝ἐν τούτῳ ὅτι就在此，羅5:8。ὅτι＝περὶ τούτου ὅτι關於這個，那個，太16:8 可8:17。ὅτι＝為什麼？ 可9:11,28見ὅστις－SG3748四。D. 特殊用法：1. ὅτι在θεωρεῖν之後有直接受格和不定詞： 徒27:10。較規則的是καὶ ὅτι帶定動詞以為倚附παρακαλεῖν的第二部分，接在不定詞ἐμμένειν之後，徒14:22。2. ὡς ὅτι在保羅書信中出現三次。在後期的白話文中，它的意思單純為「就是」，但我們必須承認ὡς在新約有其主觀意義，因為武加大譯本兩次把它譯為「quasi」（ 林後11:21 帖後2:2），而第三次（ 林後5:19）為「quoniam quidem」；δι᾽ ἐπιστολῆς…, ὡς ὅτι ἐνέστηκεν ἡ ἡμέρα τοῦ κυρίου藉著書信…（指同類的內容）說（據它著者的意見）主的日子（現在）就到了，帖後2:2。保羅用反語說法：κατὰ ἀτιμίαν λέγω, ὡς ὅτι ἡμεῖς ἠσθενήκαμεν我必須承認我的羞辱，那就是我們從前行為好像是軟弱的人（正如當我將我對你們的行為與你們從別人所受的強暴的行為比較時，我必須承認我是弱者〔 林後11:20節〕），林後11:21。同此，林後5:9；我們在基督裡是一個新的受造物（ 林後5:17節）。這並沒有改變，萬有的源頭是在乎　神的事實，祂藉著基督使我們與祂重新和好（ 林後5:18節），ὡς ὅτι θεὸς ἦν ἐν Χριστῷ κόσμον καταλλάσσων ἑαυτῷ 那就是（根據保羅自已確信的），　神在基督裡，使世人與自己重新和好。3. 指示結果的ὅτι：「以致，使」。（ 創20:9 士14:3 撒上20:1 王上18:9）；ποῦ οὗτος μέλλει πορεύεσθαι, ὅτι ἡμεῖς οὐχ εὑρήσομεν αὐτόν 這個人要到那裡去，使我們找不著他呢？⊙ 約7:35。τί γέγονεν ὅτι…，發生什麼，以致（＝使它發生，以致）…？ 約14:22。這也許是以下經文的意義－ οὐδὲν εἰσηνέγκαμεν εἰς τὸν κόσμον, ὅτι οὐδὲ ἐξενεγκεῖν τι δυνάμεθα 我們沒有帶什麼到世上來，「以致」（結果）我們也不能從中帶什麼出去，提前6:7。τί ἐστιν ἄνθρωπος, ὅτι μιμνῄσκῃ αὐτοῦ；人算什麼，以致你顧念他？ 來2:6（ 詩8:4）。二、導入直接引句：這種情況，不用譯成中文，而由引號代表（早期古典希臘文時期用法）。ὑμεῖς λέγετε ὅτι “βλασφημεῖς”, ὅτι εἶπον因我說…你們就說：「你說了僭妄的話」麼？ 約10:36原文，ὁμολογήσω αὐτοῖς ὅτι οὐδέποτε ἔγνων ὑμᾶς，我必向他們聲明：「我從來不認識你們」，⊙ 太7:23。在各種表示說話後直接引向的動詞後亦同－ 太26:72-75 27:43 可1:37 2:16 5:28 12:29 13:6 路1:25,61 4:41上;路5:26 15:27上;約1:20,32 4:17 6:42 16:17 徒5:23 15:1 羅3:8 帖後3:10約一4:20等。引用聖經經文時，也以這種方式導入－Μωϋσῆς ἔγραψεν ἡμῖν ὅτι ἐάν τινος κτλ.摩西曾寫給我們說：「如果有人…」，⊙ 可12:19。太2:23 21:16 路2:23 約10:34 羅8:36 林前14:21 來11:18。有關 路4:43中ὅτι在直接引句中後接直接受格和不定詞之用法，參一D.1.。三、作因果連接詞：A. 附屬連接詞：「因為，既然」。ὅτι ἑώρακάς με, πεπίστευκας你因看見了我才信，約20:29。太2:18（ 耶31:15）;太5:3以下;太13:16 可1:34 5:9 路4:41下;路6:20以下;路8:30 10:13 11:42以下;路13:2下;路15:27下;路18:9或為此;路19:17 約1:30,50上;約2:25 3:18 5:27 9:16,22 羅6:15 林前12:15,16。反於因果意義：約一2:12-14。與指示代名詞和疑問代名詞用－διὰ τοῦτο…ὅτι為這緣故…，就是，約8:47 10:17 12:39約一3:1等。διὰ τί; ὅτι…為什麼呢？是因為… 羅9:32 林後11:11。χάριν τίνος; ὅτι…為什麼原因呢？因為…，⊙約一3:12。後接διὰ τοῦτο－因為…這緣故（或作所以），⊙ 約15:19。οὐχ ὅτι…ἀλλ᾽ ὅτι不是因為…而是因為，⊙ 約6:26 12:6。B. 附屬關係常是非常不嚴格，以致更宜翻作「為了」，但這兩類不能清楚區別： 太7:13 11:29 路7:47 9:12 13:31 16:24 約1:16,17 9:16 林前1:25 4:9 10:17 林後4:6 7:8,14約一3:14。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] neuter of as conjunction;<br/>demonstrative, that (sometimes redundant); causative, because</p>
+<p>3754 hoti {hot&#x27;-ee}<br/>neuter of 3748 as conjunction; demonst. that (sometimes redundant);; conj<br/>AV - that 612, for 264, because 173, how that 21, how 11, misc 212; 1293<br/>1) that, because, since</p></div></div></details>
+<details class="ntfold"><summary>G04413 — πρῶτος</summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G04413</li><li>詞形 πρῶτος</li><li>音譯 prōtos</li><li>讀音 pro&#x27;-tos</li><li>約 新約</li><li>詞類 形容詞</li><li>字源 [字源] contracted superlative of ; foremost (in time, place, order or importance)</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 首先</li><li>1a (時間上) 最早, 早先, 首先</li><li>1b (數字與順序上) 第一</li><li>1c (空間上) 外在 (<br/>來 9:2,6,8<br/>)</li><li>2 首要的, 第一的, 最重要的</li><li>2a 指事物</li><li>2b 指人物</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>04413  πρῶτος, η, ον 形容詞（七十士譯）一、πρῶτος一些中之第一，或指二人或二物之一者（＝πρότερος；參 太21:31公認經文）。A. 用於時間：「第一，最早，較早」。形容詞：ἀπὸ τῆς πρώτης ἡμέρας ἄχρι τοῦ νῦν 從頭一天直到如今，腓1:5;參 徒20:18（無冠詞〔 腓1:5公認經文亦無冠詞〕）。ἡ πρώτη ἀπολογία初次申訴，提後4:16。ἡ πρ. διαθήκη前約，來9:15。τὰ πρῶτα ἔργα起初所行的事，啟2:5。ἡ ἀνάστασις ἡ πρώτη頭一次的復活，啟20:5,6。實名詞：τὰ Πρ.…τὰ ἔσχατα（ 伯8:7）：γίνεται τὰ ἔσχατα χείρονα τῶν πρώτων末後的景況，比先前更不好，太12:45;參 路11:26 彼後2:20。οἱ πρῶτοι先來的，太20:10；參 太20:8節。 ἀπέστειλεν ἄλλους δούλους πλείονας τῶν πρώτων 打發別的僕人去，比先前更多，太21:36。參 太27:64。πρῶτος ἐξ ἀναστάσεως νεκρῶν首先從死裡復活（原文），徒26:23。ὁ πρῶτος誰先，約5:4 林前14:30。復活的主自稱：ὁ πρῶτος καὶ ὁ ἔσχατος首先的，末後的，啟1:17 2:8 22:13；參ἔσχατος－SG2078三下（指　神： 賽44:6 48:12）。作敘述形容詞（像副詞用法），先的那一位＝第一：ἦλθεν πρῶτος先到，約20:4；參 約20:8節。πρῶτος Μωϋσῆς λέγει先有摩西說，羅10:19。提前2:13約一4:19。－ἐν ἐμοὶ πρώτῳ 我是（罪）魁，提前1:16。與比較之所有格同用：πρῶτός μου ἧν他本來在我以前，約1:15,30。或許亦此：ἐμὲ πρῶτον ὑμῶν μεμίσηκεν 恨你們以先，已先恨我，約15:18（見下面二A.）。平常：在後之因素（隨著先前或較早者）與先前者之本質相同。但亦可能相當不同，甚至正好相反：τὴν πρώτην πίστιν ἠθέτησαν廢棄了當初所許的願，提前5:12。 τὴν ἀγάπην σου τὴν πρώτην ἀφῆκες 把起初的愛心離棄了，啟2:4。省略之使用：ἡ πρώτῃ（即ἡμέρα）τῶν ἀζύμων除酵節的第一天，太26:17。πρώτῃ σαββάτου七日的第一日，可16:9。以上所列經文中，有些較重順序的觀念。B. 用於數目或順序（屬本意義的經文，不能很確定與上面A.的意義區分）： 太21:28 22:25 可12:20 路14:18 16:5 19:16 20:29 約19:32 徒12:10 13:33異版;啟4:7 8:7 21:19。τὸ πρῶτον…τὸ δεύτερον在先的…在後的，來10:9。關於πρώτη τῆς μερίδος Μακεδονίας πόλις 馬其頓這一方的頭一個城，徒16:12，參μερίς－SG3310一。由於πρῶτος可代替比較級的πρότερος（見上面一，始 ），由 徒1:1τὸν μὲν πρῶτον λόγον （已經作了）前書，知路加福音及使徒行傳之作者並無計畫寫第三本書。使用πρῶτος並不一定有隨後之系列：τὸν πρῶτον ἰχθὺν先（釣上來的）魚，太17:27。αὕτη ἀπογραφὴ πρώτη ἐγένετο這是…頭一次行報名上冊，路2:2，並非指續辦戶口普查，而指以前未曾有過。C. 用於等級，「第一，首要的，最重要的，最顯著的」。1. 用於事（ 結27:22）ἡ μεγάλη καὶ πρώτη ἐντολή誡命中的第一，且是最大的，太22:38;參 可12:29。ἐντολὴ πρώτη πάντων誡命中第一…的，可12:28節。無最高級比較式的意義：ἐντολὴ πρώτη ἐν ἐπαγγελίᾳ最重要帶應許的誡命（原文），弗6:2（一般譯為「第一條帶應許的誡命」，忽略了 出20:4-6＝申5:8-10，其中有應許，如同在 出20:12＝申5:16有應許。此處πρ.最好解為和上面一樣，可12:28,29相同的意義）。στολὴν τὴν πρώτην上好的袍子，路15:22。ἐν πρώτοις首要的，即最重要的，※ 林前15:3。2. 用於人：ὃς ἂν θέλῃ ἐν ὑμῖν εἶναι πρῶτος你們中間誰願為首，太20:27 可10:44;參 可9:35。πρῶτος Σίμων頭一個叫西門，太10:2，因為沒再列其他數字，所以不是指排表列在第一個，而指他是十二使徒中最出名的。帶所有格ὧν（＝τῶν ἁμαρτωλῶν）πρῶτός εἰμι在罪人中我是罪魁，提前1:15。複數：(οἱ) πρῶτοι在前的，反於(οἱ) ἔσχατοι在後的，太19:30 20:16 可9:35 10:31 路13:30。οἱ πρῶτοι最重要的，作首領的，帶地點之所有格：οἱ πρ. τῆς Γαλιλαίας加利利作首領的，可6:21;參 徒13:50，或帶團體之所有格：οἱ πρῶτοι τοῦ λαοῦ百姓的尊長，路19:47;參 徒25:2 28:17。關於ὁ πρῶτος τῆς νήσου島長，徒28:7節，參Πόπλιος－SG4196部百流。D. 用於空間，「外面，前面的」：σκηνὴ  ἡ πρώτη頭一層帳幕（即聖所），來9:2;參 來9:6,8節。二、中性πρῶτον作副詞：A. 用於時間，「第一，先，早於…，更早，始於…」： ἐπίτρεψόν μοι πρῶτον ἀπελθεῖν καὶ θάψαι容我先回去埋葬，太8:21。συλλέξατε πρῶτον τὰ ζιζάνια先將稗子薅出來，太13:30。參 太17:10,11公認經文;可7:27 9:11,12 13:10 路9:59,61 12:1（耶穌先對門徒說，然後〔 路12:15節〕才對眾人說。若是重視πρ.及其隨後的事，是C.之意義）；路14:28,31 約7:51 18:13 徒26:20 羅15:24等。τότε πρῶτον…起首，徒11:26異版。πρῶτον…καὶ τότε先…然後： 太5:24 7:5 12:29 可3:27 路6:42。τότε與πρῶτον相關，但無καὶ，約2:10異版。同此，πρῶτον…εἶτα (εἶτεν)先…然後（εἶτα－SG1534一），可4:28 提前3:10。πρῶτον…ἔπειτα （ἔπειτα－SG1899二A.），林前15:46 帖前4:16。πρῶτον…μετὰ ταῦτα先…這事以後，可16:9，見 可16:12。πρῶτον…ἐν τῷ δευτέρῳ 徒7:12。冗言法，πρῶτον πρὸ τοῦ ἀρίστου飯前，路11:38。帶所有格：ἐμὲ πρῶτον ὑμῶν μεμίσηκεν恨你們以先，約15:18（見上面一A.）。帶冠詞：τὸ πρῶτον起初，約10:40 19:39;起先，約12:16。B. 用於計數的順序（與上面A.之意義有時不完全清楚分辨），第一，πρῶτον ἀποστόλους, δεύτερον προφήτας, τρίτον …第一是使徒，第二是先知，第三…，林前12:28。參 來7:2 雅3:17。最少在形式上，保羅多次以πρῶτον μέν（第一）為始，而無述第二等，羅1:8 3:2 林前11:18。C. 用於等級，「先，第一，特別」， ζητεῖτε πρῶτον τὴν βασιλείαν先求…國，太6:33。Ἰουδαίῳ τε πρῶτον καὶ Ἕλληνι先是猶太人，後是希利尼人，羅1:16;參 羅2:9,10。徒3:26 彼後1:20 3:3。用於馬其頓基督徒 ἑαυτοὺς ἔδωκαν πρῶτον τῷ κυρίῳ καὶ ἡμῖν，先把自己獻給主，又歸附了我們，林後8:5。παρακαλῶ πρῶτον πάντων 我勸…第一要… 提前2:1。</p>
+<p>本頁字典於 πρῶτος 記「先」諸分線（出處：本頁字典／尋根版）。本節和合本寫「　神先愛我們」。全形空格原樣。分線只並列，不選邊。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] contracted superlative of ;<br/>foremost (in time, place, order or importance)</p>
+<p>4413 protos {pro&#x27;-tos}<br/>contracted superlative of 4253; TDNT - 6:865,965; adj<br/>AV - first 85, chief 9, first day 2, former 2, misc 7; 105<br/>1) first in time or place<br/>1a) in any succession of things or persons<br/>2) first in rank<br/>2a) influence, honour<br/>2b) chief<br/>2c) principal<br/>3) first, at the first</p></div></div></details>
+<details class="ntfold"><summary>G02248 — ἡμᾶς</summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02248</li><li>詞形 ἡμᾶς</li><li>音譯 hēmâs</li><li>讀音 hay-mas&#x27;</li><li>約 新約</li><li>詞類 代名詞</li><li>字源 [字源] accusative case plural of ; us</li><li>KJV 用法 us 148, we 25, our 2, us-ward + 1519 2, not tr 1; 178</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 我們</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02248  見SG1510</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] accusative case plural of ;<br/>us</p>
+<p>2248 hemas {hay-mas&#x27;}<br/>accusative case plural of 1473;; pron<br/>AV - us 148, we 25, our 2, us-ward + 1519 2, not tr 1; 178<br/>1) us, we, our etc.</p></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="62_約翰一書_1 John 1jn_04_19_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">金標要義稿・檔名仍為臨標・尚未獨立驗收</div>
+<div class="ds">本頁是約翰一書 第4章19節的金標要義稿。檔名仍為臨標，尚未獨立驗收。經文按已核對的和合本新標點抄錄，原文字典與數值只抄錄本機統一庫已有且已裁定的資料，不自算、不選邊。全頁不用表格。這不是金標完成。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 12:41:02 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

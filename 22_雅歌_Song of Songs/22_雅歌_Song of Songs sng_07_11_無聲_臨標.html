@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 7:11 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_07_11_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第7章11節<br/>我的良人，來吧！你我可以往田間去；你我可以在村莊住宿。</p>
+<p>上一節剛把話說成「我屬我的良人，他也戀慕我」，這一節卻立刻發出邀請。和合本寫：「我的良人，來吧！你我可以往田間去；你我可以在村莊住宿。」戀慕向著她以後，她開口請他出來：先是「來吧」，隨後是一同往田間去，一同在村莊住宿。</p>
+<p>原文開頭是 לְכָה דוֹדִי「來吧，我的良人」，命令語在前，稱呼在後。和合本把「我的良人」提前，再寫「來吧」，稱呼仍在，只是語序對調。隨後兩個動詞都是第一人稱複數：נֵצֵא「讓我們出去」，נָלִינָה「讓我們過夜」。和合本兩次寫「你我可以」，把這共同的邀請譯成中文裏可一同前往的語氣；「可以」是譯文的柔化，原文並沒有另寫一個表示允許的詞。</p>
+<p>出去的目的地是 הַשָּׂדֶה「那田野」，和合本寫「田間」。過夜的地方是 בַּכְּפָרִים「在那些村莊裏」，和合本寫「在村莊住宿」。字典把本詞記作村莊，本節取這個意思。場面從上一節那句所屬與戀慕的話，轉到田野與村莊：不是再把關係說一遍，乃是請人一起走出去，並且住下。</p>
+<p>本節經文沒有角色標示。按口氣，說話的是那一位剛承認「我屬我的良人」的人，對方是被稱作「我的良人」的那一位。下一節才寫早晨往葡萄園去看發芽開花；本節先把人請到田間與村莊。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_07_10_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第7章10節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_07_12_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第7章12節</a></nav>
+<h2 class="ntitle">雅歌 第7章11節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第7章11節<br/>我的良人，來吧！你我可以往田間去；你我可以在村莊住宿。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 7:11 &gt;</div>
+<div class="orig-he">לְכָ֤/ה דוֹדִ/י֙ נֵצֵ֣א הַ/שָּׂדֶ֔ה נָלִ֖ינָה בַּ/כְּפָרִֽים׃</div>
+<div class="orig-zh">來吧，我的良人，讓我們往田間去；讓我們在村莊過夜。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_07_11</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>我的良人，來吧！你我可以往田間去；你我可以在村莊住宿。</p>
+<p>原文是「來吧，我的良人，讓我們出去到那田野；讓我們在那些村莊過夜」。לְכָה 是命令語「來」，在前；דוֹדִי「我的良人」在後。和合本寫「我的良人，來吧」，把稱呼提前。נֵצֵא、נָלִינָה 都是第一人稱複數的邀請，和合本寫成兩次「你我可以」，補出「你我」，又用「可以」承這共同前往的語氣，原文並沒有另寫「可以」一詞。הַשָּׂדֶה 是「那田野」，和合本寫「田間」。נָלִינָה 是「讓我們過夜／住宿」，和合本寫「住宿」。בַּכְּפָרִים 是「在那些村莊裏」，字典記作村莊。原文此節沒有角色標示。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 來吧，我的良人｜לְכָה דוֹדִי</h3>
+<blockquote>לְכָ֤/ה דוֹדִ/י֙</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>לְכָ֤/ה</strong>（動詞 Qal 命令語第二人稱陽性單數，後附語氣詞 ה，來吧，<code><span class="sn">H03212</span></code> yalak；字義「行走、來去」。本頁字典指向同行的 הלך。和合本寫「來吧」）</li>
+<li><strong>דוֹדִ/י֙</strong>（陽性名詞單數附屬形加第一人稱單數詞尾，我的良人，<code><span class="sn">H01730</span></code> dowd；字義「心愛的人、良人」。和合本寫「我的良人」）</li>
+</ul>
+<p>邀請從一個命令語開始：來吧。對象是「我的良人」。和合本把稱呼放到最前，再寫「來吧」，意思不改，只是先喚人，再發出那一聲「來」。上一節她說自己屬他，也說他的戀慕向著她；這一節卻不是再解釋那句話，乃是請他舉步。來，是請他到她這邊來，好一起出去。</p>
+<h3>2️⃣ 讓我們往田間去｜נֵצֵא הַשָּׂדֶה</h3>
+<blockquote>נֵצֵ֣א הַ/שָּׂדֶ֔ה</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>נֵצֵ֣א</strong>（動詞 Qal 未完成式第一人稱複數，讓我們出去、讓我們前往，<code><span class="sn">H03318</span></code> yatsa'；字義「出去、外出」。和合本寫「往……去」）</li>
+<li><strong>הַ/שָּׂדֶ֔ה</strong>（冠詞加陽性名詞單數絕對形，那田野、那田間，<code><span class="sn">H07704</span></code> sadeh；字義「田野、土地、田間」。和合本寫「田間」）</li>
+</ul>
+<p>「來」之後，是「讓我們出去」。動詞是第一人稱複數，去處是那田野。和合本寫「你我可以往田間去」，把共同的主詞說成「你我」，又加上「可以」。差別不是要把經文改硬，乃是要聽見原文先是邀請，不是先商量許不許可。田野在本卷裏並不陌生，本節卻不是用它來起誓，乃是把它寫成兩人要一同前去的地方。人還沒有走到葡萄園，先被請到田間。</p>
+<h3>3️⃣ 讓我們在村莊過夜｜נָלִינָה בַּכְּפָרִים</h3>
+<blockquote>נָלִ֖ינָה בַּ/כְּפָרִֽים׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>נָלִ֖ינָה</strong>（動詞 Qal 意欲式第一人稱複數，讓我們過夜、讓我們住宿，<code><span class="sn">H03885</span></code> luwn；字義「停留、過夜」。和合本寫「住宿」）</li>
+<li><strong>בַּ/כְּפָרִֽים׃</strong>（介詞加冠詞加陽性名詞複數絕對形，在那些村莊裏，<code><span class="sn">H03723</span></code> kaphar；字義「村莊」。字典記本詞在本節與歷代志上 27:25 作村莊。和合本寫「村莊」）</li>
+</ul>
+<p>出去還不夠，還要住下。נָלִינָה 是過夜，不是路過看一眼。地點是那些村莊。和合本寫「你我可以在村莊住宿」，同樣用「你我可以」承這共同的意欲。字典把本詞記作有牆可護的村莊，本節只取「村莊」這一個意思，不另生別解。田間是出去的方向，村莊是過夜的地方。邀請被寫成一整晚都可以一起停留，而不是一句即時的招呼。</p>
+<h3>4️⃣ 收束｜本節歸納</h3>
+<p>本節是上一節所屬與戀慕之後發出的邀請：來吧，我的良人，讓我們往田間去，讓我們在村莊過夜。和合本把稱呼提前，並兩次寫「你我可以」。原文此節沒有角色標示。下一節才寫早起往葡萄園去看花果；本節先把人請出城，請到田間與村莊。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H03212、H01730、H03318、H07704、H03885、H03723。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">יָלַךְ</span><span class="gid">H03212</span></div><ul><li><b>主數值</b> 60</li><li><b>H小數</b> 6</li><li><b>H標準</b> 60</li><li><b>H序數</b> 33</li><li><b>H_Atbash</b> 90</li><li><b>H_Sofit擴展</b> 540</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 60 的詞條共 32 個（含本詞）。其中已有中文詞義者如 H00279 אֲחִיאָם「母親的兄弟」、H00974 בָּחַן「試驗(尤指金屬)、嘗試、驗證」、H00975 בַּחַן「守望樓」、H00976 בֹּחַן「考驗」、H01347 גָּאוֹן「威嚴、傲慢、趾高氣揚」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　לְכָה 是命令語「來吧」，本節用來招呼良人前來。和合本寫「來吧」，只是把「我的良人」提前到這聲招呼之前。</p>
+<p><span class="gl">④精意</span>　先請他來。本節不解釋上一句戀慕，只把人喚到可以一起舉步的地方。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">דּוֹד</span><span class="gid">H01730</span></div><ul><li><b>主數值</b> 14</li><li><b>H小數</b> 14</li><li><b>H標準</b> 14</li><li><b>H序數</b> 14</li><li><b>H_Atbash</b> 280</li><li><b>H_Sofit擴展</b> 14</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 14 的詞條共 25 個（含本詞）。其中已有中文詞義者如 H00329 אָטָד「荊棘、鼠李」、H00893 בֵּבַי「空洞」、H00959 בָּזָה「輕視、鄙視、輕蔑」、H00960 בָּזֹה「被藐視的」、H00961 בִּזָּה「搶奪、傷害、破壞」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　דוֹדִי 是「我的良人」，作這聲「來吧」的稱呼。和合本同樣寫「我的良人」，只是把它放在句首。</p>
+<p><span class="gl">④精意</span>　被請來的，仍是她自己的良人。邀請有對象，不是向著空地喊一聲「來」。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">יָצָא</span><span class="gid">H03318</span></div><ul><li><b>主數值</b> 101</li><li><b>H小數</b> 11</li><li><b>H標準</b> 101</li><li><b>H序數</b> 29</li><li><b>H_Atbash</b> 445</li><li><b>H_Sofit擴展</b> 101</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 101 的詞條共 22 個（含本詞）。其中已有中文詞義者如 H00368 אֵימִים「驚駭」、H00404 אָכַף「催逼、渴望、屈身」、H00405 אֶכֶף「重擔、迫切、催促」、H00536 אֻמְלַל「虛弱的、無力的」、H00537 אֲמֵלָל「衰弱、軟弱無力的」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　נֵצֵא 是「讓我們出去」，第一人稱複數，去處是那田野。和合本寫「往田間去」，並加上「你我可以」。</p>
+<p><span class="gl">④精意</span>　出去是兩個人的動作。本節要他來，為的是一起走向田野，而不是讓她獨自先走。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">שָׂדֶה</span><span class="gid">H07704</span></div><ul><li><b>主數值</b> 309</li><li><b>H小數</b> 12</li><li><b>H標準</b> 309</li><li><b>H序數</b> 30</li><li><b>H_Atbash</b> 192</li><li><b>H_Sofit擴展</b> 309</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 309 的詞條共 15 個（含本詞）。其中已有中文詞義者如 H00873 בִּאוּשׁ「邪惡的、壞的」、H01487 גּוּשׁ「泥土、土塊」、H01910 הֲדַדְרִמּוֹן「石榴的哈達」、H06999 קָטַר「使冒煙、以火燒變為香味(作為崇拜的活動)」、H07000 קָטַר「圍以墻、包圍」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　הַשָּׂדֶה 是那田野，作一同前去的處所。和合本寫「田間」。本節不用田野來起誓，只用它標出要去的地方。</p>
+<p><span class="gl">④精意</span>　田野把人從屋裏帶出來。邀請一出口，視線已經落到可以行走、可以停留的開闊地。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">לוּן</span><span class="gid">H03885</span></div><ul><li><b>主數值</b> 86</li><li><b>H小數</b> 14</li><li><b>H標準</b> 86</li><li><b>H序數</b> 32</li><li><b>H_Atbash</b> 109</li><li><b>H_Sofit擴展</b> 736</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 86 的詞條共 12 個（含本詞）。其中已有中文詞義者如 H00174 אֲהָלִים「沉香木」、H00430 אֱלֹהִים「　神、諸神」、H00644 אָפָה「烘烤」、H01691 דִּבְלַיִם「兩個餅」、H03563 כּוֹס「杯子、貓頭鷹」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　נָלִינָה 是「讓我們過夜」。字典記作住宿、過夜。和合本寫「住宿」。本節把共同的停留寫到夜裏。</p>
+<p><span class="gl">④精意</span>　不是路過。本節請人一起住下，讓這邀請有過夜的分量。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">כָּפָר</span><span class="gid">H03723</span></div><ul><li><b>主數值</b> 300</li><li><b>H小數</b> 12</li><li><b>H標準</b> 300</li><li><b>H序數</b> 48</li><li><b>H_Atbash</b> 39</li><li><b>H_Sofit擴展</b> 300</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 300 的詞條共 42 個（含本詞）。其中已有中文詞義者如 H03334 יָצַר「壓迫、使狹窄、悲痛、苦惱」、H03335 יָצַר「鑄造成形、定型、陶匠」、H03336 יֵצֶר「形式、框架、目的」、H03337 יֵצֶר「模型」、H03338 יָצֻר「構造、肢體」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　כְּפָרִים 是那些村莊，作過夜的地點。字典記作村莊。和合本寫「村莊」。</p>
+<p><span class="gl">④精意</span>　村莊把過夜安放在一個可住的地名上。田野是出去的方向，人卻要在村莊裏住下來。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>上一節（雅歌 7:10）寫：「我屬我的良人，他也戀慕我。」本節緊接那句所屬與戀慕，發出「來吧」的邀請，並請人一同往田間去、在村莊住宿。兩節相連，卻不可把上一節的戀慕直接說成本節已經寫出的行程。</p>
+<p>本卷稍後（雅歌 7:12）才寫早起往葡萄園去看發芽開花。本節先停在田間與村莊，不要把葡萄園提前填進來。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。外引只止於上面已用的經文。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「來吧，我的良人，讓我們出去到那田野；讓我們在那些村莊過夜」。和合本寫「我的良人，來吧！你我可以往田間去；你我可以在村莊住宿」，把稱呼提前，並兩次加上「你我可以」。原文此節沒有角色標示。</p>
+<p><strong>本書用法</strong>　本節緊接 7:10「我屬我的良人，他也戀慕我」，把那句關係轉成一同外出與過夜的邀請。「良人」仍用本卷慣見的 דּוֹד。下一節才寫葡萄園與愛情，本節自己只寫田間與村莊。</p>
+<p><strong>舊約根源</strong>　「過夜」在舊約常與某地連用，指在那裏停留一晚。本節取這個普通意思，不另拉別處的住宿條例來改定村莊。「村莊」一詞在舊約少見，字典並記歷代志上 27:25，那是另一處的用法，只可外引，不可讀成本節的現場。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把田間與村莊讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<p><strong>跨篇深意</strong>　所屬與戀慕被說出以後，還要有一步「來」。本節讓那一步走向田野，並且住到夜裏。關係不是只停在上一節那句話裏，乃是被請到可以一起行走、一起過夜的地方。</p>
+<h2>六、總意</h2>
+<p>上一節的話還很短：我屬他，他的戀慕向著我。這一節卻已經請人動身。來吧，我的良人。隨後是田間，是村莊，是過夜。</p>
+<p>和合本把「我的良人」放在最前，又兩次寫「你我可以」。原文先叫他來，再用兩個「讓我們」把路與夜都算進去。可以，是譯文的口氣；原文是邀請，不是先問許不許可。</p>
+<p>田野是出去的方向，村莊是住下來的地方。人還沒有被請去看葡萄發芽，先被請出到可以過夜的開闊地。這一節不解釋上一句戀慕，只把人帶上路。</p>
+<p>本節沒有角色標示。讀到這裏，只要先聽見那一聲「來吧」，也聽見一同外出、一同住宿。下一節才會早起，往葡萄園去。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H03212 — יָלַךְ「行走、來去」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03212</li><li>詞形 יָלַךְ</li><li>音譯 yalak</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 行走、來去</li><li>字源 一原形字根</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 去, 行走, 來</li><li>1a (Qal)</li><li>1a1 去, 走, 來, 啟程, 出發, 前進, 離開</li><li>1a2 死, 活, 生活的方式 (比喻用法)</li><li>1b (Hiphil) 引導, 帶來, 帶走, 搬, 使行走</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>請見SH1980</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root (compare 1980 );<br/>to walk (literally or figuratively); causatively, to carry (in various senses)</p></div></div></div></details>
+<details class="ntfold"><summary>H01730 — דּוֹד「情侶、所愛的人、叔伯、愛情」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01730</li><li>詞形 דּוֹד</li><li>音譯 dowd</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 情侶、所愛的人、叔伯、愛情</li><li>字源 來自一不用字根，意為沸騰</li><li>中文用法 良人33 叔叔12 愛情8 伯叔5 親愛1 所愛者1 叔父1 (61)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 心愛的 (人), 愛, 叔伯或舅舅</li><li>1a 心愛的 (人)</li><li>1b 叔伯或舅舅</li><li>1c 愛 (複數, 抽象)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽דּוֹד 歌5:9。單陽附屬形דּוֹד 撒上10:14；דֹּד 利10:4 斯2:15。單陽3單陽詞尾דּוֹדוֹ 摩6:10 撒上10:16；דֹּדוֹ 利20:20。單陽3單陰詞尾דּוֹדָהּ 歌8:5。單陽2單陽詞尾דֹּדְךָ 耶32:7。單陽1單詞尾דּוֹדִי 賽5:1；דֹּדִי 耶32:8。複陽דּוֹדִים 歌5:1；דֹדִים 箴7:18 結16:8 23:17。複陽3複陰詞尾דֹדֵיהֶן 民36:11。複陽2單陽詞尾דֹּדֶיךָ 歌1:2,4。複陽2單陰詞尾דֹדַיִךְ 歌4:10。</p>
+<p>一、心愛的人。良人，歌1:13,14,16 2:3,8,9,10,16,17 4:16 5:2,4,5,6,6,8,9,9,10,16 6:1,1,2,3,3 7:10,11,12,13 8:5,14。親愛的、朋友：שִׁירַת דּוֹדִי我所愛者的歌，賽5:1。</p>
+<p>二、叔伯或舅舅，民36:11 撒上14:50 王下24:17 利20:20 25:49,49 撒上10:14,15,16 斯2:7,15 耶32:7,8,9,12；大衛的叔叔約拿單，代上27:32；死人的伯叔，摩6:10。</p>
+<p>三、複數抽象：愛，歌1:2,4 4:10,10 5:1；עֵת דֹּדִים看見你的時候正動愛情，結16:8；מִשְׁכַּב דֹּדִים愛情的床，結23:17。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or (shortened) דֹּד ; from an unused root meaning properly, to boil , i.e.<br/>(figuratively) to love ; by implication, a love-token , lover , friend ; specifically an uncle</p></div></div></div></details>
+<details class="ntfold"><summary>H03318 — יָצָא「出去、帶出、外出」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03318</li><li>詞形 יָצָא</li><li>音譯 yatsa&#x27;</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 出去、帶出、外出</li><li>字源 一原形字根</li><li>中文用法 出來201 出170 出去146 領出來50 去32 發出23 往19 領...出17 出了16 領15 帶到14 帶出來13 發8 通9 領...出來9 來8 帶出7 搬到7 流出來7 到6 生6 離開6 領出6 帶出去5 拈出5 拿出來5 通到5 脫離4 拿出4 上4 傳4 所出的4 拉出來4 流出4 生出4 退去4 出入3 救...脫離3 出到3 取出來3 報3 杈出3 走3 起行3 交出來2 休2 凸出來2 出來的2 出班的2 出現2 出離2 到了2 加2 去吧2 墜落下來2 奪了2 抽出來2 拉到2 拔2 杈出來2 率領2 生了2 發作2 行2 調來2 買來2 趕2 跟隨2 達到2 長2 除掉2 離了2 領...出去2 帶...出來2 領...到2 帶出...去2 帶...出2 一面1 一面走1 不守舍1 使...出1 帶1 伸1 作為1 使用1 傳揚1 傳給1 傳開1 冒出1 凸出1 出巡1 出戰1 出於1 出產1 分別出來1 去了1 墜1 失去1 宣揚1 射出1 帶來1 帶回1 帶領...出1 底1 引1 彰顯1 往前行1 得1 必1 必定出1 成1 打造1 拈1 拉...出1 拉出1 拉出去1 拿來1 拿到1 拿去1 挪開1 掠來1 接續1 提...出1 搬來1 搬出1 搬出來1 擔出1 斷1 是1 歸1 歸於無有1 流去1 流行1 消除1 湧出1 湧出來1 爬滿1 牽到1 率1 發出來1 發生1 穿出1 穿通1 索要1 結1 行走1 說1 起1 越過1 趕出1 趕出去1 跟著1 轉交1 追趕1 退出去1 逃脫1 透出1 通遍1 運出1 運出來1 醒1 釋放1 長出1 閒遊1 降1 除去1 離1 領出來的1 顯1 顯明1 顯露出來1 飛去1 產1 點1 救...出1 領出...來1 使...到1 使...出來1 帶...出去1 帶...到1(1037)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 前往, 出來</li><li>1a (Qal)</li><li>1a1 去或出來</li><li>1a1a 從一個地方</li><li>1a1b 從某人所在之處前往</li><li>1a1c 逃跑</li><li>1a1d 離開</li><li>1a1e 強調起源, 源頭</li><li>1a2 前去</li><li>1a2a 一個地方</li><li>1a2b 前行, 行進</li><li>1a2c 前來或前往 (有目的或結果)</li><li>1a3 出去以及回來, 來來回回</li><li>1b (Hiphil)</li><li>1b1 使前去或出來</li><li>1b1a 一個人從一個地方</li><li>1b1b (為著某個特定目的) 從一個地方帶出來</li><li>1b1c 率領</li><li>1b2 將人帶出 (痛苦, 敵人手中)</li><li>1b3 帶動物出來</li><li>1b4 帶東西</li><li>1b5 帶出 (喻意)</li><li>1c (Hophal) 被帶出或帶往</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－3單陽יָצָא 創10:11。3單陰יָצְאָה 民16:35；יָצָאָה 賽28:29。3複יָצְאוּ 創8:19；יָצָאוּ 王上20:18。3複1單詞尾יְצָאֻנִי 耶10:20。2單陽יָצָאתָ 創24:5。2複陽יְצָאתֶם 出13:3 申11:10。1複יָצָאנוּ 民11:20。1單יָצָאתִי 民22:32。連續式3單陽וְיָצָא 出16:4。連續式3單陰וְיָצְאָה 出21:3。連續式3複וְיָצְאוּ 出21:22。連續式2單陰וְיָצָאת 耶31:4。連續式2複陽וִיצָאתֶם 士21:21 瑪4:2。連續式1單וְיָצָאתִי 撒上17:35。</p>
+<p>未完成式－3單陽יֵצֵא 創15:4。3單陰תֵצֵא 出21:7。3複陽יֵצְאוּ 創15:14;יֵצֵאוּ 創17:6。2單陽תֵצֵא 申20:1。2單陰תֵּצְאִי 耶2:37。2複陽תֵּצְאוּ 創42:15。2複陰תֵּצֶאנָה 摩4:3。1單אֵצֵא 出11:8。1複נֵצֵא 歌7:11。敘述式3單陽וַיֵּצֵא 創4:16。敘述式3單陰וַתֵּצֵא 創30:16。敘述式3複陽וַיֵּצְאוּ 創11:31。敘述式3複陰וַתֵּצֶאנָה 撒上18:6 王下2:24；וַתֵּצֶאןָ 出15:20。敘述式1單+詞尾וָאֵצְאָה , ָה 尼2:13。祈願式3單陽יֵצֵא 詩17:2。祈願式3單陰תֵּצֵא 士9:20。祈願式2單陽תֵּצֵא 箴25:8。鼓勵式1單אֵצְאָה 代下1:10。</p>
+<p>祈使式－單陽צֵא 創8:16；צֵאָה 士9:29。單陰צְאִי 歌1:8。複陽צְּאוּ 創19:14 賽49:9 結9:7；יצֵאוּ 耶50:8。</p>
+<p>不定詞－獨立形יָצוֹא 創8:7；יָצֹא 創27:30。附屬形צֵאת 創24:11。附屬形3單陽詞尾צֵאתוֹ 創12:4。附屬形3複陽詞尾צֵאתָם 出5:20。附屬形2單陽詞尾צֵאתְךָ 申16:3。附屬形2單陰詞尾צֵאתֵךְ 結26:18。附屬形2複陽詞尾צֵאתְכֶם 申24:9。附屬形1單詞尾צֵאתִי 出9:29。附屬形1複詞尾צֵאתֵנוּ 書9:12。</p>
+<p>主動分詞－單陽יֹצֵא 創2:10。單陰יֹּצָא 傳10:5；יֹצֵאת 創24:15 申28:57。複陽הַיֹּצְאִים 創9:18；יֹצְאִים 出25:32。複陰יוֹצְאוֹת 亞5:9。複陽附屬形יֹצְאֵי 創34:24。</p>
+<p>1.去或出來。</p>
+<p>A. 從（介詞מִן）一個地方來或去。帳棚，創31:33；מִפֶּתַח אֹהֶל מוֹעֵד會幕的門，利8:33 10:7；וּמִן-הַמִּקְדָּשׁ 聖所，利21:12；王宮，撒下11:8；家門，書2:19 士11:31；מִפֶּתַח-בֵּיתוֹ自己的房門，出12:22；營中，撒上13:17 王下7:12；城，創19:14 12:4 王上11:29 20:17 彌4:10；洞裡，撒上24:8；方舟，創9:18 8:16,19；葡萄園，士21:21。後有直接受詞：אֶת-הָעִיר城，創44:4 出9:29；後跟著介詞בְּ，門，耶17:19 尼2:13。後面跟著一個表明地點的受詞，לֹא-אֵצֵא פָתַח不出門口，伯31:34。分詞附屬形：מִכֹּל יֹצְאֵי הַתֵּבָה從方舟裡出來的，創9:10；יֹצְאֵי שַׁעַר עִירוֹ從自己城門出去的，創34:24；獨立使用： 書2:5 士3:24 出34:34 民33:3；從某個地方移出，創10:11,14 24:5 出12:41 13:3,8 23:15 34:18 民11:20 22:5 申4:45,46 9:7 11:10 16:3,6 23:4 24:9 25:17 書2:10 5:4,5,6 民33:1 王上6:1 8:9 代下5:10 王下21:15 耶7:25 該2:5 詩114:1。</p>
+<p>B. 從某人所在之處前往。後面跟著מֵעִם（從某人那裡），出8:30 9:33 10:6；מֵאֵת，創44:28 出5:20 耶2:37；מֵעָלָיו，士3:19；מִלִּפְנֵי（從...面前），創4:16 41:46 47:10 斯8:15 傳10:5；מֵעִם פְּנֵי 伯1:12；מֵאֵת מְּנֵי，伯2:7；＋詞尾יְצָאֻנִי離我而去，耶10:20。</p>
+<p>C.出去（成為自由的人）。解放，出21:2,3,3,4,5,7,11；וַיֵּצְאוּ מִתַּחַת יַד-אֲרָם使他們脫離亞蘭人的手，王下13:5；在禧年，土地、房屋等要歸回原主：出買主的手，利25:28,30,31,33 27:21；奴僕也是，利25:54。離婚，וְיָצְאָה מִבֵּיתוֹ她從他的家出去，申24:2；בְּהִשָּׁפְטוֹ יֵצֵא רָשָׁע他受審判的時候，願他帶著罪名而出！ 詩109:7；因疾病，עַד-יֵצְאוּ מֵעֶיךָ直到你的腸子掉落出來，代下21:15,19。</p>
+<p>D. 逃跑。וַיֵּצֵא הַחוּצָה到外邊去，創39:12,15；כִּי נָצֹא תֵּצֵא使她可以飛去，耶48:9；רָעָה אֲשֶׁר לֹא-יוּכְלוּ לָצֵאת מִמֶּנָּה災禍是他們不能逃脫的，耶11:11；יְרֵא אֱלֹהִים יֵצֵא אֶת-כֻּלָּם敬畏　神的人必從這兩樣出來，傳7:18。</p>
+<p>E.離開。בְּצֵאת נַפְשָׁהּ她的靈魂要走的時候，創35:18，即在她咽氣時；תֵּצֵא רוּחוֹ他的氣一斷，詩146:4。בְּצֵאת הַיַּיִן מִנָּבָל拿八醒了酒，撒上25:37。比喻用法：וַיֵּצֵא לִבָּם他們的心都跳出來了，創42:28（比喻極度驚慌或恐懼）；וְחֶלְאָתָהּ לֹא יָצְאָה מִמֶּנָּה其中的鏽未曾除掉，結24:6；耶和華的榮耀從殿的門檻那裡出去，結10:18；וַיֵּצֵא מִן-בַּת-צִיּוֹן כָּל-הֲדָרָהּ錫安一切的威榮全都失去，哀1:6。不定詞：退出，結束；בְּצֵאת הַשָּׁנָה在年底，出23:16；וּכְעֵת צֵאת הַקֵּץ לְיָמִים שְׁנַיִם到了兩年結束的時候，代下21:19。</p>
+<p>F. 無生命的東西：有河從伊甸流出來，創2:10；從磐石裡必有水流出來，出17:6 民20:11 士15:19；用火鑄成的牛犢，出32:24；精金，伯23:10（比喻）；預言從　神殿流出的活水，結47:1,8,12 亞14:8 珥3:18；人的精液，利15:16,32 22:4；刺穿身體的武器，撒下2:23 王下9:24 伯20:25；וַתֵּצֵא אַחֲרָיו מַשְׂאַת הַמֶּלֶךְ王的一分禮物尾隨著他身後出去，撒下11:8。花費金錢，他們把銀子轉交，王下12:11；他的箭必射出像閃電，亞9:14（像閃電一樣）；從火中發出閃電，結1:13；日頭出現，士5:31 創19:23 賽13:10；星宿出現，尼4:21；公理也不顯明，哈1:4 詩17:2；審判如光發出，何6:5 賽62:1；וַיֵּצֵא הַגּוֹרָל籤抽出來，書16:1 民33:54 書19:1,17,24,32,40 21:4；וַיֵּצֵא גְּבוּל גּוֹרָלָם落在他們的鬮的地界，書18:11。</p>
+<p>G. 特別強調起源或來源的概念。牆上長出來的牛膝草，王上4:33；מֵיְהוָה יָצָא הַדָּבָר這事乃出於耶和華，創24:50；מֵעִם יְהוָה出於耶和華，賽28:29；מֵרְשָׁעִים יֵצֵא רֶשַׁע惡事出於惡人，撒上24:13（古諺）；褻瀆的事出於(מֵאֵת)先知，耶23:15；有火從希實本，民21:28 耶48:45；火從荊棘裡，士9:15,20；מִלִּפְנֵי從...面前，利9:24 10:2；מֵאֵת יְהוָה從耶和華那裡，民16:35；וְיֵצֵא רֶשֶׁף לְרַגְלָיו在他腳下有火焰發出，哈3:5；忿怒מִלִּפְנֵי יְהוָה從耶和華面前出來，民16:46。獨立使用： 耶4:4＝耶21:12 23:19＝耶30:23；救恩，賽51:5；וְנִשְׁמַת-מִי יָצְאָה מִמֶּךָּ誰的靈從你而出？ 伯26:4；從說話者口中說出的話：וְלֹא-יֵצֵא מִפִּיכֶם דָּבָר連一句話也不可出你們的口，書6:10 士11:36 撒上2:3 耶44:17 伯37:2 斯7:8 民30:2 32:24；從耶和華口中說出的話： 賽45:23 48:3 51:4 55:11 結33:30；耶和華的話語、訓誨、命令，賽2:3＝彌4:2 但9:23；人的命令，斯1:19。</p>
+<p>H. 孩子從腰部（父親的）出來：מֵעִים肚腹，撒下7:12 16:11；מֵחֲלָצֶיךָ你的腰，創35:11 王上8:19 代下6:9；與介詞מִן（從）連用，יֵצְאוּ מִמְּךָ從你出的，王下20:18＝賽39:7；יֹצְאֵי יְרֵכוֹ從他的大腿出來的，士8:30 創46:26 出1:5；מֵרֶחֶם אִמּוֹ母腹，民12:12 耶1:5 20:18 伯3:11。比喻用法：海，伯38:8；冰，伯38:29；מִבֶּטֶן אִמִּי母親的肚腹，伯1:21 傳5:15。字面意思，來源未表述：先產的，創25:25,26 38:28,29,30；早產，出21:22；וּבְשִׁלְיָתָהּ הַיּוֹצֵת מִבֵּין רַגְלֶיהָ她兩腿中間出來的胎盤，申28:57；家庭或種族聯繫，鴻1:11 賽48:1 代上1:12 2:53；יָצָא也用於葡萄樹所產的，士13:14；הַיֹּצֵא הַשָּׂדֶה田地所出的，申14:22；מִמֶּנָּה יֵצֵא-לָחֶם糧食從它出來，伯28:5；從蛇的根必生出毒蛇，賽14:29；蔓子爬滿了園子，伯8:16 14:2 31:40；וְיָצָא חֹטֶר מִגֵּזַע יִשָׁי從耶西的樹幹必長出嫩枝，賽11:1；長出一個小角，但8:9；燈臺兩旁要杈出六個枝子，出25:32,33,35 37:18,19,21；凸出來（從城樓），尼3:25,26,27；準繩要往外量出，耶31:39；邊界，通到哈薩亞達，民34:4,9 書15:3,4,9,11 16:2,6,7。</p>
+<p>2.前去、前行、前往</p>
+<p>A.前去一個地方，創27:3 耶14:18 結3:22 亞6:6,7；וַיֵּצֵא הַפַּרְשְׁדֹנָה糞便就流出來了，士3:22；וְיָצָאנוּ אֵלֶיךָ我們就出來歸順你，撒上11:3 王下18:31＝賽36:16 耶38:17,21；אֵין-פֶּרֶץ וְאֵין יוֹצֵאת沒有人闖進來，也沒有人出去爭戰，詩144:14；יָצָא מִן-הַמָּקוֹם הַזֶּה從這地方出去的，耶22:11；בָּנַי יְצָאֻנִי וְאֵינָם我的兒女離我出去，耶10:20。</p>
+<p>B.前行、行進。比喻用法：מֵרָעָה אֶל-רָעָה יָצָאוּ乃是惡上加惡，耶9:3；刀從鞘內掉出來，撒下20:8。</p>
+<p>C.前來或前往，特別是指與目的或結果相關：וְהִכִּתִיו אַחֲרָיו וְיָצָאתִי我就追趕牠，撒上17:35；יָצָא שָׁאוּל לְבַקֵּשׁ אֶת-נַפְשׁוֹ掃羅出來尋索他的命，撒上23:15，參 撒上26:20 撒下2:13 18:4 王上20:18,18,19,39 王下5:2 彌1:11 耶37:5 亞14:3 但11:11,44；淫婦的，箴7:15；一個天使，民22:32 但9:22；יֵצֵא... אִתְּכֶם出來，跟你們在一起，撒上22:3；軍隊出征形成戰線，הַיֹּצֵא אֶל-הַמַּעֲרָכָה軍兵剛出去擺陣，撒上17:20；בְּכֹל אֲשֶׁר יָצְאוּ在所有他們出去之處，士2:15；וְיָצָא לְפָנֵינוּ在我們前面出去，撒上8:20，王率領軍兵出征；耶和華在他的百姓前頭，士4:14 撒下5:24 詩68:7 108:11 代上14:15；耶和華從西珥出發，士5:4 哈3:13；יָצְאָה בִי יַד-יְהוָה耶和華的手伸出對付我，得1:13；獨立使用：點火焚燒荊棘，出22:6。</p>
+<p>3.出去以及回來、來來回回，表達往復的動作：יָצוֹא וָשׁוֹב烏鴉飛來</p>
+<p>飛去，創8:7，出門歸來＝來回、往返；אִישׁ יוֹצֵא ... יֹצֵא יָצוֹא וּמְקַלֵּל有一個…的人出來，...他一面走一面咒罵，撒下16:5（出來，並且一邊出來一邊咒罵）；אֵין יוֹצֵא וְאֵין בָּא無人出，也無人入，書6:1（即沒有自由的進出通行）；王上15:17 代下16:1 15:5；在他們面前出、在他們面前入，也可以引導他們出、引導他們入，民27:17 撒上18:16 29:6。比喻用法：וּבָרוּךְ אַתָּה בְּצֵאתֶךָ你出也蒙福，申28:6；你出也受詛咒，申28:19；לֹא-אוּכַל עוֹד לָצֵאת וְלָבוֹא我不能再出或入，申31:2 書14:11 王上3:7 賽37:28 王下19:27 詩121:8。</p>
+<p>二、Hifil</p>
+<p>完成式－3單陽הוֹצִיא 創14:18。3單陽3複陽詞尾הוֹצִיאָם 出32:12。3單陽2單陽詞尾הוֹצִיאֲךָ 申6:12 16:1；הוֹצִאֲךָ 出13:9 申7:19。3單陽1複詞尾הוֹצִיאָנוּ 出13:14。3複הוֹצִיאוּ 出12:39。2單陽הוֹצֵאתָ 出32:11。2單陽1單詞尾הֹצֵאתָנִי 伯10:18。2複陽הוֹצֵאתֶם 出16:3。1單הוֹצֵאתִי 出12:17。1單3單陰詞尾וֹצֵאתִיהָ 亞5:4。1單3複陽詞尾הוֹצֵאתִים 結20:14。1單2單陽詞尾הוֹצֵאתִיךָ 創15:7。連續式3單陽וְהוֹצִיא 申22:14。連續式3單陽1單詞尾וְהוֹצִיאַנִי 結42:15。連續式3複וְהוֹצִיאוּ 申21:19。連續式2單陽וְהוֹצֵאתָ 民20:8。連續式2單陰וְהוֹצֵאתְ 王上17:13。連續式2單陽1單詞尾וְהוֹצֵאתַנִי 創40:14。連續式1單וְהוֹצֵאתִי 出7:4。</p>
+<p>未完成式－3單陽יוֹצִיא 利16:27。3單陰תּוֹצִיא 賽61:11 該1:11。3單陽2單陽詞尾וַיּוֹצִאֲךָ 申4:37 5:15。3單陽1單詞尾יוֹצִיאֵנִי 彌7:9。3單陽3複陽詞尾יוֹצִיאֵם 民27:17。3複陽יֹצִאוּ 王上10:29。3複陽3複陽詞尾יוֹצִיאוּם 代上9:28。2單陽תוֹצִיא 出12:46 伯38:32。2單陽1單詞尾תּוֹצִיאֵנִי 詩31:4。2複陽תּוֹצִיאוּ 利26:10。1複נוֹצִיא 民20:10。敘述式3單陽וַיּוֹצֵא 創15:5；וַיּוֹצִא 申4:20。敘述式3單陰וַתּוֹצֵא 創1:12 得2:18。敘述式3單陽3單陰詞尾וַיּוֹצִאָהּ 出4:6,7。敘述式3單陽3複陽詞尾וַיּוֹצִיאֵם 拉1:8。敘述式3單陽2單陽詞尾וַיּוֹצִאֲךָ 申4:37。敘述式3單陽1單詞尾וַיּוֹצִיאֵנִי 詩18:19。敘述式3單陽1複詞尾וַיֹּצִאֵנוּ 民20:16。敘述式3複陽וַיּוֹצִיאוּ 利24:23。敘述式3複陽3單陽詞尾וַיּוֹצִיאֻהוּ 王下12:11；וַיֹּצִאֻהוּ 創19:16 王上21:13。敘述式2單陽וַתֹּצֵא 耶32:21。敘述式2單陽1複詞尾וַתּוֹצִיאֵנוּ 詩66:12。敘述式1單3複陽詞尾וָאוֹצִיאֵם 結20:10。祈願式3單陰תּוֹצֵא 創1:24。鼓勵式1單אוֹצִיאָה 創19:8。</p>
+<p>祈使式－單陽הוֹצֵא 創19:12；הוֹצִיא 賽43:8；הוֹצִיאָה 詩142:7。單陰הוֹצִיאִי 書2:3。單陽3單陰詞尾הוֹצִיאָהּ 結24:6。單陽3複陽詞尾הוֹצִיאֵם 創19:5。單陽1單詞尾הוֹצִיאֵנִי 詩25:17 王上22:34。複陽הוֹצִיאוּ 創45:1。複陽3單陽詞尾הוֹצִיאֻהוּ 王上21:10。複陽3單陰詞尾הוֹצִיאוּהָ 創38:24。</p>
+<p>不定詞－附屬形הוֹצִיא 出6:13。附屬形3單陽詞尾הוֹצִאֵהוּ 耶39:14。附屬形3複陽詞尾הוֹצִיאָם 創19:17。附屬形2單陽詞尾הוֹצִיאֲךָ 出3:12。附屬形1單詞尾הוֹצִיאִי 出16:32；הוֹצִיאִ 耶7:22。附屬形1複詞尾הוֹצִיאָנוּ 出14:11。</p>
+<p>分詞－單陽מוֹצִיא 出6:7；מַּוֹצִיא 撒下5:2。單陽附屬形מוֹצֵא 詩135:7。單陽3複陽詞尾מוֹצִיאָם 民23:22。單陽2單陽詞尾מוֹצִיאֲךָ 申8:14 13:10。單陽1單詞尾מוֹצִיאִי 撒下22:49。複陽מוֹצִיאִים 代下9:28。複陽附屬形מוֹצִאֵי 民14:37。</p>
+<p>1.使前去或出來。</p>
+<p>A. 從某處將某人帶出，＋מִן（來源地）：監牢，創40:14 耶20:3 52:31 賽42:7；家，書6:22；城，創19:12 結14:22；耶和華將耶路撒冷的居民從城中帶出並交給敵人，結11:7,9；摩西帶百姓出埃及，出3:10,11,12 6:13,26,27 14:11；耶和華領以色列人出埃及，出18:1 20:2 書24:6 出13:3,9,14,16 32:11 民20:16 23:22 24:8 申1:27 4:20,37 5:6,15 6:12,21,23 8:14 9:12,26,28 13:5,10 16:1 26:8 利19:36 22:33 23:43 25:38,55 26:13,45 出6:6,7 7:4,5 12:17,42 16:6,32 29:46 民15:41 士2:12 6:8 撒上12:8 王上8:16 代下6:5 王上8:21,51,53 9:9 耶7:22 11:4 31:32 32:21 34:13 結20:6,10 代下7:22 詩136:11 但9:15；耶和華領以色列人從巴比倫歸回，結20:34,41 34:13；將亞哈王拉出戰場，王上22:34 代下18:33；約瑟把兩個兒子從以色列兩膝中領出來，創48:12。</p>
+<p>B. 為了特定的目的將某人從某地帶出來： 出19:17(מִן)；創38:24 書2:3 6:23 士6:30 撒下12:31＝代上20:3 王下11:12 代下23:11,14 賽43:8。主詞是耶和華，把以色列人從埃及帶出來，要在曠野殺他們，申9:28,29。受詞歌革，結38:4；主詞יַד־יְהוָה耶和華的手，結37:1。</p>
+<p>C.引出敵人，撒下10:16＝代上19:16；賽43:17。耶和華，使車輛、馬匹、軍兵、勇士都出來，賽43:17；領以色列人出入的是你，撒下5:2＝代上11:2 民27:17。</p>
+<p>D. מֵרֶחֶם הֹצֵאתָנִי使我出母胎，伯10:18，人的出生是　神掌權。</p>
+<p>E. 從某人面前離開。הוֹצִיאוּ כָל-אִישׁ מֵעָלָי人都要離開我出去，創45:1 撒下13:9,18。</p>
+<p>F. 拋妻棄子。休這一切的妻，拉10:3,19。</p>
+<p>G. 將某人帶到某個地方（אֶל表方向或目的地），書10:22,23 申17:5 22:21,24 利24:14,23 民15:36 王上21:10,13 王下11:15 代下23:14；לְהוֹצִאֵהוּ אֶל-הַבָּיִת帶回家去，耶39:14。主詞是化身為人的天使，創19:16,17 結42:1,15 46:21 47:2 創15:5；為了特定目的，出16:3。</p>
+<p>2. 比喻用法，將人從(מִן)困境中帶出，詩25:17 68:6 107:14,28 142:7 143:11；脫離仇敵，撒下22:49；將我的腳從網裡拉出來，詩25:15 31:4；領到寬闊處，撒下22:20＝詩18:19 66:12。</p>
+<p>3.帶出動物。從埃及帶出來的馬，王上10:29 代下1:17,17 9:28；有血肉的活物（從方舟），創8:17；祭牲，民19:3。</p>
+<p>4. 無生命的物體：</p>
+<p>A.攜帶或帶出。生麵，出12:39；屍首，摩6:10；財物，撒下12:30＝代上20:2；車，王上10:29；亞舍拉木偶，王下23:4,6；王宮裡的寶物，王下24:13；器皿，代上9:28；污穢之物，代下29:5,16,16；銀子，代下34:14；骸骨，耶8:1；擔子，耶17:22；兵器，耶50:25；物件，結12:4,7；受詞הָאֶבֶן הָרֹאשָׁה頂上那塊石頭，亞4:7；陳糧，利26:10。</p>
+<p>B.取出（從某人的身上或行李中），創24:53；從懷裡伸出手，出4:6,7 得2:18。</p>
+<p>C. ＝拔出。וְהוֹצֵאתִי חַרְבִּי מִתַּעְרָהּ拔刀出鞘，結21:3,5。</p>
+<p>D.帶到某個地方，申28:38 利4:12,21 6:11 14:45 16:27 結46:20。</p>
+<p>E.帶出給某人或為某人。麥基洗德帶著餅和酒出來迎接，創14:18 士6:18,19 王上17:13 王下10:22。</p>
+<p>F. 從某地帶出（מִן），交給某人，民17:9。</p>
+<p>G.交付銀子，王下12:11 15:20。</p>
+<p>H. 使天體出現（＝使升起或顯現）。領出它們的萬象，賽40:26 伯38:32；וְתַעֲלֻמָהּ יֹצִא אוֹר使隱藏的物在光中顯露出來，伯28:11。</p>
+<p>I. 藉由神蹟使之出現：摩西，水從岩石中流出，民20:8,10；耶和華，申8:15 尼9:15 詩78:16。</p>
+<p>J. ＝製造、產生、使之出現：行法術的要生出虱子來，出8:18；鐵匠打造合用器械的，賽54:16；יוֹצִיא，יוֹצִיא חֶמְאָה成奶油、יוֹצִיא דָם出血、יוֹצִיא רִיב啟爭端，箴30:33,33,33；耶和華使人從這地得食物，詩104:14；地發生了青草，創1:12,24 賽61:11 該1:11；亞倫的杖長出花苞，民17:8。</p>
+<p>K.說出話來（從嘴裡說出來），發出言語，伯8:10 15:13 箴10:18 29:11 尼6:19 賽48:20。獨立使用：發言，傳5:2；וְהוֹצִיא עָלֶיהָ שֵׁם רָע把醜名加在她身上，申22:14,19；וַיּוֹצִיאוּ דִּבַּת報惡信，民13:32 14:36,37。</p>
+<p>5.帶出。比喻用法：主詞是耶和華，從他府庫中帶出風來，耶10:13 51:16 詩135:7；我使火從你中間發出，結28:18；書卷，亞5:4；וְאִם-תּוֹצִיא יָקָר מִזּוֹלֵל你若能從無用的言詞中挖掘出寶貴的信息，耶15:19；他要使你的公義如光發出，詩37:6；耶和華已經彰顯我們的公義，耶51:10；וַיֹּצֵא לָאוֹר צַלְמָוֶת從死蔭帶出光明，伯12:22 彌7:9；以耶和華的僕人為主語，מִשְׁפָּט לַגּוֹיִם יוֹצִיא他必將公理傳給外邦，賽42:1,3。</p>
+<p>三、Hofal</p>
+<p>完成式－3單陰הוּצָאָה 結38:8。</p>
+<p>分詞－單陰מוּצֵאת 創38:25。複陽מוּצָאִים 結14:22 47:8。複陰מוּצָאוֹת 耶38:22。</p>
+<p>被帶出或帶往：他瑪被拉出來，創38:25；婦女必都帶到巴比倫，耶38:22；連兒帶女必帶到你們這裡來，結14:22；從列國中招聚出來，結38:8；這水יוֹצְאִים אֶל־הַגְּלִילָה הַקַּדְמוֹנָה往東方流去，結47:8。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>to go (causatively, bring ) out , in a great variety of applications, literally and figuratively, direct and proxim.</p></div></div></div></details>
+<details class="ntfold"><summary>H07704 — שָׂדֶה「田野、土地、田間、鄉下」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07704</li><li>詞形 שָׂדֶה</li><li>音譯 sadeh</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 田野、土地、田間、鄉下</li><li>字源 來自一不用的字根</li><li>中文用法 田90 田野83 地50 田地45 田間20 野13 野地12 郊野3 田園2 京外1 國1 地土1 城邑1 基列1 場1 (324)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 田地, 陸地</li><li>1a 耕種的田地</li><li>1b 野獸的家</li><li>1c 平原 (相對於山地)</li><li>1d 陸地 (相對於海洋)<br/><br/>sadeh {saw-deh&#x27;}</li><li>1 開闊的田野或鄉間</li><li>1a 牧草地</li><li>1b 人跡稀少, 暴力與野獸出沒之地</li><li>1c 野獸的居處</li><li>1d 出產植物,樹木之地</li><li>1e 多石之地</li><li>1f 寬闊之地</li><li>2 有一定範圍的土地或田野</li><li>2a 耕種的田地</li><li>2b 私有土地</li><li>2c 靠近城市或受城市管轄的土地</li><li>2d 國家或支派的疆界</li><li>2e 國王的疆域</li><li>3 陸地 (相對於海洋)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽שָׂדֶה 創2:5；שָׂדַי 耶4:17；שָׂדָי 何10:4。單陽附屬形שְׂדֵה 創14:7。單陽3單陽詞尾שָׂדֵהוּ 創23:9。單陽3單陰詞尾שָׂדָהּ 王下8:3。單陽2單陽詞尾שָׂדְךָ 申11:15；שָׂדֶךָ 申24:19。單陽1單詞尾שָׂדִי 耶32:7,8。單陽1複詞尾שָׂדֵינוּ 彌2:4。複陽שָׂדוֹת 撒上22:7。複陽附屬形מִשְּׂדוֹת 尼12:29；שְׂדֵי 撒下1:21。複陽3單陰詞尾שְׂדֹתֶיהָ 尼11:30。複陽3複陽詞尾שְׂדֹתֵיהֶם 尼5:11。複陽2單陽詞尾שָׂדֶיךָ 王上2:26。複陽2複陽詞尾שְׂדוֹתֵיכֶם 撒上8:14。複陽1複詞尾שְׂדֹתֵינוּ 尼5:3。</p>
+<p>一、שָׂדַי陽性名詞：田地、陸地</p>
+<p>1.耕種的。田地，何12:12 10:4；產出食物，申32:13 哀4:9；שֹׁמְרֵי שָׂדַי看守田園，耶4:17。</p>
+<p>2. 野獸的家：בַּהֲמוֹת שָׂדָי田野的獸，詩8:7 珥2:22；田野的諸獸，賽56:9；野地的走獸，詩104:11 50:11 80:13。</p>
+<p>3.平原，相對於山地，耶18:14。</p>
+<p>4.陸地，相對於海洋，詩96:12。</p>
+<p>二、שָׂדֶה陽性名詞：</p>
+<p>1. 開闊的田野，鄉間：</p>
+<p>A. 牧草地，創29:2 30:16 出9:3 申11:15 撒上11:5。</p>
+<p>B. 人跡稀少之地，創24:63,65；遭受暴力之地，創4:8 撒下14:6 申21:1 22:25,27；野獸出沒之地，出22:31 結33:27。</p>
+<p>C. 野獸的居處，撒下17:8 耶14:5；חַיַּת הַשָּׂדֶה野地的走獸，創2:19,20 3:1,14 出23:11,29 何2:12,18 4:3 13:8 申7:22 利26:22 伯5:23；בֶהֱמַת הַשָּׂדֶה田野的走獸，撒上17:44 珥1:20；אַיְלוֹת הַשָּׂדֶה田野的母鹿，歌2:7 3:5；הַצְּבָיִם אֲשֶׁר בַּשָּׂדֶה田野中的鹿，撒下2:18；田野，創25:29 27:3,5；אִישׁ שָׂדֶה田野的人，創25:27。</p>
+<p>D. 出產植物、樹木之地： 創25:27 30:14 出10:5 王下4:39 結20:46 39:10；עֵשֶׂב הַשָּׂדֶה田間的菜蔬，創2:5 3:18；עֵשֶׂב בַּשָּׂדֶה田園的菜蔬，亞10:1；שִׂיחַ הַשָּׂדֶה田野的灌木，創2:5；גֶּפֶן שָׂדֶה野瓜籐，王下4:39；פַּקֻּעֹת שָׂדֶה野瓜，王下4:39；צִיץ הַשָּׂדֶה野地的花，賽40:6 詩103:15；田間所長的，結16:7；עֵץ הַשָּׂדֶה田間的樹木，出9:25 申20:19 利26:4 賽55:12。</p>
+<p>E. 多石之地。אַבְנֵי הַשָּׂדֶה田間的石頭，伯5:23。</p>
+<p>F.寬闊之地。城牆外，士9:32,42,43,44 19:16 撒上19:3 20:5,11,24,35 王下7:12 彌4:10；戰場，書8:24 撒下10:8＝代上19:9 撒下11:23 18:6；軍營外，撒上4:2 14:15；שְׂדֵה הָאָרֶץ鄉下的田地，利25:31；京外的城邑，撒上27:5 代上27:25；田野的山上，耶13:27。一般常用的： 撒上30:11 耶40:7,13；含道路，士20:31 王上11:29 耶6:25；屋外和庭院，出8:13 撒上25:15 出1:14 士13:9；בַּשָּׂדֶה在田野，出16:25 撒上14:25；עַל-פְּנֵי הַשָּׂדֶה田間的(地)面上，王下9:37 耶9:22 結29:5 32:4 39:5。</p>
+<p>2. 有一定範圍的土地或田野：</p>
+<p>A. 耕種的田地，創37:7 47:24 出22:5,5,5 利27:16,17 彌3:12 得2:2；שְׂדֵי תְרוּמֹת可生產的田地，撒下1:21；שְׂדֵה-זָרַע肥田，結17:5,8。</p>
+<p>B. 私有土地： 彌2:2,4 賽5:8,8 創47:20 23:9,11,13 代下26:23。</p>
+<p>C. 靠近城市或受城市管轄的土地: 創41:48 利25:34 書21:12＝代上6:56 尼11:25,30 12:28,44；瑣安田，詩78:12,43。</p>
+<p>D. 國家或支派的疆界： 創32:3 民21:20 士5:4 得1:1,2 創14:7；שְׂדֵה נַחֲלַת יִשְׂרָאֵל以色列得為業的全地，士20:6。</p>
+<p>E. 國王的疆域： 撒下9:7。</p>
+<p>3.陸地。相對於海洋，代上16:32 結26:6,8。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or שָׂדַי ; from an unused root meaning to spread out;<br/>a field (as flat)</p></div></div></div></details>
+<details class="ntfold"><summary>H03885 — לוּן「停留、過夜」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03885</li><li>詞形 לוּן</li><li>音譯 luwn</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 停留、過夜</li><li>字源 一原形字根</li><li>中文用法 住宿27 發怨言11 住9 過夜5 常在3 留3 發3 住一夜2 宿2 終夜2 一宵1 一宿1 住了一夜1 住宿的1 同在一處1 在1 存1 存著1 居1 居住1 常見1 恆久1 為家1 終夜在外1 終夜霑1 長久1 雖有1 (84)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 住宿, 過夜</li><li>1a (Qal)</li><li>1a1 住宿, 過夜</li><li>1a2 住, 留 (比喻用法)</li><li>1b (Hiphil) 使停留或住宿</li><li>1c (Hithpalpel) 居住, 停留</li><li>2 發牢騷, 抱怨, 發怨言</li><li>2a (Niphal) 發牢騷</li><li>2b (Hiphil) 抱怨, 使發怨言</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>壹、住宿、過夜</p>
+<p>一、Qal</p>
+<p>完成式－3單陽לָן 創32:21。連續式3單陽וְלָן 撒下12:16。連續式3單陰וְלָנֶה 亞5:4。連續式1複וְלַנּוּ 士19:13。</p>
+<p>未完成式－3單陽יָלִין 出23:18。3單陰תָלִין 利19:13；תָּלַן 伯17:2。3複陽יָלִינוּ 番2:14。2單陽תָּלֶן 撒下17:16。1單אָלִין 詩55:7。1複נָלִין 創19:2。敘述式3單陽וַיָּלֶן 創28:11。敘述式3複陽וַיָּלִנוּ 書3:1。祈願式2單陽תָּלַן 士19:20。</p>
+<p>祈使式－單陽לִין 士19:6。單陰לִינִי 得3:13。複陽לִינוּ 士19:9。</p>
+<p>不定詞－附屬形לוּן 創24:23,54。</p>
+<p>分詞－複陽לֵנִים 尼13:21。</p>
+<p>1.住宿、過夜。</p>
+<p>A. 主詞是人，常與地點副詞或介詞搭配來描述在某地停留一晚：住一夜，創19:2,2 28:11 士19:13,15 撒下17:16 伯24:7；帶地點＋指示方向的詞尾 ָה，躺在אָרְצָה地上 ，撒下12:16；地點＋帶有介詞בְּ的時間副詞，וַיָּלֶן שָׁם בַּלַּיְלָה הַהוּא當夜，雅各在那裡住宿，創32:13,21 書8:9；與הַלַּיְלָה（夜晚）合用，民22:8 書4:3 撒下17:16 19:7 得3:13；終夜在外，詩59:15。</p>
+<p>B. 主詞是動物：野牛，伯39:9；鵜鶘和箭豬，番2:14。</p>
+<p>C. 無生命的物體作主詞：祭牲的脂油，出23:18；逾越節的祭物，出34:25 申16:4；雇工的工價，利19:13；屍首，申21:23；露水，伯29:19 歌1:13。</p>
+<p>D. 比喻用法：בָּעֶרֶב יָלִין בֶּכִי一宿雖有哭泣，詩30:5。</p>
+<p>2.住、留。比喻用法：主詞是עַיִן眼睛，וּבְהַמְּרוֹתָם תָּלַן עֵינִי常見他們惹動我（帶介詞בְּ），伯17:2；失誤，伯19:4（帶介詞אֵת）；力量（鱷魚），伯41:22（帶介詞בְּ）；公義，賽1:21（帶介詞בְּ）；נַפְשׁוֹ בְּטוֹב תָּלִין他要安然居住，詩25:13；傾聽的耳朵，箴15:31（與בְּקִרְבֵּךְ合用）；תָּלִין בְּקִרְבֵּךְ存在你心裡，耶4:14（與בְּקִרְבֵּךְ合用）；獨立使用：用於人，居尊貴中不能長久，詩49:12；וְשָׂבֵעַ יָלִין他必恆久知足，箴19:23。</p>
+<p>二、Hitpolel</p>
+<p>未完成式－3單陽יִתְלֹנָן 伯39:28；יִתְלוֹנָן 詩91:1。</p>
+<p>1.居住、停留。老鷹，以山峰和堅固之所為家，伯39:28。</p>
+<p>2. 比喻用法：信靠耶和華的，必住在全能者的蔭下，詩91:1。</p>
+<p>貳、發牢騷、抱怨、發怨言</p>
+<p>一、Nifal</p>
+<p>未完成式－敘述式3複陽וַיִּלֹּנוּ 出15:24 16:2 民14:36。</p>
+<p>發牢騷。發怨言，出15:24 16:2 民14:2 17:5 書9:18。</p>
+<p>二、Hifil</p>
+<p>完成式－2複陽הֲלִינֹתֶם 民14:29。</p>
+<p>未完成式－3複陽תַלִּינוּ 民16:11。2複陽תַלִּונוּ 出16:7。敘述式3單陽וַיָּלֶן 出17:3。敘述式3複陽וַיַּלִּונוּ 出16:2 民14:36。</p>
+<p>分詞－複陽מַלִּינִם 出16:8；מַלִּינִים 民14:27。</p>
+<p>抱怨、使發怨言，出16:8 17:3 民14:27,29 17:5 14:36。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or לִין ; a primitive root;<br/>to stop (usually over night); by implication, to stay permanently ; hence (in a bad sense) to be obstinate (especially in words, to complain)</p></div></div></div></details>
+<details class="ntfold"><summary>H03723 — כָּפָר「村莊」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03723</li><li>詞形 כָּפָר</li><li>音譯 kaphar</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 村莊</li><li>字源 來自 SH3722</li><li>中文用法 村莊2 (2)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 村莊</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>複陽כְּפָרִים村莊，代上27:25 歌7:11。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 3722 ;<br/>a village (as protected by walls)</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_07_11_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第7章11節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 02:17:50 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

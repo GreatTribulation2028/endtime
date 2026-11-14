@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>啟示錄 18:13 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="66_啟示錄_Revelation rev_18_13_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p class="verse-lead">啟示錄 第18章13節</p>
+<p class="verse-cuv">並肉桂、荳蔻、香料、香膏、乳香、酒、油、細麵、麥子、牛、羊、車、馬，和奴僕、人口。</p>
+<p>並肉桂、荳蔻、香料、香膏、乳香、酒、油、細麵、麥子、牛、羊、車、馬，和奴僕、人口。清單還往下寫到香料、酒油、糧食、牲畜和車輛。寫到最後，原文是「身體」和「人的靈魂」；和合本譯「奴僕、人口」。一份光鮮的貨單，結尾是人。這城不只買賣物，也買賣人。</p>
+<p>用淺白的話說，這城不只買賣物，也買賣人。一份光鮮的貨單，結尾是人。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<p class="mech-flag">本頁為機械層臨標稿，金標未達。這不是金標完成。</p>
+<nav class="verse-nav"><a href="66_%E5%95%9F%E7%A4%BA%E9%8C%84_Revelation%20rev_18_12_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　啟示錄 第18章12節</a><a href="index.html">啟示錄目錄</a><a href="../index.html">總目錄</a><a href="66_%E5%95%9F%E7%A4%BA%E9%8C%84_Revelation%20rev_18_14_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　啟示錄 第18章14節</a></nav>
+<h2 class="ntitle">啟示錄 第18章13節 原文逐節查經（臨標）</h2>
+<blockquote>啟示錄 第18章13節<br/>並肉桂、荳蔻、香料、香膏、乳香、酒、油、細麵、麥子、牛、羊、車、馬，和奴僕、人口。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 啟示錄 18:13 &gt;</div>
+<div class="orig-gr">καὶ (kai) κιννάμωμον (kinnamōmon) καὶ (kai) ἄμωμον (amōmon) καὶ (kai) θυμιάματα (thumiamata) καὶ (kai) μύρον (muron) καὶ (kai) λίβανον (libanon) καὶ (kai) οἶνον (oinon) καὶ (kai) ἔλαιον (elaion) καὶ (kai) σεμίδαλιν (semidalin) καὶ (kai) σῖτον (siton) καὶ (kai) κτήνη (ktēnē) καὶ (kai) πρόβατα (probata) καὶ (kai) ἵππων (ippōn) καὶ (kai) ῥεδῶν (rhedōn) καὶ (kai) σωμάτων (sōmatōn) καὶ (kai) ψυχὰς (psuchas) ἀνθρώπων. (anthrōpōn)</div>
+<p>本節原文詞（依資料庫詞序；英語詞義取自資料庫既有欄位，不另撰中文。）</p>
+<ul class="wlist">
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>κιννάμωμον (kinnamōmon)　cinnamon　G2792=N-ASN</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>ἄμωμον (amōmon)　spice　G6007=N-ASN</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>θυμιάματα (thumiamata)　incense　G2368=N-APN</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>μύρον (muron)　myrrh　G3464=N-ASN</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>λίβανον (libanon)　frankincense　G3030=N-ASM</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>οἶνον (oinon)　wine　G3631=N-ASM</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>ἔλαιον (elaion)　oil　G1637=N-ASN</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>σεμίδαλιν (semidalin)　finest flour　G4585=N-ASF</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>σῖτον (siton)　wheat　G4621=N-ASM</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>κτήνη (ktēnē)　cattle　G2934=N-APN</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>πρόβατα (probata)　sheep　G4263=N-APN</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>ἵππων (ippōn)　of horses　G2462=N-GPM</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>ῥεδῶν (rhedōn)　of chariots　G4480=N-GPF</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>σωμάτων (sōmatōn)　of slaves　G4983=N-GPN</li>
+<li>καὶ (kai)　and　G2532=CONJ</li>
+<li>ψυχὰς (psuchas)　souls　G5590J=N-APF</li>
+<li>ἀνθρώπων. (anthrōpōn)　of men.　G0444=N-GPM</li>
+</ul>
+</div>
+
+<h2>中文語意直譯</h2>
+<div class="orig-lit">
+<p class="orig-el">καὶ κιννάμωμον καὶ ἄμωμον καὶ θυμιάματα καὶ μύρον καὶ λίβανον</p>
+<p class="orig-zh">並肉桂、荳蔻、香料、香膏、乳香，</p>
+<p class="orig-el">καὶ οἶνον καὶ ἔλαιον καὶ σεμίδαλιν καὶ σῖτον</p>
+<p class="orig-zh">酒、油、細麵、麥子，</p>
+<p class="orig-el">καὶ κτήνη καὶ πρόβατα καὶ ἵππων καὶ ῥεδῶν</p>
+<p class="orig-zh">牛、羊、馬、車，</p>
+<p class="orig-el">καὶ σωμάτων καὶ ψυχὰς ἀνθρώπων.</p>
+<p class="orig-zh">以及身體，和人的靈魂。</p>
+</div>
+<h2>逐句剖析</h2>
+<h3>1️⃣ 還有肉桂、香料、香、香膏、乳香、酒、橄欖油、細麵、麥子、牲畜、羊、馬、四輪車，以及身體和人的生命｜καὶ κιννάμωμον καὶ ἄμωμον καὶ θυμιάματα καὶ μύρον καὶ λίβανον καὶ οἶνον καὶ ἔλαιον καὶ σεμίδαλιν καὶ σῖτον καὶ κτήνη καὶ πρόβατα καὶ ἵππων καὶ ῥεδῶν καὶ σωμάτων καὶ ψυχὰς ἀνθρώπων.</h3>
+<blockquote>καὶ κιννάμωμον καὶ ἄμωμον καὶ θυμιάματα καὶ μύρον καὶ λίβανον καὶ οἶνον καὶ ἔλαιον καὶ σεμίδαλιν καὶ σῖτον καὶ κτήνη καὶ πρόβατα καὶ ἵππων καὶ ῥεδῶν καὶ σωμάτων καὶ ψυχὰς ἀνθρώπων.</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>κιννάμωμον</strong>（肉桂，<code><span class="sn">G02792</span></code>，kinnamōmon）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>ἄμωμον</strong>（<code><span class="sn">G06007</span></code>，amōmon）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>θυμιάματα</strong>（香，<code><span class="sn">G02368</span></code>，thumiamata）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>μύρον</strong>（香油、香膏，<code><span class="sn">G03464</span></code>，muron）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>λίβανον</strong>（乳香，<code><span class="sn">G03030</span></code>，libanon）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>οἶνον</strong>（酒，<code><span class="sn">G03631</span></code>，oinon）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>ἔλαιον</strong>（橄欖油，<code><span class="sn">G01637</span></code>，elaion）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>σεμίδαλιν</strong>（細麵，<code><span class="sn">G04585</span></code>，semidalin）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>σῖτον</strong>（麥、穀類，<code><span class="sn">G04621</span></code>，siton）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>κτήνη</strong>（動物，<code><span class="sn">G02934</span></code>，ktēnē）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>πρόβατα</strong>（羊，<code><span class="sn">G04263</span></code>，probata）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>ἵππων</strong>（馬、駿馬，<code><span class="sn">G02462</span></code>，ippōn）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>ῥεδῶν</strong>（（四輪的）馬車，<code><span class="sn">G04480</span></code>，rhedōn）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>σωμάτων</strong>（身體，<code><span class="sn">G04983</span></code>，sōmatōn）</li><li><strong>καὶ</strong>（和，<code><span class="sn">G02532</span></code>，kai）</li><li><strong>ψυχὰς</strong>（靈、魂、生命，<code><span class="sn">G05590</span></code>，psuchas）</li><li><strong>ἀνθρώπων.</strong>（人類、人，<code><span class="sn">G00444</span></code>，anthrōpōn）</li></ul>
+<p>本節仍是清單的下半。κιννάμωμον 殼內寫「肉桂」。ἄμωμον 殼內此條沒有中文義項，從詞本身與上下文看，是一種香料，常與肉桂並列，本節取「香料」，並註明殼內未給中文。θυμιάματα 殼內寫「香」；μύρον 有「香油、香膏」，直譯取「香膏」；λίβανος 寫「乳香」。οἶνος 寫「酒」；ἔλαιον 寫「橄欖油」。σεμίδαλις 寫「細麵」；σῖτος 有「麥、穀類」，取「麥子」。κτήνη 殼內寫「動物」，本節在牛羊馬的序列裏取「牲畜」，比泛稱動物更貼這份貨單。πρόβατα 寫「羊」。ἵππων 有「馬、駿馬」，取「馬」。ῥεδῶν 殼內此條寫作「（四輪的」，詞形未寫全，是四輪車，本節取「四輪車」。後半忽然轉重：σωμάτων 殼內寫「身體」，ψυχὰς ἀνθρώπων，ψυχή 有「靈、魂、生命」，ἄνθρωπος 有「人類、人」，直譯取「身體和人的生命」。這是把奴僕當作貨物來賣。清單從香料、糧油、牲畜、車馬，一直寫到人自己。</p>
+<h3>2️⃣ 收束｜本節歸納</h3>
+<p>本節把貨單接到盡頭：肉桂、香料、香膏、乳香，酒與油，細麵與麥子，牲畜、羊、馬、四輪車，最後是身體和人的生命。前面都是物，最後一項是人。殼內 ἄμωμον 無中文義項，ῥεδῶν 詞條未寫全，都在剖析中據實註明。</p>
+<p>原文寫到 σωμάτων「身體」和 ψυχὰς ἀνθρώπων「人的靈魂」。和合本譯「奴僕、人口」。直譯按身體、靈魂寫出；經文仍以頁首和合本為準。</p>
+<h2>二、原文字典</h2>
+<details class="ntfold"><summary><span class="heb">καί</span> <span class="tl">kaí</span> <span class="sn">G02532</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02532</li><li>詞形 καί</li><li>音譯 kaí</li><li>讀音 kahee</li><li>約 新約</li><li>詞類 連接詞</li><li>字源 [字源] apparently, a primary particle, having a copulative and sometimes also a cumulative force; and, also, even, so then, too, etc.; often used in connection (or composition) with other particles or small words</li><li>KJV 用法 and 8182, also 515, even 108, both 43, then 20, so 18, likewise 13, not tr. 354, misc 46, vr and 1; 9280</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 和, 並且, 即使, 事實上, 但是, 也, 甚至於</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02532  καί 連接詞是新約所有希臘文中最常出現的質詞；它不僅比希臘文的其它文獻用得更普遍，而且常帶不同的意思，或情況，故它對新約的風格提供了不少特殊的色彩。甲、連接詞：「和」。用以：一、連接單字：A. 一般用法：Ἰάκωβος καὶ Ἰωσὴφ καὶ Σίμων καὶ Ἰούδας雅各，約瑟，西門和猶太，⊙ 太13:55。χρυσὸν καὶ λίβανον καὶ σμύρναν黃金，乳香和沒藥，太2:11。 ἡ ἐντολὴ ἁγία καὶ δικαία καὶ ἀγαθή 誡命也是聖潔的，公義和良善的，⊙ 羅7:12。πολυμερῶς καὶ πολυτρόπως多次和多方，來1:1。ὁ θεὸς καὶ Πατήρ　神，也是父，林前15:24原文;參 林後1:3 11:31 弗1:3 雅1:27 3:9等。B. 帶數字，以數目大的在先：δέκα καὶ ὀκτώ十八，路13:16。τεσσεράκοντα κ. ἔξ四十六，約2:20。τετρακόσιοι κ. πεντήκοντα四百五十，徒13:20。καί 在 林後13:1，ἐπὶ στόματος δύο μαρτύρων καὶ τριῶν σταθήσεται πᾶν ῥῆμα 憑著兩個和（＝「或」〔 太18:16的異版有讀作ἣ τριῶν〕；參 雅4:13公認經文。σήμερον καὶ αὔριον＝「今天或明天」）三個人的口作證，句句都要定準（引述 申19:15）。C. 把整體加進部份裡：和一般的。Πέτρος καὶ οἱ ἀπόστολοι 彼得和其餘的使徒們，徒5:29。οἱ δὲ ἀρχιερεῖς κ. τὸ συνέδριον ὅλον 祭司長和公會所有其餘的人，太26:59原文。或把一（特別重要的）部份加進整個裡：並特別的（πᾶς Ιουδα καὶ Ιερουσαλημ 所有猶大和耶路撒冷人，代下35:24;參 代下35:32,33）τοῖς μαθηταῖς κ. τῷ Πέτρῳ 其餘的門徒和彼得，可16:7原文。σὺν γυναιξὶ καὶ Μαριὰμ同著幾個婦人和…馬利亞，徒1:14。D. 由καί所連接的措辭可以合併成為重名法的形式：ἐξίσταντο ἐπὶ τῇ συνέσει καὶ ταῖς ἀποκρίσεσιν αὐτοῦ 他們都驚奇他聰明的對答，⊙ 路2:47。δώσω ὑμῖν στόμα κ. σοφίαν我必賜你們智慧的口才，路21:15。τροφὴ κ. εὐφροσύνη 對（你們的）食物滿心歡喜，徒14:17原文。ἐλπὶς κ. ἀνάστασις 復活的盼望，徒23:6原文。E. 用作一種通俗語的特徵就是連接兩個對等的動詞，其中之一必須是分詞：ἀποτολμᾷ κ. λέγει＝ἀποτολμῶν λέγει 他如此的放膽以致說，羅10:20原文。ἔσκαψεν κ. ἐβάθυνεν（＝βαθύνας）挖深了地，⊙ 路6:48。ἐκρύβη κ. ἐξῆλθεν（＝ἐξελθών）躲起來…出去了⊙ 約8:59。相類似者－χαίρων κ. βλέπων我歡喜看見，西2:5原文。二、連接子句和句子：A. 一般用法：ἐν γαστρὶ ἕξει κ. τέξεται υἱόν 懷孕生子，太1:23（ 賽7:14）。εἰσῆλθον … κ. ἐδίδασκον進到…施教，⊙ 徒5:21。διακαθαριεῖ τὴν ἅλωνα αὐτοῦ καὶ συνάξει τὸν σῖτον要揚淨他的場，把麥子收在倉裡，太3:12及其他多處。連接兩個問句： 太21:23。或引句（ 徒1:20）和對話（ 路21:8），或另一個可能性（ 路13:18）。B. 另一普遍的特徵（引自希伯來文或日常之談話的習慣），是以κ.用作連接詞，取代其他更清楚的質詞：καὶ εἶδον καὶ（代替ὅτι）σεισμὸς ἐγένετο我看見發生地震，啟6:12原文。καὶ ἤκουσεν ὁ βασιλεύς…καὶ（代替ὅτι）ἔλεγον王聽見他們說，可6:14原文。τέξεται υἱὸν καὶ καλέσεις τὸ ὄνομα αὐτοῦ（代替οὗ τὸ ὄνομα καλ.）他將要生一個兒子，他的名字你要稱，太1:21原文;參 路6:6 11:44。 καλόν ἐστιν ἡμᾶς ὧδε εἶναι καὶ ποιήσωμεν σκηνάς在這裡對我們來說是好的，容我們搭棚，可9:5原文。特別常用在歷史敘述的慣用語中－καὶ ἐγένετο (ἐγένετο δέ)…καὶ（像ὤ…ψηιψ.ὤ）事情是這樣發生的…就是，太9:10 可2:15 路5:1,12,17 6:12 14:1 17:11等。正如在通俗的談話中，κ.是頻密的出現，太14:9下;可1:12下;路18:32下;林前12:5,6 啟6:12下;啟9:1下。在這種通俗的談話中，它將獨立子句而非附屬子句與另一句子連接。C. 當κ.將一時間辭句與當時所發生的事連接時，它亦是表示對等而非附屬：ἤγγικεν ἡ ὥρα κ. παραδίδοται時候到了，當他要被交，太26:45。κ. ἐσταύρωσαν αὐτόν他們釘他十字架的時候，⊙ 可15:25。κ. ἀνέβη εἰς Ἱεροσόλυμα當他上耶路撒冷的時候，約2:13原文。κ. συντελέσω我要立定的時候，來8:8原文（參 耶31:31）；參 約4:35 7:33 路19:43 23:44 徒5:7。D. 用καί導出結果子句的用法是受希伯來文的影響：καὶ ὅτε ἐπλήσθησαν ἡμέραι ὀκτὼ…, κ. ἐκλήθη τὸ ὅνομα αὐτοῦ並且當滿了八天…同時給他起名，路2:21原文。參 啟3:20異版。κ. ἰδού在結果子句中，路7:12 徒1:10。E. 用以連接否定與肯定子句： 路3:14。οὔτε ἄντλημα ἔχεις κ. τὸ φρέαρ ἐστὶ βαθύ 你沒有打水的器具，而且井又深，約4:11原文;參約三1:10。在一個影響子句之否定子句之後，以καί來開始：μήποτε καταπατήσουσιν…κ. στραφέντες ῥήξωσιν ὑμᾶς免得他們踐踏，並且轉過咬你們，太7:6原文;參 太5:25 10:38 13:15（ 賽6:10）;太27:64 路12:58 21:34 約6:53 12:40（ 賽6:10）;徒28:27（ 賽6:10）;帖前3:5 來12:15 啟16:15。F. 導出從前文而致的結果：「然後，所以」，太5:15 23:32 林後11:9 來3:19約一3:19。καὶ ἔχομεν所以我們有，彼後1:19原文。特別在命令語氣，或具有命令性質的辭句之後－δεῦτε ὀπίσω μου καὶ ποιήσω然後我要使，太4:19原文。εἰπὲ Λόγῳ, κ. ἰαθήσεται ὁ παῖς μου說一句話，然後我的僕人必得醫治，太8:8原文;路7:7;參 太7:7 可6:22 路10:28 約14:16 雅4:7,10 啟4:1。καὶ導出一短子句以確定某物應如此存在：ἵνα τέκνα θεοῦ κληθῶμεν, καὶ ἐσμέν使我們得稱為　神的兒女，這樣我們真的是（καλέω－SG2564一A.4.）約一3:1原文。G. 強調一個令人驚訝的事實，在意料之外的或是值得注意的：「然而，卻，儘管」。κ. σὺ ἔρχῃ πρὸς μέ；你卻到我這裡來麼？⊙ 太3:14;參 太6:26 10:29 可12:12 約1:5,10 3:11,32 5:40 6:70 7:28 林前5:2 林後6:9 來3:9（ 詩95:9）;啟3:1。亦連接那意料之外的事或具某種企圖而值得注意之事：但，卻。ζητεῖ  κ. οὐχ εὑρίσκει他卻尋不著，太12:43。ἐπεθύμησαν ἰδεῖν κ. οὐκ εἶδαν卻沒有看見（它）太13:17;參 太26:60 路13:7 帖前2:18。或 可5:20。H. 導出一個常表達驚訝，敵意，不信等的突發問句：κ. πόθεν μοι τοῦτο；怎樣使我配得這事呢？ 路1:43原文。κ. τίς；難道誰呢？ 可10:26原文;路10:29 約9:36。καὶ τί γέγονεν ὅτι…；它如何發生以致？ 約14:22原文。帶一假定子句－εἰ γὰρ ἐγὼ λυπῶ ὑμᾶς, κ. τίς ὁ εὐφραίνων με；如果我使你們憂愁，難道誰還能使我快樂呢？ 林後2:2原文。因此 腓1:22可能要加標點符號如下：εἰ δὲ τὸ ζῆν ἐν σαρκί, τοῦτό μοι καρπὸς ἔργου, καὶ τί αἱρήσομαι︰οὐ γνωρίζω那麼我該選那一樣呢？I. 用以導入插句：καὶ ἐκωλύθην ἄχρι τοῦ δεῦρο可是直到現在我還有阻礙，⊙ 羅1:13。三、它常是解釋詞；即一個字或子句藉著καί與另一字或子句連接，為了要解釋前者的意義：「因此，就是」。χάριν καὶ ἀποστολὴν恩典，就是使徒的職份，羅1:5原文。ἀπήγγειλαν πάντα καὶ τὰ τῶν δαιμονιζομένων他們報告一切的事情，就是被鬼附的人所遭遇的事，太8:33原文。καὶ χάριν ἀντὶ χάριτος即是恩典再加上恩典，約1:16原文。參 林前3:5 15:38。太21:5。其他解釋詞的用法是－καὶ αὗτος, καὶ τοῦτο, καὶ ταῦτα而且，亦有強調含義，而且確實地，而且誠然。 Ἰ. Χρ. καὶ τοῦτον ἐσταυρωμένον耶穌基督，（而且）他確實地釘在十字架上，林前2:2原文。καὶ τοῦτο而且在那，羅13:11 林前6:6,8 弗2:8。καὶ ταῦτα帶分詞－而且誠然，來11:12。καί強調之含意亦明顯見於Ῥωμαῖον καὶ ἀκατάκριτον是羅馬人，又沒有定罪，徒22:25。ἔρχεται ὥρα καὶ νῦν ἐστιν時候將到，現在就是了，約5:25。四、在πολύς之後並在第二個形容詞之前，從現代語文的觀點看，καί是冗言用法：πολλὰ … κ. ἄλλα σημεῖα 另外…許多神蹟，約20:30。πολλὰ κ. βαρέα αἰτιώματα許多嚴重的控告，⊙ 徒25:7。πολλὰ…κ. ἕτερα 許多別的話，路3:18。許多不受約束的（人），⊙ 多1:10異版。五、導出新而關係不大的事情： 太4:23 8:14,23,28 9:1,9,27,35 10:1 12:27 可5:1,21 路8:26 約1:19及其他多處。六、καὶ…καί 「不但…而且，不僅…但也」。連接單一辭句： 太10:28 羅11:33 腓2:13 4:12。κ. ἐν ὀλίγῳ κ. ἐν μεγάλῳ不但是少數而且更是多處，徒26:29原文。κ. ἄπαξ κ. δίς（見ἄπαξ－SG530一）一而再的，⊙ 腓4:16 帖前2:18。連接整個子句或句子： 可9:13 約7:28 9:37 12:28 林前1:22。引介出對比：雖然…可是。約15:24 徒23:3。καὶ…κ. οὐ而且…卻不，路5:36 約6:36。καὶ οὐ … καί雖然不…卻，約17:25；κ.…κ.如今…現在，可9:22。有關τὲ…καί見τέ－SG5037。乙、近似於副詞：「也，亦，同此」。一、簡單用法：κ. τὴν ἄλλην連另一面也，太5:39;參 太5:40 6:21 12:45 可1:38 2:26 8:7及其他多處。常與代名詞並用：κἀγώ（另見）καὶ σύ你也，太26:73。κ. ὑμεῖς你們也，太20:4,7 路21:31 約7:47及其他多處。κ. αὐτός（見αὐτος－SG846一G.）。二、強調的：「甚至」。太5:46,47 10:30 可1:27 4:41 路10:17 徒5:39 22:28 林前2:10 林後1:8 加2:17 弗5:12 門1:21 來7:25 彼前4:19 猶1:23。用以表達意願的慣用語： ὄφελον καὶ若能，但願，加5:12。與比較級連接：κ. περισσότερον προφήτου他甚至比先知更大，太11:9原文。καὶ μείζονα ποιήσει他甚至要作比…更大的，約14:12原文。三、在表示對比的一些句子中，καί以不同的方式出現，有時它出現在比較的雙方中，在我們看來，常是冗言用法：καθάπερ…οὕτως καὶ 既…照樣也，林後8:11。ὥσπερ…οὔτως καί正如…照樣也，羅5:19 11:30,31 林前11:12 15:22 加4:29。ὡς…，οὕτως καί既然…照樣也，羅5:15,18。ὃν τρόπον …，οὕτως καί 用甚麼方法…也這樣，※ 提後3:8。οὕτως καὶ也這樣，⊙ 羅6:11。ὡσαύτως καί也照樣，林前11:25。ὁμοίως καί也是這樣，約6:11 猶1:8。ὡς καί像…一樣，徒11:17 林前7:7 9:5。καθὼς καί如同…一樣，羅15:7 林前13:12 林後1:14 弗4:17。καθάπερ καί正如…也，※ 羅4:6 林後1:14。καὶ亦可單獨置於第二部份而具也同樣之意義。ὡς…καί如…也同樣，太6:10 徒7:51 加1:9 腓1:20。καθὼς…καί怎樣…照樣，路6:31異版;約6:57 13:15 林前15:49。οἷος …, τοιοῦτος καὶ 怎樣…也怎樣，林前15:48。在比較級之後，ὅσῳ καί也以如此之多，來8:6原文。καί同時在比較的雙方中－ 羅1:13 帖前2:14。καθὼς καὶ…οὕτως καί怎樣…也照樣，⊙ 西3:13。四、帶導出原因或結果的辭句，此處亦為相當程度之冗言用法：διὰ τοῦτο καί為這緣故（也）路11:49 約12:18。διὸ καί因此也，路1:35 徒10:29 羅4:22 來13:12。εἰς τοῦτο καί為此也，林後2:9。ὥστε καί所以，彼前4:19。ὅθεν καί為此，來7:25 11:19。五、在疑問句之後：「全然，還要」。ἱνατί καὶ τ. γῆν καταργεῖ；何必還要讓它白佔地土呢？ 路13:7。τί καί為何仍然？ －τίς καὶ ἐλπίζει；他為何仍舊盼望呢？ 羅8:24原文。τὶ καὶ βαπτίζονται，為什麼還要替他們受洗呢？ 林前15:29原文；參 林前15:30。六、與關係詞同用時，它常加強後置關係子句的獨立性： 路10:30 徒1:3,11 7:45 10:39 11:30 12:4 13:22 28:10 羅9:24 林前11:23 加2:10 西1:29等。七、與介系詞並用的冗言用法：帶μετά，腓4:3。八、帶雙重的名字：ὁ καί也稱為…。Σαῦλος ὁ καὶ Παῦλος掃羅又名保羅，徒13:9。有關κ.…γάρ, καί γε, κ.…δέ, δὲ καί見γάρ, γέ, δέ。有關ἀλλὰ κ., ἐὰν κ., εἰ κ., ἢ κ.見ἀλλά, ἐάν, εἰ, ἡ.。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] apparently, a primary particle, having a copulative and sometimes also a cumulative force;<br/>and, also, even, so then, too, etc.; often used in connection (or composition) with other particles or small words</p>
+<p>2532 kai {kahee}<br/>apparently, a primary particle, having a copulative and sometimes<br/>also a cumulative force;; conj<br/>AV - and<br/>8182<br/>, also 515, even 108, both 43, then 20, so 18,<br/>likewise 13, not tr. 354, misc 46, vr and<br/>1<br/>; 9280<br/>1) and, also, even, indeed, but</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">κινάμωμον</span> <span class="tl">kinámōmon</span> <span class="sn">G02792</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02792</li><li>詞形 κινάμωμον</li><li>音譯 kinámōmon</li><li>讀音 kin-am&#x27;-o-mon</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自外來語 參 7076 ; 中性名詞</li><li>KJV 用法 cinnamon 1; 1</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 肉桂 (<br/>啟 18:13<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02792  κινάμωμον, ου見SG2796a</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of foreign origin (compare );<br/>cinnamon</p>
+<p>2792 kinamomon {kin-am&#x27;-o-mon}<br/>of foreign origin cf 7076;; n n<br/>AV - cinnamon 1; 1<br/>1) cinnamon was a well known aromatic substance, the rind of<br/>&quot;Laurus cinnamonum&quot; called &quot;Korunda-gauhah&quot; in Ceylon</p></div></div></details>
+<p>編號 G06007 在統一字典中沒有條目，此處從缺，不另撰。</p>
+<details class="ntfold"><summary><span class="heb">θυμίαμα</span> <span class="tl">thymíama</span> <span class="sn">G02368</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02368</li><li>詞形 θυμίαμα</li><li>音譯 thymíama</li><li>讀音 thoo-mee&#x27;-am-ah</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自 2370 ; 名詞</li><li>KJV 用法 incense 4, odour 2; 6</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 用來點燃散發香氣的物質, 香</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02368  θυμίαμα, ατος, τό 名詞一、「香」。以複數表示： 啟5:8 8:3,4 18:13。二、「燒香，獻香」。τὸ θυσιαστήριον τοῦ θ.香壇（ 出30:1,27）路1:11；ἡ ὥρα τοῦ θ.燒香的時候，10節。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from ;<br/>an aroma, i.e. fragrant powder burnt in religious service; by implication, the burning itself</p>
+<p>2368 thumiama {thoo-mee&#x27;-am-ah}<br/>from<br/>2370<br/>;; n n<br/>AV - incense 4, odour 2; 6<br/>1) an aromatic substance burnt, incense</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">μύρον</span> <span class="tl">mýron</span> <span class="sn">G03464</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G03464</li><li>詞形 μύρον</li><li>音譯 mýron</li><li>讀音 moo&#x27;-ron</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自外來語 [參 04753 , 04666 ]; TDNT - 4:800,615; 中性名詞</li><li>KJV 用法 ointment 14; 14</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 油膏, 香膏</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>03464  μύρον, ου, τό 名詞「香油，香膏」。（ 詩133:2）太26:12 路7:38,46 約11:2;珍貴的，可14:4,5 約12:3上，約12:5；強烈的香氣，約12:3下；放在玉瓶中，太26:7 可14:3 路7:37。帶其他的貿易商品，啟18:13；複數： 路23:56。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] probably of foreign origin (compare , );<br/>&quot;myrrh&quot;, i.e. (by implication) perfumed oil</p>
+<p>3464 muron {moo&#x27;-ron}<br/>probably of foreign origin [cf<br/>04753<br/>,<br/>04666<br/>]; TDNT - 4:800,615; n n<br/>AV - ointment 14; 14<br/>1) ointment</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">λίβανος</span> <span class="tl">líbanos</span> <span class="sn">G03030</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G03030</li><li>詞形 λίβανος</li><li>音譯 líbanos</li><li>讀音 lib&#x27;-an-os</li><li>約 新約</li><li>詞類 名詞</li><li>字源 [字源] of foreign origin ( ); the incense-tree, i.e. (by implication) incense itself</li><li>KJV 用法 frankincense 2; 2</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 乳香 (<br/>太 2:11<br/>啟 18:13<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>03030  λίβανος, ου, ὁ 名詞「乳香」，一種多樹脂的膠，從阿拉伯某一種樹的許多品種上所提煉出來的，可當做醫藥用，亦可為宗教禮儀上所使用，啟18:13。帶黃金和沒藥為一種寶貴的禮物，太2:11（參 賽60:6）。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of foreign origin ( );<br/>the incense-tree, i.e. (by implication) incense itself</p>
+<p>3030 libanos {lib&#x27;-an-os}<br/>of foreign origin<br/>03828<br/>; TDNT - 4:263,533; n m<br/>AV - frankincense 2; 2<br/>1) the frankincense tree<br/>2) the perfume, frankincense</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">οἶνος</span> <span class="tl">oînos</span> <span class="sn">G03631</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G03631</li><li>詞形 οἶνος</li><li>音譯 oînos</li><li>讀音 oy&#x27;-nos</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自希伯來文 3196 ); TDNT - 5:162,680; 陽性名詞</li><li>KJV 用法 wine 32, winepress + 3125 1; 33</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 酒</li><li>2 隱喻:上帝對惡人的懲罰</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>03631  οἶνος, ου, ὁ 名詞「酒」。通常指發酵後的葡萄汁，發酵前的葡萄汁是τρύξ。一、字義： 約2:3,9,10 4:46。 οἶνος μετὰ χολῆς μεμιγμένος苦膽調和的酒，太27:34（見χολή－SG5521一）。ἐσμυρνισμένος οἶν.沒藥調和的酒，可15:23。有醫療作用，路10:34。帶其他的自然產物，啟18:13。施洗約翰禁戒葡萄酒和其他含酒精的飲料（參 民6:3 士13:14 撒上1:11）路1:15；有論到施洗約翰，指出這獨特的戒律－μὴ ἐσθίων ἄρτον μήτε πίνων οἶνον不喫餅，不喝酒，路7:33。那些「軟弱」的基督徒也禁戒酒和肉，羅14:21。οἶν. νέος 新酒（見νέος－SG3501一A.1.）太9:17 可2:22 路5:37,38。μεθύσκεσθαι οἴνῳ醉酒，弗5:18。οἶνος πολύς：οἴνῳ πολλῷ προσέχειν酗酒，⊙ 提前3:8。οἴνῳ πολλῷ δεδουλωμένος被酒奴役，⊙ 多2:3。οἴνῳ ὀλίγῳ χρῆσθαι稍微用點酒，提前5:23。見ἄμπελος－SG288一和ἄρτος－SG740一A.。二、喻意：用作啟示文學中的象徵，指　神給惡者的審判如給他們像喝酒一般：ὁ οἶνος τοῦ θυμοῦ τοῦ θεοῦ 　神大怒的酒，啟14:10。或ὁ οἶν. τοῦ θυμοῦ τῆς ὀργῆς τοῦ θεοῦ 啟19:15;參 啟16:19。指邪淫的巴比倫喝 ὁ οἶνος τοῦ θυμοῦ τῆς πορνείας αὐτῆς 邪淫大怒之酒，啟14:8 18:3。參這些經文中的θυμός。οἶν. τῆς πορνείας淫亂的酒，啟17:2。三、以產品代替原始出處：「萄萄園」，啟6:6。見ἔλαιον－SG1637三。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primary word (or perhaps of Hebrew origin ( ));<br/>&quot;wine&quot; (literally or figuratively)</p>
+<p>3631 oinos {oy&#x27;-nos}<br/>a primary word (or perhaps of Hebrew origin<br/>03196<br/>); TDNT - 5:162,680; n m<br/>AV - wine 32, winepress + 3125 1; 33<br/>1) wine<br/>2) metaph. fiery wine of God&#x27;s wrath</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ἔλαιον</span> <span class="tl">élaion</span> <span class="sn">G01637</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G01637</li><li>詞形 ἔλαιον</li><li>音譯 élaion</li><li>讀音 el&#x27;-ah-yon</li><li>約 新約</li><li>詞類 名詞</li><li>字源 [字源] neuter of the same as ; olive oil</li><li>KJV 用法 oil 11; 11</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 橄欖油</li><li>1a 一般:作燈油,療傷用</li><li>1b 膏抹用 (<br/>路7:46<br/>來1:9<br/>)</li><li>2 橄欖園 (<br/>啟6:6<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>01637  ἔλαιον,  ου, τό  名詞「橄欖油」。一、一般用法： 路16:6。與酒和細麵同用（參 申7:13 11:14 28:51 代下31:5 結16:19等）啟18:13。用於燈，太25:3,4,8。作療傷用之藥物（ 賽1:6）路10:34，及其他醫療用，可6:13 雅5:14（見ἀλείφω－SG218）。二、特別指膏抹用的油，路7:46（參 王下9:6 詩23:5）。喻意： ἔχρισέν σε ὁ θεὸς ἔ. ἀγαλλιάσεως 　神用喜樂油膏你，來1:9（ 詩45:7）。三、指成果之起源：「橄欖園」τὸ ἔ. καὶ τὸν οἶνον μὴ ἀδικήσῃς橄欖園和葡萄園不可蹧蹋，啟6:6另譯。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] neuter of the same as ;<br/>olive oil</p>
+<p>1637 elaion {el&#x27;-ah-yon}<br/>from the same as 1636; TDNT - 2:470,221; n n<br/>AV - oil 11; 11<br/>1) olive oil<br/>1a) for fuel for lamps<br/>1b) for healing the sick<br/>1c) for anointing the head and body at feasts<br/>1d) mentioned among articles of commerce</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">σεμίδαλις</span> <span class="tl">semídalis</span> <span class="sn">G04585</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G04585</li><li>詞形 σεμίδαλις</li><li>音譯 semídalis</li><li>讀音 sem-id&#x27;-al-is</li><li>約 新約</li><li>詞類 名詞</li><li>字源 [字源] probably of foreign origin; fine wheaten flour</li><li>KJV 用法 fine flour 1; 1</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 最好的麵粉 （<br/>啟18:13<br/>）</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>04585  σεμίδαλις, εως, ἡ 名詞「細麵」。小麥磨的麵粉中最好的一種，與油和穀類同列，啟18:13。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] probably of foreign origin;<br/>fine wheaten flour</p>
+<p>4585 semidalis {sem-id&#x27;-al-is}<br/>probably of foreign origin;; n f<br/>AV - fine flour 1; 1<br/>1) the finest wheat flour</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">σῖτος</span> <span class="tl">sîtos</span> <span class="sn">G04621</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G04621</li><li>詞形 σῖτος</li><li>音譯 sîtos</li><li>讀音 see&#x27;-tos</li><li>約 新約</li><li>詞類 名詞</li><li>字源 [字源] of uncertain derivation; grain, especially wheat</li><li>KJV 用法 wheat 12, corn 2; 14</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 麥子，穀類, 食物</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>04621  σῖτος, ου, ὁ 名詞「麥，穀類」。一般用法： 太13:25,29 路16:7 約12:24 林前15:37 啟6:6 18:13。συνάγειν τὸν σ. εἰς τὴν ἀποθήκην把麥子收在倉裡，太3:12 13:30 路3:17;參 路12:18。σινιάσαι τὸν σ.篩麥子，路22:31。為一條船的貨物，徒27:38。有關πλήρης σῖτος飽滿的子粒，可4:28，參πλήρης－SG4134二。複數：τὰ σῖτα，徒7:12公認經文。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of uncertain derivation;<br/>grain, especially wheat</p>
+<p>4621 sitos {see&#x27;-tos}<br/>plural irregular neuter sita {see&#x27;-tah}, of uncertain derivation;; n m<br/>AV - wheat 12, corn 2; 14<br/>1) wheat, grain</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">κτῆνος</span> <span class="tl">ktēnos</span> <span class="sn">G02934</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02934</li><li>詞形 κτῆνος</li><li>音譯 ktēnos</li><li>讀音 ktay&#x27;-nos</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自 2932 ; 中性名詞</li><li>KJV 用法 beast 4; 4</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 家畜, 馱畜, 用來騎的動物, 寵物</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02934  κτῆνος, ους, τό 名詞「動物」，即「家畜，寵物，馱畜，可騎的動物」（多用複數以為集會名詞）。指家畜，林前15:39。κτήνη καὶ πρόβατα似乎指牛和羊，啟18:13。指可騎的動物，路10:34 徒23:24。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from ;<br/>property, i.e. (specially) a domestic animal</p>
+<p>2934 ktenos {ktay&#x27;-nos}<br/>from<br/>2932<br/>;; n n<br/>AV - beast 4; 4<br/>1) a beast<br/>1a) esp. a beast of burden<br/>1b) used for four legged animals as opposed to fishes and birds</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">πρόβατον</span> <span class="tl">próbaton</span> <span class="sn">G04263</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G04263</li><li>詞形 πρόβατον</li><li>音譯 próbaton</li><li>讀音 prob&#x27;-at-on</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自一被認為是衍生於 4260 的字; TDNT - 6:689,936; 中性名詞</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 羊</li><li>2 (　神的子民) 羊</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>04263  πρόβατον, ου, τό 名詞（七十士譯）「羊」。一、字義：「羊」。太12:11,12 18:12 路15:4,6 啟18:13。作為祭牲，約2:14,15。πρόβατα σφαγῆς獻祭的羊或將宰的羊，羅8:36（ 詩44:22）。入狼群毫無抵禦，太10:16。危險無牧人，太9:36 可6:34，（兩者見 民27:17;參 結34:5）;太26:31 可14:27（後二者見 亞13:7）。ἐν ἐνδύμασιν προβάτων披著羊皮（參ἔνδυμα－SG1742二），太7:15。耶穌 ὡς πρόβατον ἐπὶ σφαγὴν ἤχθη … ἄφωνος像羊被牽到宰殺之地…無聲（根據 賽53:7）徒8:32。二、字義之用法轉移至非字義用法，羊大多數作為某些人之記號：指（好）牧人與羊之寓意，約10:1-16,26,27。耶穌是ὁ ποιμήν τῶν προβάτων ὁ μέγας群羊的大牧人，來13:20。參 彼前2:25。監督是牧人，教會會眾是羊，參 約21:16異版，17異版。在最後審判，人將被區分，如同牧人被區分τὰ πρόβατα綿羊及οἱ ἔριφοι山羊（ 太25:32,33見ἔριφος－SG2056），而πρόβατα代表父所賜福的，將站在人子的右邊，33節。耶穌知祂是被差遣，太15:24，而且差遣祂的門徒，太10:6，πρὸς τὰ πρόβατα τὰ ἀπολωλότα οἴκου Ἰσραήλ往以色列家迷失的羊那裡去。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] probably neuter of a presumed derivative of ;<br/>something that walks forward (a quadruped), i.e. (specially), a sheep (literally or figuratively)</p>
+<p>4263 probaton {prob&#x27;-at-on} also diminutive: probation {pro-ba&#x27;-tee-on}<br/>probably from a presumed. derivative of 4260; TDNT - 6:689,936; n n<br/>AV - sheep 40, sheepfold + 833 1; 41<br/>1) any four footed, tame animal accustomed to graze, small cattle<br/>(opp. to large cattle, horses, etc.), most commonly a sheep or a goat<br/>1a) a sheep, and so always in the NT</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ἵππος</span> <span class="tl">híppos</span> <span class="sn">G02462</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02462</li><li>詞形 ἵππος</li><li>音譯 híppos</li><li>讀音 hip&#x27;-pos</li><li>約 新約</li><li>詞類 名詞</li><li>字源 [字源] of uncertain affinity; a horse</li><li>KJV 用法 horse 16; 16</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 馬</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02462  ἵππος, ου, ὁ 名詞「馬，駿馬」。雅3:3 啟9:9 14:20 18:13 19:18。不同顏色的馬在啟示錄中地位重要（見πυρρός－SG4450）；白馬，啟6:2 19:11,14;參 啟19:19,21；紅馬，啟6:4；黑馬，啟6:5；灰馬，啟6:8。像馬的蝗蟲，啟9:7；具獅頭的馬，啟9:17；參 啟9:19。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of uncertain affinity;<br/>a horse</p>
+<p>2462 hippos {hip&#x27;-pos}<br/>of uncertain affinity; TDNT - 3:336,369; n m<br/>AV - horse 16; 16<br/>1) a horse</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ῥέδα</span> <span class="tl">rhéda</span> <span class="sn">G04480</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G04480</li><li>詞形 ῥέδα</li><li>音譯 rhéda</li><li>讀音 hred&#x27;-ah</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自拉丁文; 陰性名詞</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 四輪馬車 (<br/>啟 18:13<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>04480  ῥέδη, ης, ἡ 名詞「（四輪的）馬車」。啟18:13（異版用ῥαίδη）。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of Latin origin;<br/>a rheda, i.e. four-wheeled carriage (wagon for riding)</p>
+<p>4480 rheda {hred&#x27;-ah}<br/>of Latin origin;; n f<br/>AV - chariot 1; 1<br/>1) a chariot, a type of vehicle having four wheels</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">σῶμα</span> <span class="tl">sōma</span> <span class="sn">G04983</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G04983</li><li>詞形 σῶμα</li><li>音譯 sōma</li><li>讀音 so&#x27;-mah</li><li>約 新約</li><li>詞類 名詞</li><li>字源 [字源] from ; the body (as a sound whole), used in a very wide application, literally or figuratively</li><li>KJV 用法 body 144, bodily 1, slave 1; 146</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 指人或動物的身體</li><li>1a 屍體</li><li>1b 活著的身體</li><li>2 奴隸 (<br/>啟18:13<br/>)</li><li>3 (植物與種子的結構) 身體</li><li>4 (用於身體投射出影子的意象) 事物本身, 實體 (<br/>西2:17<br/>)</li><li>5 (團結的一群人) 身體</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>04983  σῶμα, ατος, τό 名詞一、人或動物的「身體」：A. 「死的身體，屍體」。太14:12公認經文；太27:59 可15:45公認經文;路17:37 徒9:40。複數，約19:31。帶所有格，太27:58 可15:43 路23:52,55 24:3,23 約19:38上，下，約19:40 20:12 猶1:9。複數: 太27:52 來13:11。B. 「活的身體」：用於動物的，雅3:3。大部份為人類的，太5:29,30 6:22,23 26:12 可5:29 14:8 路11:34上，中，下；約2:21 羅1:24 林前6:18上，下。帶πνεῦμα靈並與之成對比，羅8:10,13 林前5:3 7:34 雅2:26。帶ψυχή生命並與之成對比，太6:25上，下;太10:28上，下;路12:4異版;路12:22,23，τὸ πνεῦμα καὶ ἡ ψυχὴ καὶ τὸ Σῶμα魂與靈與身子，帖前5:23。帶它的肢體並與之成對比，羅12:4 林前12:12,14-20 雅3:6。身體為性功能的所在，羅4:19 林前7:4上，下。身體為會死亡的生命所在，εἶναι ἐν σώματι在肉身之內＝活著，服在致命的苦難之下，來13:3。ἐνδημεῖν ἐν τῷ σώματι我們住在身內，林後5:6（見ἐνδημέω－SG1736）。ἐκδημῆσαι ἐκ τοῦ σώματος 離開身體，林後5:8（見ἐκδημέω－SG1553）。 διὰ τοῦ σώματος按著本身所行的（或在肉身活著的時候）林後5:10。在一個宗教的狂喜境地，保羅不知他是否ἐν σώματι在身內或ἐκτὸς (χωρίς) τοῦ σώματος在身外，林後12:2,3。ἀπὼν τῷ σώματι (παρὼν δὲ τῷ πνεύματι)我身子雖不在（心卻在）林前5:3。ἡ παρουσία τοῦ σώματος及至身臨面對，※ 林後10:10（παρουσία－SG3952一）。身體是人類經驗和受苦的器具，林後4:10上，下；加6:17 腓1:20；身體是人類行動的器官：δοξάσατε τὸν θεὸν ἐν τῷ σώματι ὑμῶν要在你們的身子上榮耀　神，即過一個聖潔的生活，林前6:20；參 羅12:1。這可能是διὰ τοῦ σώματος 林後5:10，按著本身之意（見上），若是如此，可以解釋為表工具的意義，用或藉著身體。在某些上面所提到的經節中（如 羅12:1 腓1:20，和 弗5:28），身體幾乎與整個人格同義。因人必死的身體是服在罪和死亡之下，故它是τὸ σώμα τῆς σαρκός（σάρξ－SG4561七）肉體的身體，西2:11也是一個σῶμα τῆς ἁμαρτίας罪身，羅6:6或τοῦ θανάτου取死的，羅7:24，參 羅8:11。事實上，σῶμα可以真正取代σάρξ身體的 羅8:13之用法。σῶμα τῆς παπεινώσεως卑賤的身體與σῶμα τῆς δόξης天上榮耀的身體成對比，腓3:21。在另外一處經節，σῶμα ψυχικόν指人必死的身體與σῶμα πνευματικόν死後靈性的身體相反，林前15:44。基督地上的身體，是服在死亡下的，羅7:4 來10:5（ 詩39:7異版），來10:10 彼前2:24。τὸ σώματῆς σαρκὸς αὐτοῦ 他的肉身，西1:22。尤在主的聖餐時所說的（反於αἷμα血），太26:26 可14:22 路22:19 林前10:16 11:24,27,29。－ἕν σῶμα一體，林前6:16。二、複數：σώματα奴僕，啟18:13。三、為了使保羅自己提的問題得到答案，ποίῳ σώματι ἔρχονται帶著什麼身體來，（即死人在復活之後），保羅在 林前15:35中講到植物的形體，林前15:37,38節和σώματα ἐπουράνια的天上形體，林前15:40節。四、指投射影子的實體，對比於σκιά影子，「本體，事物本身」，西2:17。五、基督徒的團體，教會是一個合一的σῶμα身體，尤為基督的身體，他用他的聖靈充滿它並予以生氣，或為它的頭：οἱ πολλοὶ ἓν σῶμά ἐσμεν ἐν Χριστῷ 這許多人在基督裡成為一身，羅12:5。參 林前10:17 12:13,27 弗1:23 2:16 4:12,16 5:23,30 西1:18,24 2:19 3:15。ἓν σῶμα καὶ ἓν πνεῦμα身體只有一個，聖靈只有一個，弗4:4。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from ;<br/>the body (as a sound whole), used in a very wide application, literally or figuratively</p>
+<p>4983 soma {so&#x27;-mah}<br/>from<br/>4982<br/>; TDNT - 7:1024,1140; n n<br/>AV - body 144, bodily 1, slave 1; 146<br/>1) the body both of men or animals<br/>1a) a dead body or corpse<br/>1b) the living body<br/>1b1) of animals<br/>2) the bodies of planets and of stars (heavenly bodies)<br/>3) is used of a (large or small) number of men closely united into one<br/>society, or family as it were; a social, ethical, mystical body<br/>3a) so in the NT of the church<br/>4) that which casts a shadow as distinguished from the shadow itself</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ἄνθρωπος</span> <span class="tl">ánthrōpos</span> <span class="sn">G00444</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G00444</li><li>詞形 ἄνθρωπος</li><li>音譯 ánthrōpos</li><li>讀音 anth&#x27;-ro-pos</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自 435 and ops (外表, 源自 3700 ); 人面的, 亦即&quot;人類&quot;; TDNT - 1:364,59; 陽性命詞</li><li>KJV 用法 man 552, not tr 4, misc 3; 559</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 人類</li><li>2 人(焦點在其侷限與軟弱)</li><li>3 男人</li><li>4 某人, 一個人</li><li>5 人性</li><li>6 那個人(在敘述中提起的)</li><li>7 某人(被輕蔑的)</li><li>8 稱呼:朋友, 先生, 人</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>00444  ἄνθρωπος, ου, ὁ 名詞「人類，人」。一、一般用法：A. 指人類：1. ἐγεννήθη ἄ. 生了一個人，約16:21；εἰς χεῖρας ἀ. 在人的手裡，可9:31；ψυχὴ ἀνθρώπου人的魂，羅2:9原文；συνείδησις ἀ.各人的良心，林後4:2；μέτρον ἀ.人的尺寸，啟21:17。2. 與動物，植物等對比－ 太4:19 12:12 可1:17 路5:10 林前15:39 彼後2:16 啟9:4,7 13:18等。與天使對比－ 林前4:9 13:1。與　神對比－ 來13:6（ 詩118:6）;太10:32,33 19:6 可10:9約10：33（ἄνθ. ὤν＝作為凡人）；徒10:26 12:22 14:11,15 帖前2:13 腓2:7。ἐντάλματα ἀνθρώπων人的吩咐，太15:9 可7:7;（ 賽29:13）；帶οὐρανός（即　神）太21:25 可11:30。 ἀδύνατα παρὰ ἀνθρώποις人所不能的事，路18:27，參 太19:26。δοῦλοι ἀνθρώπων人的奴僕，林前7:23。πείθειν和ἀρέσκειν ἀ.人的心和人的喜歡，加1:10。μεσίτης θεοῦ καὶ ἀ. 　神和人中間的中保，提前2:5等。θεὸς πάντας ἀνθρώπους θέλει σωθῆναι 　神願意萬人得救，提前2:4。3. 在稱呼對方ἄνθρωπε為「朋友」之意，表明說話者與被稱呼之間的親密關係－ 路5:20。表示責備之意－人，路12:14 22:58,60。書信中亦用以加重其稱呼－ 羅2:1,3 9:20 雅2:20。（參 彌6:8 詩55:13）。4. 一般意義的複數－οἱ ἄ.眾「人」或「伙伴」，太5:13,16 6:1,2,5,14,18 7:12 8:27 23:5 可8:27。οἱ υἱοὶ τῶν ἀνθρώπων人的後裔（ 創11:5 詩11:4）可3:28 弗3:5。B. 重在血肉之驅： 雅5:17；會死，來9:27 啟8:11 羅5:12;沉淪在罪中，羅5:18,19等，因而被斷為下等的，加1:1,11,12 西2:8,22（ 賽29:13）或甚至要謹慎地加以防備－ προσέχειν ἀπὸ τ. ἀ. 防備（惡）人，太10:17;參 路6:22,26。C. κατὰ ἄνθρωπον 「照人的方式，從人的立場」。強調人與　神比較下顯出的卑微與下等；λαλεῖν 林前9:8；λέγειν 羅3:5 加3:15；περιπατεῖν 林前3:3。κ. ἄ. ἐθηριομάχησα 像尋常人（反於像一個確信復活的基督徒）林前15:32。指福音－οὐκ ἔστιν κ. ἄ. 不是出於人的，加1:11。複數：κ. ἀνθρώπους 按著人（反於κ. θεόν）彼前4:6。二、具特殊的組合與意義：A. 帶所有格： ἀνθρώποι εὐδοκίας所喜悅的人，路2:14（εὐδοκία－SG2107）。ὁ ἄ. τῆς ἀνομίας（異版為ἁμαρτίας）那大罪人，帖後2:3。ἄ.（τοῦ）θεοῦ 屬　神的人，提前6:11 提後3:17 彼後1:21公認經文（ 王上12:22 13:1 17:24 王下1:9以下;代下8:14等）。B. 由上下文可有以下的意思：1. 「人」，男性成人－ 太11:8 路7:25。σκληρὸς εἶ ἄ. 你是忍心的人，太25:24;參 路19:21,22。與女人相對－ 太19:5 弗5:31（皆引自 創2:24）;林前7:1。2. 「丈夫」，太19:10。3. 「兒子」，反於父親，太10:35。4. 「奴僕」，路12:36。C. 對於「人」的各方面，從保羅書信（和保羅書信以後）就有不同的看法：1. 人本質兩面之差異－ὁ ἔξω ἄ.外面的人，即人的形質，短暫和罪性的方面，林後4:16，以及另一面ὁ ἔσω ἄ. 裡面的人，即人的靈性，不朽方面是努力來親近　神的，羅7:22 林後4:16 弗3:16。類似的意義有 ὁ κρυπτὸς τῆς καρδίας ἄ.內在隱藏著的人，即ὁ ἔσω ἄ. 彼前3:4。2. 從另一觀點分別παλαιὸς 舊人和καινὸς（νέος）ἄ.新人，羅6:6;弗4:22,24 西3:9。或ὁ ψυχικὸς ἄ. 及ὁ πνευματικὸς ἄ.屬血氣的人與屬靈的人，林前2:14,15（參πνευματικός －SG4152二A.1.）D. 耶穌基督與人類認同被稱為ἄ.，提前2:5 來2:6上（ 詩8:5上）。祂是與亞當相對的，羅5:15 林前15:21，πρῶτος ἄ.首先的人，林前15:45，用δεύτερος ἄ.第二個人，以作區別 林前15:47。三、幾乎與不定代名詞相同，只是ἄ.的基本意義有很大的減弱。A. 不帶冠詞：1. 與τὶς連用：ἐὰν γένηταί τινι ἀνθρώπῳ 若有一個人，太18:12。ἄνθρωπός τις κατέβαινεν 有一個人…下到… 路10:30。ἀνθρώπου τινὸς πλουσίου一個有錢人，※ 路12:16。ἄ. τις ἦν ὑδρωπικὸς有一個患水臌的人，路14:2，參 路14:16 15:11 16:1 19:12，ἦν τις ἄ. ἐκεῖ 在那裡有一個人，約5:5。τινῶν ἀ. αἱ ἁμαρτίαι 有些人的罪，提前5:24。2. 不帶τὶς：有時εἷς ἄ.與εἷς τις（一個人）幾乎相等，約11:50，參 約18:14。εἶδεν ἄνθρωπον καθήμενον他看見一個人坐，太9:9。λαβὼν ἄ.一個人拿，太13:31;參 可1:23 3:1 4:26 5:2 7:11 10:7（ 創2:24）;路2:25 4:33 5:18 6:48,49 13:19 約3:4,27等。與否定詞連用－ἄ. οὐκ ἔχω 沒有人，約5:7。οὐδέποτε ἐλάλησεν οὕτως ἄ.從來沒有人像祂這樣說話，約7:46。3. 具不確定，一般性的意味－通常解作「一個人」。οὕτως ἡμᾶς λογιζέσθω ἄ.字義：這是一個人（即你）應當以我們為，林前4:1;參 太16:26 羅3:28 林前7:26 11:28 加2:16 6:7 雅2:24。4. 帶關係代名詞－ἴδετε ἄ. ὃς εἶπέν μοι你們來看，有一個…給我說出來的人，約4:29原文。 ἄ. ὃς τὴν ἀλήθειαν ὑμῖν λελάληκα 對你們講真理的人，※ 約8:40。 ὁ ἄ., ἐν ᾧ ἦν τὸ πνεῦμα τὸ πονηρόν惡鬼所附的人，徒19:16。5. 與名詞連用，作贅言用法（ 利21:9）－ἄ. φάγος貪食者，太11:19 路7:34；ἄ. ἔμπορος買賣人，太13:45異版；ἄ. οἰκοδεσπότης家主，太13:52 21:33；ἄ. βασιλεύς國王，太18:23 22:2。同樣的，帶地方或國家起源的名稱－ἄ. Κυρηναῖος古利奈人，太27:32；ἄ. Ἰουδαῖος猶太人，徒21:39；ἄ.  Ῥωμαῖος 羅馬人 徒16:37 22:25。帶形容詞以示其名詞的性質－ἄ. τυφλός 瞎子，約9:1； ἄ. ἁμαρτωλὸς 罪人，約9:16；ἄ. αἱρετικὸς分門結黨的人，多3:10。同樣地帶分詞ἄ. σπείρων撒種的人，太13:24。6. 與別的詞連用作為贅言－τίς ἄ.；誰？ 太7:9 路15:4；πᾶς ἄ.每個人，約2:10 雅1:19；πάντες ἄ.所有人，徒22:15；眾人，林前7:7；εἷς ἄ. 約11:50；δύο ἄ.兩人，路18:10。同樣與表分所有格連用－ἀνθρώπων帶οὐδείς 可11:2 路19:30，μηδείς 徒4:17，τίς 徒19:35 林前2:11。B. 帶表示總稱的冠詞：ὁ ἀγαθός ἄ.善人，反於ὁ πονηρὸς ἄ.惡人，太12:35。οὐκ ἐπ᾽ ἄρτῳ ζήσεται ὁ ἄ.人活著不是單靠食物（ 申8:3）太4:4。κοινοῖ τὸν ἄ.污穢一個人，太15:11,18;參 可7:15,20；τὸ σάββατον διὰ τὸν ἄ. ἐγένετο 安息日是為人而有的，可2:27另譯；τί ἦν ἐν τῷ ἀ.人怎樣…，約2:25；κρίνει τὸν ἄ. 定人罪的，約7:51； ὁ νόμος κυριεύει τοῦ ἀ. 律法管人，羅7:1； ὁ ποιήσας ἄ.每一個行的人，羅10:5（ 利18:5 尼9:29）；κακὸν τῷ ἀ. τῷ διὰ προσκόμματος ἐσθίοντι 對那因食物絆倒人的就是錯事了，羅14:20原文等。四、帶冠詞，ἄ.指明：A. 剛被提及的人－ 太12:13 可3:5 5:8 約4:50等。B. 某一個人，帶著輕蔑或責備的語氣－οὐκ οἶδα τὸν ἄ.我不認得那個人（指耶穌），太26:72,74 可14:71。προσηνέγκατέ μοι τὸν ἄ. τοῦτον你們解這人到我這裡，路23:14。 εἰ ὁ ἄ. Γαλιλαῖός ἐστιν這人是加利利人嗎？ 路23:6。 τίς ἐστιν ὁ ἄ.這人是誰呢？ 約5:12。ἰδοὺ ὁ ἄ.你們看這個人，約19:5。μὴ οἰέσθω ὁ ἄ. ἐκεῖνος 這樣的人不要想…，雅1:7。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from and (the countenance; from );<br/>man-faced, i.e. a human being</p>
+<p>444 anthropos {anth&#x27;-ro-pos}<br/>from<br/>435<br/>and ops (the countenance, from<br/>3700<br/>); man-faced, i.e. a<br/>human being; TDNT - 1:364,59; n m<br/>AV - man 552, not tr 4, misc 3; 559<br/>1) a human being, whether male or female<br/>1a) generically, to include all human individuals<br/>1b) to distinguish man from beings of a different order<br/>1b1) of animals and plants<br/>1b2) of from God and Christ<br/>1b3) of the angels<br/>1c) with the added notion of weakness, by which man is led<br/>into a mistake or prompted to sin<br/>1d) with the adjunct notion of contempt or disdainful pity<br/>1e) with reference to two fold nature of man, body and soul<br/>1f) with reference to the two fold nature of man, the corrupt<br/>and the truly Christian man, conformed to the nature of God<br/>1g) with reference to sex, a male<br/>2) indefinitely, someone, a man, one<br/>3) in the plural, people<br/>4) joined with other words, merchantman</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ψυχή</span> <span class="tl">psychḗ</span> <span class="sn">G05590</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G05590</li><li>詞形 ψυχή</li><li>音譯 psychḗ</li><li>讀音 psoo-khay&#x27;</li><li>約 新約</li><li>詞類 名詞</li><li>字源 源自 5594 ; TDNT - 9:608,1342; 陰性名詞</li><li>KJV 用法 soul 58, life 40, mind 3, heart 1, heartily + 1537 1, not tr 2; 105</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 使身體得以活動的塵世生命</li><li>1a 生命氣息,生命力, 魂</li><li>1b 塵世生命</li><li>1c (轉喻) 擁有生命或魂的</li><li>2 (人類內在生命的中心所在) 魂</li><li>2a 豐厚生活的渴望</li><li>2b 邪惡的渴望</li><li>2c 感受與情感</li><li>2d 超越塵世的生命核心</li><li>3 (具有位格的) 人</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>05590  ψυχή, ῆς, ἡ 名詞「靈，魂，生命」。很難在這些層面上作明確的劃分。一、字義：A. 用於在世生命中肉體及外在的層面。1. 「氣息，生命的本質，靈，魂」。用於動物：（ 創9:4），啟8:9。平常用於人（ 創35:18 王上17:21），徒20:10。當靈魂離開軀體時，人就死了，路12:20。人死後靈魂離開世界而到陰間，徒2:27（ 詩16:10），徒2:31公認經文，或在世界之外的其他地方，啟6:9 20:4（ 詩22:20）。2. 「在世的生命」ζητεῖν τὴν ψυχὴν τινος 尋求（害）某人的性命，太2:20（參 出4:19）;羅11:3（ 王上19:10,14）。δοῦναι τὴν ψυχὴν ἑαυτοῦ 捨己命，太20:28 可10:45，約翰的說法：τιθέναι τὴν ψυχήν 放棄性命，約10:11,15,※ 約10:17 13:37,38 15:13約一3:16上，下；παραδιδόναι捨棄性命，※ 徒15:26，παραβολεύεσθαι τῇ ψυχῇ 冒著生命的危險，⊙ 腓2:30（見παραβολεύομαι－SG3851）。顧惜自己的生命，啟12:11。藉營養延壽，太6:25上，下；路12:22,23。參 路14:26 徒20:24 27:10,22 28:19異版;羅16:4（見下列一D.）。B. 「靈魂」。指人內在生命各方面的中樞。1. 用於享受的慾望（ 詩107:9 箴25:25 賽29:8 32:6）。用於財主，ἐρῶ τῇ ψυχῇ μου, ψυχή, ἀναπαύου, φάγε, πίε, εὐφραίνου對我的靈魂說，靈魂哪，只管安安逸逸的吃喝快樂吧，路12:19。參 啟18:14。2. 用於感情及情緒：περίλυπός ἐστιν ἡ ψυχή μου（參 詩42:5,11 43:5）我心裡甚憂傷，太26:38 可14:34。ἡ ψυχή μου τετάρακται我心裡憂愁，約12:27;參 徒2:43（見下列二）。路1:46 2:35 約10:24 徒14:2,22 15:24 羅2:9 帖前2:8（τὰς ἑαυτῶν ψυχάς我們的心滿了愛）；來12:3 彼後2:8。（ 賽53:11 58:3,5,10下）。也用於　神在舊約中擬人的表達法，ὁ ἀγαπητός μου ὃν εὐδόκησεν ἡ ψυχή μου我所親愛的，心裡所喜悅的，太12:18（參 賽42:1）;參 來10:38（ 哈2:4）。愛　神要ἐν ὄλῃ τῇ ψυχῇ 盡性，太22:37 路10:27；亦作ἐξ ὅλης τῆς ψυχῆς（ 申6:5 10:12 11:13）盡性，可12:30,33公認經文；路10:27公認經文。ἐκ ψυχῆς從心裡，即樂意，弗6:6 西3:23。μιᾷ ψυχῇ同一個心志，腓1:27;參 徒4:32。（ 代上12:39下）。C. 「靈魂」，生命的中樞，能超越塵世的部份。因此靈魂能得到　神的拯救，σῴζειν τὰς ψυχὰς救靈魂，雅1:21。ψυχὴν ἐκ θανατου靈魂不死，雅5:20。σωτηρία ψυχῶν靈魂的救恩，彼前1:9。περιποίησις ψυχῆς 保全靈魂，※ 來10:39。人無法傷害靈魂，但是　神能使靈魂滅亡，太10:28上，下。ζημιωθῆναι τὴν ψυχήν（ζημιόω－SG2210一）賠上生命，太16:26上;可8:36。沒有任何事物是比ψυχή生命更寶貴的，太16:26下;可8:37。此字與σῶμα「身體」相反（一旦σῶμα是指σάρξ「肉體」的時候）。一個基督徒向另一位祝福，願他的靈魂興盛，約三1:2（見εὐοδόω－SG2137），因為基督徒的靈魂會遭受試探，彼前2:11 彼後2:14，也期望得安息，太11:29，而且需要成為聖潔，彼前1:22（參 耶6:16）。必須將靈魂交與　神，彼前4:19。基督是ποιμὴν καὶ ἐπίσκοτος（參ἐπίσκοπος－SG1985）靈魂的牧人和監督，彼前2:25。使徒與監督關心信徒的靈魂，林後12:15 來13:17。基督徒的盼望被稱為靈魂的錨，來6:19。保羅稱　神是那位給他的心作見證的；若他是說謊的，自己就沒有救恩，林後1:23。同樣的用法，κτήσασθε τὰς ψυχὰς ὑμῶν你們就保全靈魂（生命），路21:19。D. 靈魂既是世上生活（一A.）及超自然生命（一C.）的中樞，人就會面對如何保守那一方面的問題（今生或來世）：ὃς ἐὰν θέλῃ τὴν ψυχὴν αὐτοῦ σῶσαι, ἀπολέσει αὐτήν· ὃς δ᾽ ἂν ἀπολέσει τὴν ψυχὴν αὐτοῦ ἕνεκεν ἐμοῦ σώσει αὐτήν因為凡要救自己生命的，必喪掉生命；凡喪掉生命的，必救了生命，可8:35。參 太10:39 16:25 路9:24 17:33 約12:25。太10:39上，下。指示τὴν ψυχὴν εὑρεῖν 「得著生命」及ἀπολέσαι「失喪生命」的對比；太16:25下；σῶσαι救自己生命及ἀπολέσαι喪掉生命的對比，太16:25節上；可8:35上，下；路9:24上，下；περιποιήσασθαι, ζωογο νῆσαι及ἀπολέσαι保全，救活，及喪掉的對比，路17:33；φιλεῖν及ἀπολλύναι愛惜與失喪的對比，約12:25上；μισεῖν及φυλάσσειν恨惡與保守的對比，約12:25節下。E. 關於 帖前5:23 來4:12的合用法，見πνεῦμα－SG4151三A.結尾。獨特的合用法是：σωμάτων, καὶ ψυχὰς ἀνθρώπων人的身體和人的靈魂，直譯，可作「奴僕和奴隸」，啟18:13（參 結27:13）。F. 在不同的閃系語文中，如關身的關係意譯為נֶפֶשׁ︰ψυχή的對立用法可在新約中找到，尤其是引用舊約及一些深受舊約思想方式影響的經文中如；太11:29 26:38 可10:45 14:34 路12:19 14:26 約10:24 12:27 林後1:23約三1:2 啟18:14。（ 賽53:10 58:3,5）。林後12:15 來13:17。二、換喻用法：有生命之物，或作人，ψυχή ζῶσα（見 創1:24）活物，啟16:3公認經文。ἐγένετο  Ἀδὰμ εἰς ψυχὴν ζῶσαν亞當成了有靈的活人，林前15:45（ 創2:7。見πνεῦμα－SG4151五F.）。ψυχὴ ζωῆς活物，啟16:3。πᾶσα ψυχή眾人（ 利7:27 23:29等），徒2:43 3:23（ 利23:29）;羅2:9 13:1。複數：人ψυχαὶ ὡσεὶ τρισχίλιαι，約三千人，徒2:41;參 徒7:14（ 出1:5）;徒27:37 彼前3:20。或許也可包括ἔξεστιν  ψυχὴν σῶσαι ἢ ἀποκτεῖναι 救命或害命，可3:4 路6:9。參 路9:56公認經文。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from ;<br/>breath, i.e. (by implication) spirit, abstractly or concretely (the animal sentient principle only; thus distinguished on the one hand from , which is the rational and immortal soul; and on the other from , which is mere vitality, even of plants: these terms thus exactly correspond respectively to the Hebrew , and )</p>
+<p>5590 psuche {psoo-khay&#x27;}<br/>from<br/>5594<br/>; TDNT - 9:608,1342; n f<br/>AV - soul 58, life 40, mind 3, heart 1, heartily + 1537 1, not tr 2; 105<br/>1) breath<br/>1a) the breath of life<br/>1a1) the vital force which animates the body and shows itself<br/>in breathing<br/>1a1a) of animals<br/>1a12) of men<br/>1b) life<br/>1c) that in which there is life<br/>1c1) a living being, a living soul<br/>2) the soul<br/>2a) the seat of the feelings, desires, affections, aversions<br/>(our heart, soul etc.)<br/>2b) the (human) soul in so far as it is constituted that by<br/>the right use of the aids offered it by God it can attain<br/>its highest end and secure eternal blessedness, the soul<br/>regarded as a moral being designed for everlasting life<br/>2c) the soul as an essence which differs from the body and is not<br/>dissolved by death (distinguished from other parts of the body)</p></div></div></details>
+<h2>三、數值備考</h2>
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">καί</span><span class="gid">G02532</span></div><ul><li><b>主數值</b> 31</li><li><b>G_iso</b> 31</li><li><b>G序數</b> 20</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">κινάμωμον</span><span class="gid">G02792</span></div><ul><li><b>主數值</b> 1081</li><li><b>G_iso</b> 1081</li><li><b>G序數</b> 109</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gid">G06007</span></div><ul><li>統一庫沒有此編號的 lemma 數值條，此處從缺，不自算。</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">θυμίαμα</span><span class="gid">G02368</span></div><ul><li><b>主數值</b> 501</li><li><b>G_iso</b> 501</li><li><b>G序數</b> 63</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">μύρον</span><span class="gid">G03464</span></div><ul><li><b>主數值</b> 660</li><li><b>G_iso</b> 660</li><li><b>G序數</b> 77</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">λίβανος</span><span class="gid">G03030</span></div><ul><li><b>主數值</b> 363</li><li><b>G_iso</b> 363</li><li><b>G序數</b> 69</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">οἶνος</span><span class="gid">G03631</span></div><ul><li><b>主數值</b> 400</li><li><b>G_iso</b> 400</li><li><b>G序數</b> 70</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ἔλαιον</span><span class="gid">G01637</span></div><ul><li><b>主數值</b> 166</li><li><b>G_iso</b> 166</li><li><b>G序數</b> 54</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">σεμίδαλις</span><span class="gid">G04585</span></div><ul><li><b>主數值</b> 500</li><li><b>G_iso</b> 500</li><li><b>G序數</b> 87</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">σῖτος</span><span class="gid">G04621</span></div><ul><li><b>主數值</b> 780</li><li><b>G_iso</b> 780</li><li><b>G序數</b> 79</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">κτῆνος</span><span class="gid">G02934</span></div><ul><li><b>主數值</b> 648</li><li><b>G_iso</b> 648</li><li><b>G序數</b> 82</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">πρόβατον</span><span class="gid">G04263</span></div><ul><li><b>主數值</b> 673</li><li><b>G_iso</b> 673</li><li><b>G序數</b> 98</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ἵππος</span><span class="gid">G02462</span></div><ul><li><b>主數值</b> 440</li><li><b>G_iso</b> 440</li><li><b>G序數</b> 74</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ῥέδα</span><span class="gid">G04480</span></div><ul><li><b>主數值</b> 110</li><li><b>G_iso</b> 110</li><li><b>G序數</b> 27</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">σῶμα</span><span class="gid">G04983</span></div><ul><li><b>主數值</b> 1041</li><li><b>G_iso</b> 1041</li><li><b>G序數</b> 55</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ἄνθρωπος</span><span class="gid">G00444</span></div><ul><li><b>主數值</b> 1310</li><li><b>G_iso</b> 1310</li><li><b>G序數</b> 112</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ψυχή</span><span class="gid">G05590</span></div><ul><li><b>主數值</b> 1708</li><li><b>G_iso</b> 1708</li><li><b>G序數</b> 72</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div></div>
+
+<h2>四、對照經文</h2>
+<div class="ntcallout"><div class="nticon">📖</div><div class="ntbody"><p>以西結書 27:13 寫雅完、土巴、米設「用人口和銅器兌換你的貨物」，是本節「身體和人的生命」最貼近的舊約外引。貨物清單仍與 18:12、以西結書 27 章同一路。把人算進貨單，是這份清單最重的一筆，本節必須把這一筆留下。</p></div></div>
+<hr/>
+<h2>五、語意</h2>
+<div class="ntcallout"><div class="nticon">💧</div><div class="ntbody">
+<ul><li>字面：還有肉桂、香料、香、香膏、乳香、酒、橄欖油、細麵、麥子、牲畜、羊、馬、四輪車，以及身體和人的生命。ψυχή 殼內有「靈、魂、生命」，本節取「生命」，因這裏是被買賣的人口，不是討論靈魂的構成。σῶμα 跟殼內「身體」，正與生命並列，寫出把人當成貨物的事實。</li></ul>
+<ul><li>本書用法：本節是 18:12 清單的下半，沒有另起動詞。人的生命被寫進貨單，與 18:24 在這城裏看見先知、聖徒和地上被殺之人的血，前後相照：這城不但是買賣物的地方，也是買賣人、傷害人的地方。本節先停在貨單的最後一項。</li></ul>
+<ul><li>舊約根源：以西結書已經把「人口」寫進推羅的貿易。舊約也嚴禁把人當作可任意買賣的物，只是這些城仍然這樣做。本節沿這舊約的指控，把「身體」和「人的生命」放在馬與車之後，讓讀的人自己聽見這次序。</li></ul>
+<ul><li>新約慣用：新約書信譴責奴待人、販賣人口，如提摩太前書 1:10。這些經文可以說明本節最後一項的性質，卻不是本節的出典。本節的力量在於：人被寫在同一份貨單的末尾。</li></ul>
+<ul><li>跨篇深意：從肉桂到麥子，從馬到車，最後是身體，是人的生命。貨單寫到這裏，繁華就露出它的代價。他們所哭的貨物裏，也包括被他們算作貨物的人。</li></ul>
+</div></div><hr/>
+<h2>六、總意</h2>
+<p>清單還在往下寫。肉桂、香料、香膏、乳香，都是叫人覺得奢華的東西；酒和油、細麵和麥子，是桌上的豐富；牲畜、羊、馬、四輪車，是動得了的產業。</p>
+<p>寫到最後，卻是身體，是人的生命。人被放在馬和車後面，與香料、糧食寫在同一份單上。這城不只買賣物，也買賣人。</p>
+<p>商人為這些貨物哀哭。那麼，他們所哭的裏面，也包括這些被當作貨物的生命。一份看起來光鮮的貨單，結尾是人。連人都可以被賣，這城的價已經說完了。　神讓這最後一項留下，是叫人看見這買賣裏最重的一筆。</p>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="66_啟示錄_Revelation rev_18_13_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">機械層臨標・金標未達</div>
+<div class="ds">本頁是啟示錄 第18章13節的機械層臨標稿。經文按已核對的和合本新標點抄錄，原文字典與數值只抄錄本機統一庫已有且已裁定的資料，不自算、不選邊。直譯、剖析、語意、總意已寫於本頁，尚未收貨，不是金標。這不是金標完成，亦未經獨立驗收，不得稱為全書金標，亦不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-12 21:51:08 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified・數值＝gematria_unified・機械層臨標・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

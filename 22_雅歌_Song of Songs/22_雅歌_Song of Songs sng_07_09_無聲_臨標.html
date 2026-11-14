@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 7:9 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_07_09_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第7章9節<br/>你的口如上好的酒。〔新娘〕女子說：為我的良人下咽舒暢，流入睡覺人的嘴中。</p>
+<p>上一節以分號收住蘋果的香，這一節才接口與酒。和合本寫：「你的口如上好的酒。〔新娘〕女子說：為我的良人下咽舒暢，流入睡覺人的嘴中。」前半還在稱「你的口」，後半已改口說「為我的良人」。和合本把呼召與回答放在同一節的情形，上一章已經見過；本節同樣是兩段話寫在一節裏，不可自改編號。</p>
+<p>原文以 וְחִכֵּךְ「而你的口／上膛」接上，כְּיֵין הַטּוֹב「如上好的酒」。חֵךְ 是上膛、口中的味覺之處，5:16 已用它寫過「他的口極其甘甜」；本節用來寫「你的口」。和合本在「上好的酒」之後加上「〔新娘〕女子說」。〔新娘〕是新標點本編者的角色標示，原文此節沒有這幾個字；「女子說」也是和合本加上的敘述，原文沒有「女子說」這三個字。人稱的轉換卻是原文自己有的：前面是「你的口」，隨後是 לְדוֹדִי「為我的良人」。聲音在哪裏改口，編者把分界放在酒的比喻之後；剖析中據實寫出這一人稱的轉變，不另替經文決定唯一的切分點。</p>
+<p>後半是 הוֹלֵךְ לְדוֹדִי לְמֵישָׁרִים「為我的良人而行，以至於平順／下咽舒暢」。מֵישָׁרִים 字典在本節與箴言 23:31 同記為酒下咽的平順、舒暢。和合本寫「為我的良人下咽舒暢」。最後 דּוֹבֵב שִׂפְתֵי יְשֵׁנִים「滑過／流入睡覺之人的唇」。דָּבַב 只見於本節，字典作緩慢移動、滑過；和合本寫「流入睡覺人的嘴中」，把唇寫成嘴，把滑過寫成流入。睡覺的人是誰，本節沒有再說明，只把酒的流動寫到他們的唇邊。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_07_08_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第7章8節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_07_10_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第7章10節</a></nav>
+<h2 class="ntitle">雅歌 第7章9節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第7章9節<br/>你的口如上好的酒。〔新娘〕女子說：為我的良人下咽舒暢，流入睡覺人的嘴中。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 7:9 &gt;</div>
+<div class="orig-he">וְ/חִכֵּ֕/ךְ כְּ/יֵ֥ין הַ/טּ֛וֹב הוֹלֵ֥ךְ לְ/דוֹדִ֖/י לְ/מֵישָׁרִ֑ים דּוֹבֵ֖ב שִׂפְתֵ֥י יְשֵׁנִֽים׃</div>
+<div class="orig-zh">你的口如上好的酒，為我的良人而行，下咽平順，滑過睡覺之人的唇。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_07_09</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>你的口如上好的酒。〔新娘〕女子說：為我的良人下咽舒暢，流入睡覺人的嘴中。</p>
+<p>原文以 וְחִכֵּךְ כְּיֵין הַטּוֹב 承接上一節，是「而你的口如上好的酒」。חֵךְ 是上膛、口，和合本寫「你的口」。新標點本在此後加上「〔新娘〕」，是編者的角色標示，原文此節沒有這幾個字；和合本又寫「女子說」，這三個字也是譯文加上的敘述，原文沒有。隨後 הוֹלֵךְ לְדוֹדִי לְמֵישָׁרִים 是「為我的良人而行，以至於平順」，人稱從「你的口」轉到「我的良人」；和合本寫「為我的良人下咽舒暢」。דּוֹבֵב שִׂפְתֵי יְשֵׁנִים 是「滑過睡覺之人的唇」，דָּבַב 只見於本節；和合本寫「流入睡覺人的嘴中」，把唇寫成嘴，把滑過寫成流入。本節把稱讚與隨後那一句收在同一節，須據實寫成兩段，不可自改章節編號。聲音在何處改口，原文以人稱轉換為據，編者把標示放在「上好的酒」之後；各讀只並列這件事，不另鎖成唯一切分。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 你的口如上好的酒｜וְחִכֵּךְ כְּיֵין הַטּוֹב</h3>
+<blockquote>וְ/חִכֵּ֕/ךְ כְּ/יֵ֥ין הַ/טּ֛וֹב</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>וְ/חִכֵּ֕/ךְ</strong>（連接詞加陽性名詞單數附屬形加第二人稱陰性單數詞尾，而你的口、你的上膛，<code><span class="sn">H02441</span></code> chek；字義「上膛、口中之味」。5:16 已用它寫「他的口」；本節寫「你的口」。和合本寫「你的口」）</li>
+<li><strong>כְּ/יֵ֥ין</strong>（介詞加陽性名詞單數附屬形，如……的酒，<code><span class="sn">H03196</span></code> yayin；字義「酒」）</li>
+<li><strong>הַ/טּ֛וֹב</strong>（冠詞加陽性名詞／形容詞單數絕對形，那上好的、那美的，<code><span class="sn">H02896</span></code> tob；字義「好、美善」。和合本寫「上好的酒」）</li>
+</ul>
+<p>上一節的分號之後，稱讚接口。口被比成上好的酒，連接詞把這一句緊接在蘋果的香後面。5:16 是她稱他的口甘甜，本節是稱她的口如酒，主詞與方向都不同，不可合成一句。這半句仍是「你的」，稱呼還在對方。新標點本隨後加上「〔新娘〕女子說」，原文此節沒有這幾個字，也沒有「女子說」。標示的位置，是編者按後文人稱的轉換來加的。</p>
+<h3>2️⃣ 為我的良人下咽舒暢，滑過睡覺之人的唇｜הוֹלֵךְ לְדוֹדִי לְמֵישָׁרִים דּוֹבֵב שִׂפְתֵי יְשֵׁנִים</h3>
+<blockquote>הוֹלֵ֥ךְ לְ/דוֹדִ֖/י לְ/מֵישָׁרִ֑ים דּוֹבֵ֖ב שִׂפְתֵ֥י יְשֵׁנִֽים׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>הוֹלֵ֥ךְ</strong>（動詞 Qal 主動分詞陽性單數絕對形，去、行，<code><span class="sn">H01980</span></code> halak；字義「走、去」。這裏指酒的下行。和合本寫「下咽」所根據的動作）</li>
+<li><strong>לְ/דוֹדִ֖/י</strong>（介詞加陽性名詞單數附屬形加第一人稱單數詞尾，為我的良人、向我的良人，<code><span class="sn">H01730</span></code> dod；字義「心愛的人」。人稱在這裏轉成「我的」）</li>
+<li><strong>לְ/מֵישָׁרִ֑ים</strong>（介詞加陽性名詞複數絕對形，以至於平順、舒暢，<code><span class="sn">H04339</span></code> meshar；字義「平坦、和諧、滑溜」。字典把本節與箴言 23:31 同記為酒下咽的舒暢。和合本寫「下咽舒暢」。此詞在 1:4 也出現，和合本在那節寫「理所當然」，用法與本節不同，不可合成一句）</li>
+<li><strong>דּוֹבֵ֖ב</strong>（動詞 Qal 主動分詞陽性單數絕對形，滑過、緩緩移動，<code><span class="sn">H01680</span></code> dabab；字義「緩慢的移動、滑行」。舊約只見於本節。和合本寫「流入」）</li>
+<li><strong>שִׂפְתֵ֥י</strong>（陰性名詞雙數附屬形，……的唇，<code><span class="sn">H08193</span></code> saphah；字義「唇、語言」。和合本寫「嘴中」的「嘴」；原文是唇）</li>
+<li><strong>יְשֵׁנִֽים׃</strong>（形容詞複數絕對形，睡覺的人，<code><span class="sn">H03463</span></code> yashen；字義「睡著的」。和合本寫「睡覺人」。本節沒有說明這些人是誰）</li>
+</ul>
+<p>酒為我的良人下行，並且下得平順。人稱在「我的良人」這裏轉成第一人稱，這是原文自己有的轉變，也是編者在前面加上角色標示的根據。和合本寫「下咽舒暢」，與字典在本節的用法一致，把平順說成咽下時的暢快。隨後是一個只在本節出現的動詞：滑過睡覺之人的唇。和合本寫「流入睡覺人的嘴中」，把滑過寫成流入，把唇寫成嘴，流動的方向仍在。睡覺的人是誰，本節沒有解釋，不宜補上一個沒有出處的身分。能讀出來的只是：這酒的流動，最後到了睡著之人的唇邊。</p>
+<h3>3️⃣ 收束｜本節歸納</h3>
+<p>本節上半把她的口比成上好的酒，下半說這酒為我的良人下咽舒暢，並滑過睡覺之人的唇。和合本在中段加上「〔新娘〕女子說」，〔新娘〕是新標點本編者標示，原文此節沒有；「女子說」也是譯文所加。人稱從「你的口」轉到「我的良人」，是原文已有的轉換。兩段寫在同一節，不改編號。唇與嘴、滑過與流入的差別，須留下意思。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H02441、H02896、H03196、H01730、H01980、H04339、H08193、H03463、H01680。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">חֵךְ</span><span class="gid">H02441</span></div><ul><li><b>主數值</b> 28</li><li><b>H小數</b> 10</li><li><b>H標準</b> 28</li><li><b>H序數</b> 19</li><li><b>H_Atbash</b> 90</li><li><b>H_Sofit擴展</b> 508</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 28 的詞條共 14 個（含本詞）。其中已有中文詞義者如 H00031 אֲבִיהוּד「我父是威嚴的」、H00280 אֲחִידָה「難解的事、謎」、H00943 בּוּךְ「混亂、困窘」、H01774 דִּי זָהָב「多金子的」、H02069 זְבַדְיָה「耶和華已賜予」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　חִכֵּךְ 是你的口、你的上膛。和合本寫「你的口」。5:16 用同一個詞寫「他的口」，本節寫「你的口」。</p>
+<p><span class="gl">④精意</span>　口在本節被比成酒。稱讚從鼻子的香，來到可以品嘗的地方。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">טוֹב</span><span class="gid">H02896</span></div><ul><li><b>主數值</b> 17</li><li><b>H小數</b> 17</li><li><b>H標準</b> 17</li><li><b>H序數</b> 17</li><li><b>H_Atbash</b> 430</li><li><b>H_Sofit擴展</b> 17</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 17 的詞條共 34 個（含本詞）。其中已有中文詞義者如 H00091 אֲגָגִי「我將勝出」、H00093 אֱגוֹז「核桃、果仁」、H00188 אוֹי「呼喊、哀哉、啊」、H00189 אֱוִי「渴望的」、H01416 גְּדוּד「群(尤指眾士兵)、軍隊」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　הַטּוֹב 是那上好的，用來限定這酒。和合本寫「上好的酒」。</p>
+<p><span class="gl">④精意</span>　上好，把這酒從普通的酒裏分別出來。本節用它來寫她的口，不是泛寫一杯酒。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">יַיִן</span><span class="gid">H03196</span></div><ul><li><b>主數值</b> 70</li><li><b>H小數</b> 7</li><li><b>H標準</b> 70</li><li><b>H序數</b> 34</li><li><b>H_Atbash</b> 89</li><li><b>H_Sofit擴展</b> 720</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 70 的詞條共 23 個（含本詞）。其中已有中文詞義者如 H00138 אֲדֹנִיָּה「耶和華之貴族」、H00971 בַּחִין「望樓」、H01349 גַּאֲיוֹן「傲慢的」、H01979 הֲלִיכָה「步行、行列、前進、旅行隊」、H02013 הָסָה「使平靜、保持安靜」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　יַיִן 是酒，作口的比喻。和合本寫「酒」。隨後的下行、平順，都還是這酒的動作。</p>
+<p><span class="gl">④精意</span>　酒把口寫成可以入喉的甘美。本節先立好比來，再讓這酒為良人而行。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">דּוֹד</span><span class="gid">H01730</span></div><ul><li><b>主數值</b> 14</li><li><b>H小數</b> 14</li><li><b>H標準</b> 14</li><li><b>H序數</b> 14</li><li><b>H_Atbash</b> 280</li><li><b>H_Sofit擴展</b> 14</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 14 的詞條共 25 個（含本詞）。其中已有中文詞義者如 H00329 אָטָד「荊棘、鼠李」、H00893 בֵּבַי「空洞」、H00959 בָּזָה「輕視、鄙視、輕蔑」、H00960 בָּזֹה「被藐視的」、H00961 בִּזָּה「搶奪、傷害、破壞」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　לְדוֹדִי 是為我的良人。人稱在這裏轉成第一人稱「我的」。和合本寫「為我的良人」。編者的角色標示，是按這一轉換加上的。</p>
+<p><span class="gl">④精意</span>　良人在本節成為這酒所為著的那一位。話從稱「你的口」，轉到「為我的良人」，關係被說回第一人稱裏面。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">הָלַךְ</span><span class="gid">H01980</span></div><ul><li><b>主數值</b> 55</li><li><b>H小數</b> 10</li><li><b>H標準</b> 55</li><li><b>H序數</b> 28</li><li><b>H_Atbash</b> 140</li><li><b>H_Sofit擴展</b> 535</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 55 的詞條共 30 個（含本詞）。其中已有中文詞義者如 H00129 אֲדָמִי「泥土的」、H00130 אֱדֹמִי「紅」、H00134 אֶדֶן「（建築、支柱等的）基礎、座基、底部的根基」、H00135 אַדָּן「堅固的」、H01374 גֵּבִים「蓄水池」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　הוֹלֵךְ 是去、行，這裏指酒的下行。和合本寫「下咽」所根據的動作。</p>
+<p><span class="gl">④精意</span>　酒不是停在杯裏，乃是向前行、向下去。本節讓這美可以進入，不只是可以觀看。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">מֵישָׁר</span><span class="gid">H04339</span></div><ul><li><b>主數值</b> 550</li><li><b>H小數</b> 10</li><li><b>H標準</b> 550</li><li><b>H序數</b> 64</li><li><b>H_Atbash</b> 55</li><li><b>H_Sofit擴展</b> 550</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 550 的詞條共 15 個（含本詞）。其中已有中文詞義者如 H04658 מַפֶּלֶת「廢墟、傾覆、屍體」、H05403 נְשַׁר「鷹」、H05404 נֶשֶׁר「鷹」、H05423 נָתַק「撕開、拉走、隔離、折斷、拔除」、H05424 נֶתֶק「疥癬」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　לְמֵישָׁרִים 是以至於平順、舒暢。字典把本節與箴言 23:31 同記為酒下咽的舒暢。和合本寫「下咽舒暢」。</p>
+<p><span class="gl">④精意</span>　平順把下行寫成暢快的，不是哽住的。這酒為良人而去，並且去得順。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">שָׂפָה</span><span class="gid">H08193</span></div><ul><li><b>主數值</b> 385</li><li><b>H小數</b> 16</li><li><b>H標準</b> 385</li><li><b>H序數</b> 43</li><li><b>H_Atbash</b> 98</li><li><b>H_Sofit擴展</b> 385</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 385 的詞條共 14 個（含本詞）。其中已有中文詞義者如 H03912 לְטוּשִׁם「用錘敲出來的」、H04923 מְשַׁמָּה「荒地、驚駭」、H06301 פְּדָהצוּר「已救贖」、H06477 פְּצִירָה「意義不明，可能是磨銳」、H06581 פָּשָׂה「展開、擴散」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　שִׂפְתֵי 是……的唇，屬於那些睡覺的人。和合本寫「嘴中」，原文是唇。</p>
+<p><span class="gl">④精意</span>　唇是酒最後經過的地方。和合本寫成嘴，部位更寬；原文停在唇上。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">יָשֵׁן</span><span class="gid">H03463</span></div><ul><li><b>主數值</b> 360</li><li><b>H小數</b> 9</li><li><b>H標準</b> 360</li><li><b>H序數</b> 45</li><li><b>H_Atbash</b> 51</li><li><b>H_Sofit擴展</b> 1010</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 360 的詞條共 38 個（含本詞）。其中已有中文詞義者如 H01874 דַּרְקוֹן「散播者」、H03462 יָשֵׁן「沉睡(死亡)、睡覺」、H03464 יָשֵׁן「睡著」、H03465 יָשָׁן「舊的、老的」、H03768 כַּרְפַּס「亞麻或植物纖維」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　יְשֵׁנִים 是睡覺的人。和合本寫「睡覺人」。本節沒有說明這些人是誰，不宜補上沒有出處的身分。</p>
+<p><span class="gl">④精意</span>　睡著的人出現在句末，酒的流動到了他們的唇邊。本節只寫到這裏，不解釋他們為何在睡。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">דָּבַב</span><span class="gid">H01680</span></div><ul><li><b>主數值</b> 8</li><li><b>H小數</b> 8</li><li><b>H標準</b> 8</li><li><b>H序數</b> 8</li><li><b>H_Atbash</b> 700</li><li><b>H_Sofit擴展</b> 8</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 8 的詞條共 13 個（含本詞）。其中已有中文詞義者如 H00014 אָבָה「順從、意願、樂意」、H00015 אָבֶה「渴望、懇求、願望」、H00016 אֵבֶה「蘆葦、紙草」、H00157 אָהַב「愛情（兩性或其他方面）、喜愛、可愛」、H00158 אַהַב「愛情、可愛、親愛」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　דּוֹבֵב 是滑過、緩緩移動，舊約只見於本節。和合本寫「流入」。</p>
+<p><span class="gl">④精意</span>　滑過把酒的動作寫得很輕。和合本寫成流入，流動仍在；原文更像輕輕擦過那些唇。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>雅歌 7:8 以分號收住鼻子的香氣，本節才接口與酒。兩節文氣相接，卻分屬兩節，不可把「上好的酒」提前寫進上一節。</p>
+<p>雅歌 5:16 寫「他的口極其甘甜」，用的也是 חֵךְ，那裏是她稱他，本節是稱「你的口」如酒，主詞與方向都不同。箴言 23:31 用 מֵישָׁרִים 寫酒的下咽舒暢，可作同一用語的外引，場合是勸戒看酒，不是本節這一口，不可倒填成本節的意思。1:4 也有 מֵישָׁרִים，用法與本節不同，不宜合成一句。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。後來的讀者若把這酒或睡覺之人讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「而你的口如上好的酒，為我的良人而行，以至於平順，滑過睡覺之人的唇」。和合本寫「你的口如上好的酒。〔新娘〕女子說：為我的良人下咽舒暢，流入睡覺人的嘴中」。〔新娘〕是新標點本編者標示，原文此節沒有；「女子說」也是譯文所加。唇被寫成嘴，滑過被寫成流入。</p>
+<p><strong>本書用法</strong>　口與 5:16 可對讀，一稱他的口，一稱你的口。良人是本卷常用稱呼，本節因「我的良人」而出現人稱轉換。酒的舒暢與 1:4、箴言 23:31 的用詞可對讀，場合不同。本節把兩段話寫在同一節。</p>
+<p><strong>舊約根源</strong>　酒、下咽平順、唇與睡覺，都是可以明白的詞。箴言中對酒的勸戒是外引，不可寫成本節的意思。不宜補上睡覺之人的身分，也不宜另拉宴席條例來改定這一句。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把上好的酒或睡覺之人讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<p><strong>跨篇深意</strong>　香氣之後是酒。口被比成上好的酒，並且這酒為良人而行，下得平順，最後輕輕到了睡著之人的唇邊。本節讓稱讚變成可以進入的東西，又讓人稱在「我的良人」這裏轉回自己。誰在說話，印本用標示分開，原文則以人稱的轉換為據。</p>
+<h2>六、總意</h2>
+<p>蘋果的香還用分號連著，這一節已經接口。你的口如上好的酒。5:16 她稱過他的口甘甜，這一回被稱的是她的口。酒被說成上好的，稱讚還沒有停。</p>
+<p>和合本在這裏加上「〔新娘〕女子說」。〔新娘〕是印本的角色標示，原文此節沒有；「女子說」也是譯文加上的。原文自己有的，是人稱的轉換：前面還是「你的口」，隨後已經是「為我的良人」。話在同一節裏轉了方向。</p>
+<p>這酒為良人下行，並且下得舒暢。和合本寫「下咽舒暢」，把平順說成咽時的暢快。最後它滑過睡覺之人的唇。和合本寫「流入……嘴中」，原文是唇，動作是滑過。睡覺的人是誰，本節沒有說。</p>
+<p>呼召與回答曾經被寫在 6:13 的同一節裏，本節也是兩段話放在一起。不必為了分開聲音去改編號。讀完，只要記得：酒為良人而去，並且去得順，直到睡著之人的唇邊。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H02441 — חֵךְ「上顎、口、嘴巴」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02441</li><li>詞形 חֵךְ</li><li>音譯 chek</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 上顎、口、嘴巴</li><li>字源 或許來自 SH2596 ，含品嚐之意</li><li>中文用法 口8 上膛7 嘗...的滋味1 覺1 (17)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 口, 上顎, 味道, 牙床</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽חֵךְ 伯12:11 34:3。單陽2單陽詞尾חִכְּךָ 何8:1；חִכֶּךָ 結3:26 箴24:13。單陽1單詞尾חִכִּי 箴8:7。大多用於詩體，特別用在智慧文學：單陽2單陰詞尾חִכֵּךְ 歌7:9。單陽3單陽詞尾חִכּוֹ 哀4:4。單陽3單陰詞尾חִכָּהּ 箴5:3。單陽3複陽詞尾חִכָּם 伯29:10。</p>
+<p>1. אֶל-חִכְּךָ שֹׁפָר你用口吹角吧，何8:1；時常用לָשׁוֹן דָּבַק舌頭緊貼上顎，形容說不出話來，結3:26 伯29:10；咒詛，詩137:6；渴望解渴，哀4:4（בַּצָּמָא口渴）。</p>
+<p>2. 說話的器官：她的口比油更滑，箴5:3 8:7；我沒有容口犯罪，伯31:30；דִּבְּרָה לְשׁוֹנִי בְחִכִּי我的舌在我的上膛發言，伯33:2。</p>
+<p>3. 味覺器官：上膛嘗食物，伯12:11 34:3；פִרְיוֹ מָתוֹק לְחִכִּי嘗他果子的滋味，歌2:3；便覺甘甜，箴24:13（暗示智慧的比喻對靈魂來說是甘甜的）；比喻　神的話是甜蜜的，在我上膛何等甘美，詩119:103。辨別禍福：我的口裡豈不辨奸惡，伯6:30。愛戀不捨離棄，בְּתוֹךְ חִכּוֹ含在口中，伯20:13（喜歡並延長它的味道）。</p>
+<p>4. 隱喻情人的嘴很甜（親吻）及美麗（甜言蜜語）：他的口極其甘甜，歌5:16 7:9。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] probably from 2596 in the sense of tasting;<br/>properly, the palate or inside of the mouth; hence, the mouth itself (as the organ of speech, taste and kissing)</p></div></div></div></details>
+<details class="ntfold"><summary>H02896 — טוֹב「好的、良善的、喜悅的、有益的、合適的」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02896</li><li>詞形 טוֹב</li><li>音譯 towb</li><li>約 舊約</li><li>詞類 形容詞</li><li>中文詞義 好的、良善的、喜悅的、有益的、合適的</li><li>字源 來自 SH2895</li><li>中文用法 善94 好62 美36 好處27 強19 福18 好的17 福樂15 吉9 美好9 美好的9 勝過8 喜悅8 還好7 俊美6 甚好6 佳美5 恩5 恩惠5 施恩的5 福氣5 美物5 隨意5 寧可4 快樂4 更好4 有益4 良善4 不如3 佳3 勝3 強過3 恩待3 意旨3 施恩3 是3 更美3 福分3 美福3 貴重的3 上好的2 亨通2 俊2 利益2 厚2 厚待2 善人2 善待2 善行2 更強2 最好的2 最美的2 樂2 益2 精2 美的2 肥2 良2 還強2 順利2 上等1 主1 亨通的1 享福1 以為美1 任憑1 健壯的1 勝似1 勝於1 可悅1 可愛的1 吉言1 吉語1 善益的1 喜悅的1 喜愛1 喜樂1 大1 好人1 好話1 妙1 安然1 平安1 平安無事1 強如1 恩典1 情1 慈善1 所喜悅的1 所行的...善1 施1 暢快1 更好的1 有利1 有功的1 歡暢1 歡樂1 清秀1 益處1 純1 綽綽1 美善1 美善的1 美貌1 美麗1 肥美1 肥美的1 至善的1 良善的1 蒙福1 豐1 豐盛1 貨物1 賢能1 降福1 隨...意1 願1 香1 高1 (540)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>形</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 好的, 令人愉悅的, 可喜的</li><li>1a 令人愉悅的, 可喜的 (感官上)</li><li>1b 令人愉悅的 (更高的本質)</li><li>1c 好的, 卓越的 (在其類)</li><li>1d 好的, 豐富的, 有價值的</li><li>1e 美的, 和宜的, 合適的</li><li>1f 較好的 (比較級)</li><li>1g 歡喜的, 快樂的, 成功的 (人的感官層面)</li><li>1h 聰明的 (人的才智層面)</li><li>1i 好的, 仁慈的, 良好的</li><li>1j 好的, 對的 (倫理的)<br/><br/>陽性名詞</li><li>2 好東西, 利益, 福樂</li><li>2a 福樂, 繁榮, 幸福</li><li>2b 好東西 (集合名詞)</li><li>2c 好處, 利益</li><li>2d 好德性<br/><br/>陰性名詞</li><li>3 福樂, 利益, 好東西</li><li>3a 福樂, 繁榮, 幸福</li><li>3b 好東西 (集合名詞)</li><li>3c 慷慨</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、形容詞：好的、令人愉悅的、可喜的。</p>
+<p>單陽טוֹב 創2:12；單陽3複陽詞尾טוֹבָם 彌7:4；單陰טוֹבָה 斯8:5；單陰附屬形טוֹבַת 創26:7；טֹבַת 創24:16；複陽טוֹבִים 耶44:17；טֹבִים 創27:9；複陽附屬形טוֹבֵי 但1:4；複陰טוֹבוֹת 斯2:2；טֹבוֹת 耶24:2；טֹבֹת 創6:2。</p>
+<p>1. 感官上令人愉悅的、可喜的。</p>
+<p>A. 外觀：美貌，人的女子，創6:2；兒子，出2:2 撒上9:2 王上20:3；年輕人，撒上8:16；מַרְאֵיהֶם他們的面貌，但1:15；טֹבַת מַרְאֶה容貌俊美，創24:16 26:7 撒下11:2 斯1:11 2:3,7；עֵינַיִם וְטוֹב雙目清秀，撒上16:12；טוֹב־תֹּאַר面貌英俊，王上1:6；טוֹבַת חֵן 鴻3:4；טוֹבוֹת מַרְאֶה美貌，斯2:2；טוֹבֵי מַרְאֶה相貌俊美，但1:4。</p>
+<p>B. 味道，美味、甜美、宜人：לְמַאֲכָל作食物，創2:9 3:6；穗子，創41:5,22,24,26；無花果，耶24:2,3,5；蜜，箴24:13。כְּיֵין הַטּוֹב如上好的酒，歌7:9；תְּנוּבָתִי הַטּוֹבָה美的果子，士9:11。</p>
+<p>C. 嗅覺：甜美的氣味。香膏，歌1:3。</p>
+<p>D.令人愉悅的：樹影，何4:13。</p>
+<p>2. 提升心靈層次的令人愉悅的，帶來快樂、幸福、繁榮：</p>
+<p>A. 關於時間：יוֹם טוֹב好日子，撒上25:8 斯8:17 9:19,22；節期，亞8:19；豐年，創41:35。</p>
+<p>B. 關於地方：טוֹב בֵּית הַנָּשִׁים女院上好的房屋，斯2:9；בַּטּוֹב לוֹ他所喜悅的地方，申23:16；בַּטּוֹב בְּעֵינֶיךָ שֵׁב隨意居住，創20:15。</p>
+<p>C. 關於人物：טוֹב בְּעֵינַי在我眼中甚好，撒上29:6,6,9；טוֹב בְּעֵינֵי יְהוָה耶和華眼看為善，瑪2:17。</p>
+<p>D. 關於話語或信息：בְּשׂוֹרָה טוֹבָה報好信的，撒下18:27；טוֹבָה הַשְּׁמֻעָה好風聲，撒上2:24 箴15:30 25:25；דָּבָר טוֹב美辭，詩45:1。</p>
+<p>E. 其他：בְּדֶרֶךְ טוֹבָה平安無事，撒上24:19;מְנֻחָה כִּי טוֹב佳美的安息所，創49:15；弟兄和睦，מַה-טּוֹב וּמַה-נָּעִים何等地善何等地美，詩133:1；טוֹב לְ為美，傳2:3 6:12 8:12,13；הֲטוֹב כִּי這豈是好的嗎？ 伯13:9。</p>
+<p>F. עֲשִׂי־לָהּ הַטּוֹב בְּעֵינָיִךְ按著妳眼中看為好的對待她，創16:6 士19:24 撒上1:23 3:18 14:40 撒下10:12＝代上19:13 撒下19:18,27,37 王下10:5 20:3＝賽38:3 代上21:23＝撒下24:22；וַעֲשׂוּ לָהֶן כַּטּוֹב בְּעֵינֵיכֶם照你們所看為好的對待她們，創19:8 士10:15 撒上11:10 14:36 斯3:11。</p>
+<p>3. 在其類別上是好的、出色的。</p>
+<p>A. 各種創造物：וַיַּרְא אֱלֹהִים כִּי-טוֹב　神看是好的，創1:4,10,12,18,21,25；כָּל־אֲשֶׁר עָשָׂה טוֹב מְאֹד一切所造的都甚好，創1:31。</p>
+<p>B. 土地、土壤，豐富、肥沃：אֶרֶץ地，出3:8 民13:19 14:7 申1:25,35 3:25 4:21,22 6:18 8:7,10 9:6 11:17 書23:16 士18:9 代上28:8。אֲדָמָה地，王上14:15 書23:13,15。חֶלְקָה田，王下3:19,25。שָׂדֶה田地，結17:8。נָוֶה住處，結34:14。מִרְעֶה草場，代上4:40 結34:14,18。</p>
+<p>C. 植物，精選的，產量多的：זֵיתִים橄欖樹，撒上8:14。עֵץ樹，王下3:19,25 結31:16。指種子，אִם-שְׁנֵיהֶם כְּאֶחָד טוֹבִים或它們兩樣都一樣好，傳11:6。</p>
+<p>D. 動物，肥嫩的：בָּקָר牛，創18:7。עִזִּים山羊，創27:9。פָּרֹת母牛，創41:26。יָרֵךְ大腿、腰部，結24:4。</p>
+<p>E. 礦物，優質的、不攙雜的。זָהָב金子，創2:12 代下3:5,8。כֶּתֶם純金，哀4:1。銅，拉8:27。銲錫、接縫，賽41:7。</p>
+<p>4.好的、豐富的、有價值的。</p>
+<p>A. 數量上，大壽數，創15:15 25:8 士8:32 代上29:28。天賦、禮物，　神賜我厚賞，創30:20(許多兒子)。寶物（來自耶和華的福氣），申28:12。</p>
+<p>B. 價值上，很好的、很有價值的：指房屋、牲畜和什一等等，利27:10,10,12,14,33。利益，箴31:18。報酬，傳4:9。מַחֲמַדַּי הַטֹּבִים寶物，珥3:5。</p>
+<p>5.美的、和宜的、合適的。טוֹב אֲשֶׁר為美，傳7:18；טוֹבָה חָכְמָה עִם-נַחֲלָה智慧和產業並好，傳7:11；טוֹב פָּתָר解得好，創40:16（夢）；לֹא־טוֹב הַדָּבָר這件事不好，出18:17；טוֹב דְּבָרְךָ你的話很好，撒上9:10 王上2:38,42 18:24 王下20:19＝賽39:8。簡短的讚嘆，טוֹב好、很好，得3:13 撒上20:7 撒下3:13 王上2:18；後跟著כּי，最好...，撒下18:3 得2:22 哀3:27 伯10:3。</p>
+<p>6. 與מִן合用，更好的。後有不定詞：給你勝似給別人，創29:19 出14:12 詩118:8,9 箴16:19 25:7,24 傳6:9 7:2；不定詞省略，箴21:9,19 25:24；מִן省略，民14:3；מִן +人稱，士15:2 得4:15 撒上1:8 15:22 王上2:32 19:4 代下21:13 箴12:9 16:32 19:1,22 27:10 28:6 哀4:9 斯1:19 傳4:3,9,13 6:3 7:5,8；與מִן的事物比較，士8:2 撒上15:22 撒下17:14 王上21:2 王下5:12 何2:7 摩6:2 賽56:5 拿4:3,8 詩37:16 63:3 84:11 119:72 箴3:14 8:11,19 15:16,17 16:8,16 22:1 歌1:2 傳4:6。</p>
+<p>7. 人的感官層面：幸福的、快樂的、成功的。טוֹב-לֵב心中歡暢，箴15:15 斯5:9 傳9:7；טוֹבֵי לֵב心中喜樂，王上8:66＝代下7:10；וַנִּהְיֶה טוֹבִים享福樂，耶44:17。</p>
+<p>8. 人的才智層面：聰明的。שֵׂכֶל-טוֹב善於事奉，代下30:22 詩111:10 箴3:4 13:15。טוֹבַת-שֶׂכֶל聰明俊美的，撒上25:3。</p>
+<p>9.好的、仁慈的、善良的：</p>
+<p>A. 人本身：那些人待我們甚好，撒上25:15 撒下18:27 代下10:7。</p>
+<p>B. 　神本身：　神自己，耶和華本為善，鴻1:7 代下30:18 詩86:5。כִּי-טוֹב他是美善，詩100:5 135:3 耶33:11；כִּי טוֹב כִּי לְעוֹלָם חַסְדּוֹ因他本為善祂的慈愛永遠長存，代上16:34 代下5:13 7:3 拉3:11 詩106:1 107:1 118:1,29 136:1。טוֹב לְ恩待，詩73:1 145:9 哀3:25；יַד-אֱלֹהָיו הַטּוֹבָה עָלָיו　神施恩的手幫助他，拉7:9 8:18 尼2:8,18；良善的靈，尼9:20 詩143:10；שִׁמְךָ כִי-טוֹב這名本為美好，詩52:9 54:6；כִּי-טוֹב חַסְדֶּךָ因為你的慈愛本為美好，詩69:16 109:21；耶和華應許賜福的話，書21:45 23:14,15 王上8:56 耶29:10 33:14 亞1:13。</p>
+<p>10.良善（倫理上的）、對的：指示你們何為善，彌6:8 伯34:4。</p>
+<p>A. 人本身：他們最好的，彌7:4；אִישׁ טוֹב善人，箴14:14＝代下19:11 詩125:4 箴2:20 12:2 13:22 15:3 傳9:2,2。人的行為：מַעֲשֶׂה所行的，撒上19:4 傳12:14；מַעַלְלֵיכֶם作為，結36:31；善道正路，撒上12:23 王上8:36 代下6:27 賽65:2 耶6:16 詩36:4 箴16:29。דְבָרֶךָ טוֹבִים וּנְכֹחִים你的事有情有理（你的話語是良善和正直的），撒15:3；דָּבָר טוֹב顯出善行，王上14:13；לֹא־טוֹב הַדָּבָר你們所行的不善，尼5:9；וַאֲשֶׁר לֹא־טוֹב עָשָׂה在本國的民中行不善，結18:18；如同וּמֹאזְנֵי מִרְמָה לֹא־טוֹב詭詐的天平也為不善，箴20:23；不善與不定詞合用：這是不正義的…，עֲנוֹשׁ לַצַּדִּיק לֹא־טוֹב刑罰義人為不善，箴17:26；שְׂאֵת פְּנֵי־רָשָׁע לֹא־טוֹב抬舉惡人的臉面(意思是偏袒)，…是不好的，箴18:5；הַכֵּר־פָּנִים לֹא־טוֹב認人的臉面(意思是偏袒)是不好的，箴28:21 24:23(בַּל־טוֹב不良善)。</p>
+<p>B. 　神本身：טוֹב-אַתָּה וּמֵטִיב你本為善所行的也善，詩119:68；טוֹב-וְיָשָׁר יְהוָה耶和華是良善的正直的，詩25:8；מִשְׁפָּטֶיךָ טוֹבִים你的典章本為美，詩119:39；מִצְוָה命令、吩咐，尼9:13；חֻקִּים律例，結20:25；לֶקַח טוֹב好教訓，箴4:2；מִפִּי עֶלְיוֹן לֹא תֵצֵא הָרָעוֹת וְהַטּוֹב禍福不都出於至高者的口嗎，哀3:38。</p>
+<p>二、陽性名詞：好東西、繁榮、平安、幸福。</p>
+<p>1.福樂、繁榮、幸福。平行詞שָׁלוֹם平安，賽52:7 耶8:15 14:19；אִם-טוֹב וְאִם-רָע無論是好是歹，耶42:6；יָבוֹא טוֹב福樂來到，耶17:6；שָׂמַחְתָּ בְכָל-הַטּוֹב一切福分歡樂，申26:11 代下6:41；רְאֵה בְטוֹב你好享福，傳2:1 耶29:32。טוֹב作受詞：：רָאָה看見的好處，詩4:6；美福，詩34:12 傳2:24 3:13 伯7:7。דָּרַשׁ尋求，斯10:3；בָּקַשׁ求，詩122:9；נָתַן給，詩85:12；קָוָה仰望，伯30:26；מָצָא得到，箴16:20 17:20 18:22 19:8；נָחַל承受，箴28:10；חָסֵר缺乏，詩34:10；בָּשַׂר宣告好消息，王上1:42 賽52:7；חָלָה לְטוֹב想得好處，彌1:12；חָכְמָה וָטוֹב智慧和福分，王上10:7；טוֹב וָחֶסֶד恩惠與慈愛，詩23:6；בְּטוֹב安然中，詩25:13 伯21:13 36:11 傳7:14；מִטּוֹב因為良善，亞1:17；遠離良善，詩39:2；כְּטוֹב如同良善，何10:1；לְטוֹבָה為了良善，申30:9 耶15:11；לְטוֹב לָנוּ使我們得好處，申6:24 10:13。</p>
+<p>2.好東西（集合名詞）。בִּרְכוֹת טוֹב美福，詩21:3 箴24:25；מִלֵּא בָתֵּיהֶם טוֹב美物充滿他們的房屋，伯22:18；טוֹב作受詞：שָׂבַע（飽足），飽得美食，詩104:28 箴12:14；מִלֵּא־טוֹב得飽美物，詩107:9；אָכַל（吃），箴13:2 賽55:2；לָקַח（取、拿），何14:2；הַמַּשְׂבִּיַע בַּטּוֹב他用美物使你所願的得以知足，詩103:5；財物、所有物，撒上15:9。</p>
+<p>3.好處＝利益。גְּמָלַתְהוּ טוֹב וְלֹא-רָע使丈夫有益無損，箴31:12。תַּאֲוַת צַדִּיקִים אַךְ-טוֹב義人的心願盡得好處，箴11:23。טוֹב作受詞：קָבַל（領)，伯2:10；מָנַע（拒絕），箴3:27；שֹׁחֵר（尋求），箴11:27；שָׁלַם（償還）： 箴13:21；עָשָׂה（做、行），創26:29 詩119:65；יֵיטִיב（降福），民10:32；עַבְדְּךָ לְטוֹב為你僕人的益處，詩篇119:122；חֹרְשֵׁי טוֹב謀善的，箴14:22。</p>
+<p>4. 道德上的善。הַדַּעַת טוֹב וָרָע分別善惡，創2:9,17 3:5,22 申1:39；אֵדַע בֵּין־טוֹב לְרָע分辨善與惡，撒下19:35；與רָע（惡）相反，申30:15 撒下14:17 王上3:9 賽5:20,20 7:15,16 摩5:14,15 彌 3:2 詩34:14 37:27 52:3。</p>
+<p>三、陰性名詞：福樂、利益、好東西。</p>
+<p>單陰טוֹבָה 申28:11。單陰附屬形טוֹבַת 詩106:5。單陰2單陽詞尾טוֹבָתֶךָ 詩65:11；טוֹבָתְךָ 詩68:10。單陰1單詞尾טוֹבָתִי 詩16:2。複陰טוֹבוֹת 耶12:6；טֹבוֹת 王下25:28 耶52:32。複陰3單陽詞尾טוֹבֹתָיו 尼6:19。</p>
+<p>1.福樂、繁榮、幸福。平行詞שָׁלוֹם平安，申23:6 耶33:9,9 哀3:17；יוֹם טוֹבָה亨通的日子，傳7:14；טוֹבָתִי בַּל-עָלֶיךָ我的好處不在你以外，詩16:2；תְּבוֹאַתְךָ טוֹבָה福氣也必臨到你，伯22:21；לְטֹבָה好的，創50:20 申28:11 30:9 代下18:7 耶14:11；לְרָעָה וְלֹא לְטוֹבָה降禍不降福，摩9:4 耶21:10 39:16 44:27。與動詞的搭配使用：בָּקַשׁ（尋求），尼2:10；רָאָה（看見），伯9:25 傳5:18 6:6；אָבַד（敗壞），傳9:18；לִרְאוֹת בְּטוֹבַת בְּחִירֶיךָ使我得見你選民的福，詩106:5；וּמְחַסֵּר אֶת־נַפְשִׁי מִטּוֹבָה使自己不享福樂，傳4:8。比喻用法：未嘗福樂，伯21:25；תִשְׂבַּע מִן־הַטּוֹבָה滿享福樂，傳6:3。</p>
+<p>2.好東西（集合名詞）：</p>
+<p>A. 好話。טוֹבָה作受詞：דָּבַר（說），撒上25:30 撒下7:28＝代上17:26 耶18:20；複數：יְדַבְּרוּ אֵלֶיךָ טוֹבוֹת向你說好話，耶12:6 52:32＝王下25:28。</p>
+<p>B. 物質產業。בִּרְבוֹת הַטּוֹבָה貨物增添吃的人也增添，傳5:11。</p>
+<p>3. 慷慨的祝福、善：שְׁנַת טוֹבָתֶךָ恩典為年歲，詩65:11；טוֹבָתְךָ恩惠，詩68:10 民24:13 士8:35 9:16 撒上24:19 撒下2:6 王上8:66＝代下7:10 24:16 耶33:9。以善待我，撒上24:18；יְשַׁלֶּמְךָ טוֹבָה以善報你，撒上24:19；רָעָה תַּחַת טוֹבָה以惡報善，創44:4 撒上25:21 詩35:12 38:20 109:5 箴17:13 耶18:20；תַּחַת קִלְלָתוֹ טוֹבָה施恩代替咒詛，撒下16:12；זָכְרָה-לִּי אֱלֹהַי לְטוֹבָה　神記念施恩，尼5:19 13:31；לְטוֹבָה施恩的，拉8:22 尼2:18；好處，耶24:5,6；恩待，詩86:17。複數：טוֹבֹתָיו他的善行，尼6:19。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 2895 ;<br/>good (as an adjective) in the widest sense; used likewise as a noun, both in the masculine and the feminine, the singular and the plural (good, a good or good thing, a good man or woman; the good, goods or good things, good men or women), also as an adverb (well)</p></div></div></div></details>
+<details class="ntfold"><summary>H03196 — יַיִן「酒」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03196</li><li>詞形 יַיִן</li><li>音譯 yayin</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 酒</li><li>字源 來自一不用字根，意為起泡沫</li><li>中文用法 酒137 清酒2 筵宴1 (140)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 酒</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽יַיִן 創9:21。יָיִן 創14:18。單陽附屬形יַיִן 詩60:3 歌8:2；יֵין 申32:38。單陽3單陽詞尾יֵינוֹ 創9:24。單陽3單陰詞尾יֵינָהּ 箴9:2。單陽3複陽詞尾יֵינָם 申32:33。單陽2單陽詞尾יֵינֶךָ 傳9:7。單陽2單陰詞尾 撒上1:14。單陽1單詞尾יֵינִי 歌5:1。</p>
+<p>1. 一般飲品：提神，創14:18 27:25 士19:19 撒下16:2 摩5:11 9:14 何14:7 伯1:13,18 但1:5。補品，箴31:6 結27:18 尼13:15。防營內儲備的物資，代下11:11。助興，撒下13:28 亞9:15 10:7 斯1:10 傳9:7 10:19 詩104:15。</p>
+<p>2. 宗教禮儀：在　神面前吃喝快樂，申14:26 何9:4。作為奠祭，出29:40 利23:13 民15:5,7,10 28:14；聖所的庫存，代上9:29；也用於異教徒的儀式，申32:33。</p>
+<p>3. 醉人的飲品： 創9:21,24 19:32,33,34,35 撒上1:14 25:37 賽5:11,22 箴21:17 23:30,31；平行詞תִּירוֹשׁ新酒，何4:11；平行詞שֵׁכָר	烈酒，撒上1:15 彌2:11 賽24:9 28:7,7 56:12；離俗歸耶和華的人不可飲用，民6:3,3,4,20 摩2:12；利甲的後代不可喝，耶35:6。參孫的母親，士13:4,7,14；進入聖所的祭司，利10:9 結44:21；君王喝酒不宜，箴31:4。</p>
+<p>4. 組合字：כְּיֵין הַטּוֹב上好的酒，歌7:9；וְיֵין מַלְכוּת御酒，斯1:7；אֹצְרוֹת הַיַּיִן酒窖，代上27:27；מִיַּיִן הָרֶקַח香酒，歌8:2；מִשְׁתֵּה הַיַּיִן酒席，斯5:6 7:2,7,8；בְסֹבְאֵי-יָיִן好飲酒的，箴23:20；נֹאד יַיִן皮酒袋，書9:4,13 撒上16:20；נֵבֶל יַיִן一皮袋酒，撒上1:24 10:3 25:18 撒下16:1 耶13:12,12；בֵּית הַיָּיִן筵宴所，歌2:4。</p>
+<p>5. 隱喻用法：智慧的酒，箴9:2 賽55:1。　神的忿怒，耶25:15（כּוֹס הַיַּיִן）。象徵因　神的作為而帶來的混亂，יַיִן תַּרְעֵלָה使人東倒西歪的酒，詩60:3 75:8；形容　神的震怒和行動，詩78:65；　神藉巴比倫猛烈的力量來施行審判，耶51:7；歡娛的酒，歌5:1；וְיֵין חֲמָסִים暴力的酒，箴4:17；比喻迫切想要說出自己心中想法，伯32:19；先知因　神的話語和審判而深感憂傷和震撼，וּכְגֶבֶר עֲבָרוֹ יָיִן像被酒所勝的人，耶23:9；表達愛情的甜美，你的口如上好的酒，歌7:9；因你的愛情比酒更美，歌1:2 4:10。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root meaning to effervesce;<br/>wine (as fermented); by implication, intoxication</p></div></div></div></details>
+<details class="ntfold"><summary>H01730 — דּוֹד「情侶、所愛的人、叔伯、愛情」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01730</li><li>詞形 דּוֹד</li><li>音譯 dowd</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 情侶、所愛的人、叔伯、愛情</li><li>字源 來自一不用字根，意為沸騰</li><li>中文用法 良人33 叔叔12 愛情8 伯叔5 親愛1 所愛者1 叔父1 (61)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 心愛的 (人), 愛, 叔伯或舅舅</li><li>1a 心愛的 (人)</li><li>1b 叔伯或舅舅</li><li>1c 愛 (複數, 抽象)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽דּוֹד 歌5:9。單陽附屬形דּוֹד 撒上10:14；דֹּד 利10:4 斯2:15。單陽3單陽詞尾דּוֹדוֹ 摩6:10 撒上10:16；דֹּדוֹ 利20:20。單陽3單陰詞尾דּוֹדָהּ 歌8:5。單陽2單陽詞尾דֹּדְךָ 耶32:7。單陽1單詞尾דּוֹדִי 賽5:1；דֹּדִי 耶32:8。複陽דּוֹדִים 歌5:1；דֹדִים 箴7:18 結16:8 23:17。複陽3複陰詞尾דֹדֵיהֶן 民36:11。複陽2單陽詞尾דֹּדֶיךָ 歌1:2,4。複陽2單陰詞尾דֹדַיִךְ 歌4:10。</p>
+<p>一、心愛的人。良人，歌1:13,14,16 2:3,8,9,10,16,17 4:16 5:2,4,5,6,6,8,9,9,10,16 6:1,1,2,3,3 7:10,11,12,13 8:5,14。親愛的、朋友：שִׁירַת דּוֹדִי我所愛者的歌，賽5:1。</p>
+<p>二、叔伯或舅舅，民36:11 撒上14:50 王下24:17 利20:20 25:49,49 撒上10:14,15,16 斯2:7,15 耶32:7,8,9,12；大衛的叔叔約拿單，代上27:32；死人的伯叔，摩6:10。</p>
+<p>三、複數抽象：愛，歌1:2,4 4:10,10 5:1；עֵת דֹּדִים看見你的時候正動愛情，結16:8；מִשְׁכַּב דֹּדִים愛情的床，結23:17。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or (shortened) דֹּד ; from an unused root meaning properly, to boil , i.e.<br/>(figuratively) to love ; by implication, a love-token , lover , friend ; specifically an uncle</p></div></div></div></details>
+<details class="ntfold"><summary>H01980 — הָלַךְ「走、去、往來、漫遊、行進、逐漸」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01980</li><li>詞形 הָלַךְ</li><li>音譯 halak</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 走、去、往來、漫遊、行進、逐漸</li><li>字源 近似 SH3212 、一原形字根</li><li>中文用法 去395 行162 往134 走72 來57 行走45 遵行36 到28 回28 離開27 隨23 回去18 去了16 走了15 流12 行事12 跟11 順從10 到了9 帶9 歸9 隨從9 出去8 上8 出7 前往7 跟隨7 領7 引導6 往來6 效法6 來吧5 行為5 行動5 走來走去5 上去4 日見4 經過4 越發4 跟著4 進入4 傳3 去行3 引3 引路3 從3 日漸3 行走的3 走遍3 遊行3 過去3 下2 使2 來到2 來往2 出來2 前行2 去世2 去的2 帶去2 帶領2 弱2 強盜2 往返2 所行的2 時常2 步2 歸回2 流行2 漲2 漸2 漸漸的2 爬行的2 犯2 直行2 行的2 走來2 走去2 走開2 起身2 越2 跑2 送2 速散的2 進了2 遵2 離別2 順2 上...去2 行動...的2 一舉一動1 上去下來1 下去1 亂竄1 事奉1 作事1 傳揚1 出外的1 前去1 向前進1 周遊1 四散1 回了1 回到1 妄想1 存1 寄1 寄居的1 射出1 將要1 就近1 帶到1 帶往1 延長1 往前去1 快去1 快走1 投奔1 抬1 擄去1 旋轉1 既1 時常行走1 步行1 歸於1 毀謗1 浮1 游1 漂來漂去1 漸漸長1 犯了1 當1 發出1 素行1 聽從1 行事的1 行動的1 行去1 行路1 行路的1 要去的1 走著1 走過1 起1 起行1 趕1 跟從1 跨1 躲避1 追1 追尋1 追趕1 退1 逃1 逃走1 逃避1 通行1 進1 進去1 遊1 過1 遵守1 遵從1 還1 長大1 閃1 隨著1 颳1 飛行1 齋戒1 行...的1 去...的1 遵行...的1 行...之人1 離...去1(1435)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 行, 走, 來</li><li>1a (Qal)</li><li>1a1 行,走, 來, 分開,進行 ,移動, 離開</li><li>1a2 結束, 生命的狀態 (比喻用法，如雨、露、風、憂愁、人的生命)</li><li>1b (Piel)</li><li>1b1 走</li><li>1b2 走 (比喻用法)</li><li>1c (Hithpael)</li><li>1c1 來來去去</li><li>1c2 散步</li><li>1d (Hiphil)引導, 帶來, 引開 , 帶來, 使之走開</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－3單陽הָלַךְ 創26:26；הָלָךְ 王下13:6。3單陰הָלְכָה 瑪3:14。3單陽3複陽詞尾הוֹלִיכָם 賽48:21。3複הָלְכוּ 創14:24；הָלָכוּ 何7:11。2單陽הָלַכְתָּ 民22:37。2單陰הָלַכְתְּ 結16:47。2複陽הֲלַכְתֶּם 申1:31。1複הָלַכְנוּ 申2:14。1單הָלַכְתִּי 得1:21。連續式3單陽וְהָלַךְ 撒上7:16。連續式3單陰וְהָלְכָה 撒下17:17。連續式3複וְהָלְכוּ 撒上2:20。連續式2單陽וְהָלַכְתָּ 申8:19。連續式2複陽וַהְלַכְתֶּם 創19:2。連續式1單וְהָלַכְתִּי 利26:24。</p>
+<p>未完成式－3單陽יֵלֵךְ 出10:24。3單陰תִּהֲלַךְ 詩73:9。3複陽יֵלְכוּ 出18:20；יֵלֵכוּ 出33:14。3複陽+古代的詞尾יֵלֵכוּן , ן 珥2:7。2單陽תֵלֵךְ 創3:14。2單陰תֵלֵכִי 創16:8。2複陽תֵלְכוּ 創42:38。2複陽+古代的詞尾תֵלֵכוּן,ן 出3:21。1單אֵלֵךְ 創24:58。1複נֵלֵךְ 出10:9。敘述式3單陽וַיֵּלֶךְ 創12:4。敘述式3單陰וַתֵּלֶךְ 創7:18。敘述式3複陽וַיֵּלְכוּ 創9:23。敘述式3複陰וַתֵּלַכְנָה 創24:61。敘述式2複陽וַתֵּלְכוּ 彌6:16。鼓勵式1單אֵלְכָה 創30:25。鼓勵式1複נֵלְכָה 創22:5。祈願式3單陽יֵלֵךְ 申20:5。祈願式3複陽יֵלְכוּ 士7:7。祈願式1單אֵלֵךְ 王上11:21。祈願式1複וְנֵלֵךְ 耶51:9。</p>
+<p>祈使式－單陽לֶךְ 創12:1；לְכָה 創31:44。單陰לֵכִי 出2:8。複陽לְכוּ 創29:7。複陰לֵכְנָה 得1:8。</p>
+<p>不定詞－獨立形הָלוֹךְ 創8:3。附屬形לָלֶכֶת 創12:5。附屬形1單詞尾לֶכְתִּי 王上2:8。附屬形2單陽詞尾לֶכְתְּךָ 出4:21。附屬形2單陰詞尾לֶכְתֵּךְ 耶2:2。附屬形3單陽詞尾לֶכְתּוֹ 撒上9:9。附屬形3複陽詞尾לֶכְתָּם 撒下17:21。附屬形3複陰詞尾לֶכְתָּן 結1:9。</p>
+<p>主動分詞－單陽הֹלֵךְ 創18:16；הוֹלֵךְ 創15:2。單陰הֹלְכָה 耶3:6；הֹלֶכֶת 創32:20。複陽הֹלְכִים 創32:19。複陰הֹלְכֹת 出2:5；הֹלְכוֹת 撒上25:42。複陽附屬形הֹלְכֵי 士5:6。</p>
+<p>1. 字面意思：</p>
+<p>A. 人：</p>
+<p>a.走、進行、移動、步行： 創22:6,8 出17:5 摩3:3 番1:17；基路伯，結10:16＝四活物，結1:9,12,19,20,21,24；反義詞יָשַׁב坐，申6:7 11:19；平行詞רוּץ奔跑，箴4:12 賽40:31。</p>
+<p>b.離開、走開：耶和華…就走了，創18:33；我們就帶著妹子走了，創34:17 撒上14:3 15:27 出3:19 12:28 王下5:25。去、出去（去履行特定的職責等）：撒母耳，他每年巡行，撒上7:16；巴拉，士4:8,8；去（與שׁוּב來相反），得1:21。＝被擄（無修飾語），代上6:15；進一步參מִבֵּין הַגּוֹיִם אֲשֶׁר הָלְכוּ־שָׁם從他們所到的各國收取，結37:21。</p>
+<p>c.接近、到達，帶介系詞表起點：לְכָה אֵלַי到我這裡來吧，撒上17:44；向耶和華祈求時，וּלְכָה לִישֻׁעָתָה לָּנוּ來救我們，詩80:2；　神邀請以色列，都當就近水來，賽55:1,3；來到、到達一個地方（＋指示方向的詞尾 ָה），創29:1；來到（אֶל）民中，得2:11。</p>
+<p>d. 帶修飾語： (1)穿越的空間：經過、走過：וַנֵּלֶךְ אֵת כָּל־הַמִּדְבָּר經過...曠野，申1:19；וַיֵּלְכוּ כָּל־הַבִּתְרוֹן走過畢倫，撒下2:29；與直接受詞דֶּרֶךְ（道路）連用，創35:3 民20:17 申1:31 撒下4:7 王上13:12,12 耶52:7；תָשׁוּב בַּדֶּרֶךְ אֲשֶׁר הָלָכְתָּ從你去的原路回來，王上13:9。הֹלֵךְ דֶּרֶךְ＝行走者，賽35:8 士5:6；分詞附屬形וְהֹלְכֵי נְתִיבוֹת旅客，士5:6。與受詞דֶּרֶךְ道路＝旅途，箴7:19。 (2)後接著בְּ：在...空間（領土、國家等）。בַּמִּדְבָּר曠野，士11:16,18；וַיֵּלֶךְ בַּבַּיִת אַחַת הֵנָּה וְאַחַת הֵנָּה在屋裡來往走了一趟，王下4:35；＋時間或距離的受格，在曠野行走，書5:6 14:10 王上19:4；הָלְכוּ בָּעֲרָבָה經過亞拉巴，撒下2:29；בַיַּבָּשָׁה走乾地，出14:29＝出15:19；בְּתוֹךְ הָעֵמֶק進入山谷，書8:13；הָלַךְ בְּדֶרֶךְ獨走一路，王上18:6,6；走大道，民21:22 書24:17；當行的路，申1:33 2:27 士18:6 撒上28:22。לֹא־תָשׁוּב לָלֶכֶת בַּדֶּרֶךְ אֲשֶׁר־הָלַכְתָּ בָּהּ也不可從你去的原路回來，王上13:17（הָלַךְ 去與來）；經常用於比喻，בִּרְחֹבֹתֵינוּ走在自己的街上，哀4:18；בַדֶּרֶךְ走在路上，申6:7 11:19。後面跟著עַל，行走或經過：עַל־יַד הַיְאֹר在河邊行走，出2:5。 (3)去、到：בְּכֹל אֲשֶׁר-תֵּלֵךְ你無論往哪裡去，創28:15 書1:7,9 撒下7:9 8:6,14＝代上17:8 18:6,13。到一個城市，撒上11:14,15 23:5 王上2:8 11:24 12:1 14:2,4 王下9:1 代上11:4 代下8:3 拉8:31；בַּיִת屋裡，撒下13:7,8；耶和華的殿，詩122:1；田野，創27:5；鹽谷，代下25:11。＋指示方向的 ָה表位置，לָלֶכֶת אַרְצָה כְּנַעַן要往迦南地去，創11:31 12:5 28:2,5,7 民32:39 撒下14:23；城市，創18:22 28:10 士9:1 撒上15:34 16:13 19:22 撒下15:9 王上3:4 18:45 代下10:1；幼發拉底河，耶13:4,6,7；樹林裡，撒上23:16；山上，書2:16。 (4)從…處出發、離開。後接著מִן，例如： 王上2:41等；מִשָּׁם離開那裡，創42:26 王上19:19；比較אָנָה אֵלֵךְ מֵרוּחֶךָ我往哪裡去躲避你的靈，詩139:7；特別注意וּמַלְאַךְ יְהוָה הָלַךְ מֵעֵינָיו耶和華的使者就從他的眼中走了，士6:21，比較 撒上14:17（מֵעִמָּנוּ從我們這裡）；הָלְכוּ מִשֹּׁד逃避災難，何9:6；וְהָלְכָה מֵאִתּוֹ妻離他而去，耶3:1；比較 創26:31 書22:9。(5)用介詞表示其他關係：與אֵת表陪伴，הָלְכוּ אִתִּי與我同行，創14:24 撒下15:11 書10:24 士1:3 7:4,4 撒上23:23 撒下16:17。與介系詞עִם，同去，士4:8,8,9,9 7:4 11:8 撒上30:22,22 撒下19:26 民22:13,14。與介系詞בְּ，同去，出10:9；בְּצֹאנָם וּבִבְקָרָם יֵלְכוּ לְבַקֵּשׁ אֶת־יְהוָה他們必牽著牛羊去尋求耶和華，何5:6；王命傳遍，代下30:6。בְּקֶרֶב在中間同，出34:9。介系詞 לִפְנֵי在...前面，賽45:2；耶和華走在以色列前面，出13:21 民14:14；我的使者要在你前面，出23:23 32:34 33:14,15 賽52:12；וְהָלַךְ לְפָנֶיךָ צִדְקֶךָ你的公義必在你前面行，賽58:8；其他神像，出32:1,23。與介系詞אַחַר後面、跟著，創37:17 王下7:15；אַחֲרַי 創24:5,8,39,61 書3:3。與介系詞 לְ，他就往本地去了（讓他去），出18:27；אֵלֶךְ לִי אֶל我要往（我會讓我到），歌4:6；וְנֵלֲכָה לָּנוּ我們就走，撒上26:11,12；雨水止住過去了，歌2:11。帶介詞的片語：וַיֵּלְכוּ מֵאִתּוֹ בְּשָׁלוֹם平平安安的離開，創26:31 撒上29:7 撒下3:21,22,23 15:9；וַיֵּלֶךְ בְּכֹחַ הָאֲכִילָה הַהִיא仗著這飲食的力，走了，王上19:8；וַיִּפֶן וַיֵּלֶךְ בְּחֵמָה氣忿忿地轉身走了，王下5:12 撒上17:39 賽52:12；וְהָלַךְ בְּסַעֲרוֹת תֵּימָן乘南方的旋風而行，亞9:14；הַהֹלְכִים בְּנַפְשׁוֹתָם冒死去打水，撒下23:17；וַיֵּלֶךְ אֶל־נַפְשׁוֹ起來逃命，王上19:3；הַהֹלְכוֹת לְרַגְלָהּ跟隨她腳蹤，撒上25:42，即跟隨她，服侍她；לֵךְ לְשָׁלוֹם平平安安的去，出4:18 士18:6 撒上1:17 20:13,42 王下5:19；וְהֹלְכִים לְתֻמָּם誠誠實實去的，撒下15:11。</p>
+<p>B. 也指動物，具有類似的含義和組合：四處走動、徘徊（獅子，比喻亞述的統治者），鴻2:11 箴30:29；行走，移動：בִּמְסִלָּה אַחַת הָלְכוּ הָלֹךְ וְגָעוֹ牠們在一條大道上，一面走，一面叫，撒上6:12；在撒迦利亞先知的異象中，וַיְבַקְשׁוּ לָלֶכֶת לְהִתְהַלֵּך בָּאָרֶץ在遍地走來走去，亞6:7；空中的飛鳥和地上的野獸，耶9:10；連人帶牲畜，耶50:3；יֵלֵךְ עִמָּנוּ我們的牲畜也要帶去，出10:26；מֵהַר אֶל־גִּבְעָה הָלָכוּ他們從大山走到小山（比喻以色列如走迷的羊），耶50:6；四足爬行的物，利11:20,21；用掌行走的，利11:27；用肚子行走的，利11:42；蛇，只能用肚子行走，創3:14；聲音好像蛇行一樣，耶46:22；蝗蟲，וְאִישׁ בִּדְרָכָיו יֵלֵכוּן各自行進於自己的道上，珥2:7；גֶּבֶר בִּמְסִלָּתוֹ יֵלֵכוּן各行其路，珥2:8。</p>
+<p>C. 以無生命之物的方式，如：方舟，在水面上漂來漂去，創7:18；船，王上22:49＝代下20:36；אֳנִי־שַׁיִט盪槳搖櫓的船，賽33:21；輪子（以西結的異象），結1:17,17,19,21 10:11（4次）；月亮，伯31:26；風，詩78:39 傳1:6,6；江河，傳1:7,7；溪河，珥3:18；比喻：וְכָל־בִּרְכַּיִם תֵּלַכְנָה מָּיִם膝弱如水，結7:17 21:7；江河圍流，結31:4；וְעָלָה עַל־כָּל־אֲפִיקָיו漲過兩岸，賽8:7即溢出；水也是如此，賽8:6 王上18:35 詩105:41 創8:3,5。海浪הַיָּם הוֹלֵךְ וְסֹעֵר越發翻騰，拿1:11,13；酒，為我的良人下咽舒暢，歌7:9；閃電，伯38:35；וַתִּהֲלַךְ אֵשׁ אָרְצָה有火閃到地上，出9:23；他們的舌毀謗全地，詩73:9；אֵשׁ לְפָנָיו תֵּלֵךְ有烈火在他前頭行，詩97:3；比喻鱷魚猛烈呼吸，מִפִּיו לַפִּידִים יַהֲלֹכוּ從牠口中發出燒著的火把，伯41:19；אַחֲרַיִךְ תֵּלֶךְ חָרֶב刀劍必追趕你，耶48:2；箭頭從他膽中出來，伯20:25；黑夜行的瘟疫，詩91:6（擬人化）；有瘟疫流行，哈3:5；וְשָׁמְעוֹ הוֹלֵךְ בְּכָל־הַמְּדִינוֹת名聲傳遍各省，斯9:4；角聲，出19:19；信，尼6:17；速散的甘露，何6:4 13:3；雲彩消散而過，伯7:9；הַגֶּשֶׁם חָלַף הָלַךְ לוֹ雨水止住過去，歌2:11；日影向前進十度，王下20:9；長大而且結果（比喻惡人亨通），耶12:2。</p>
+<p>2. 比喻用法：</p>
+<p>A.去世、死亡。暗示死亡的片語：וְהִנֵּה אָנֹכִי הוֹלֵךְ הַיּוֹם בְּדֶרֶךְ כָּל־הָאָרֶץ看哪，我現在要走世人必走的路，書23:14 王上2:2；我必往他那裡去，撒下12:23；דּוֹר הֹלֵךְ וְדוֹר בָּא一代過去，一代又來，傳1:4；הַכֹּל הוֹלֵךְ אֶל都歸一處，傳3:20 6:6；בִּשְׁאוֹל אֲשֶׁר אַתָּה הֹלֵךְ שָׁמָּה在你所必去的陰間，傳9:10；הֹלֵךְ הָאָדָם אֶל־בֵּית עוֹלָמוֹ人歸他永遠的家，傳12:5；בְּטֶרֶם אֵלֵךְ וְאֵינֶנִּי在去而不返之先，詩39:13；他去世無人思慕，代下21:20；後跟不定詞，אָנֹכִי הוֹלֵךְ לָמוּת 我將要死，創25:32。</p>
+<p>B.過生活（行）、經歷：גַּם כִּי־אֵלֵךְ בְּגֵיא צַלְמָוֶת我雖然行過死蔭的幽谷，詩23:4；比較 詩138:7與אֵלֶךְ חֹשֶׁךְ行過黑暗，伯29:3；קֹדֵר אֵלֵךְ哀痛而行，詩42:9；הָלַךְ חֲשֵׁכִים行在暗中，賽50:10 結3:14；יֵלְכוּ מֵחַיִל אֶל־חָיִל他們行走，力上加力，詩84:7；הוֹלֵךְ בַּתֹּם יֵלֶךְ בֶּטַח行為完全的，走路安穩，箴10:9,9。</p>
+<p>C. 道德和宗教生活：按正直而行，箴15:21。</p>
+<p>a. 按規矩行。正面意思：הֹלֵךְ בְּדֶרֶךְ תָּמִים行在完全道上的，詩101:6 賽30:21 耶6:16 王上8:36 代下6:27；　神的道，申8:6 10:12 11:22 28:9 詩119:3 128:1；בְּאֹרְחֹתָיו祂的路，賽2:3＝彌4:2；耶和華的誡命，代下17:4；　神的法度，出16:4；　神的律法，王下10:31 耶44:23 代下6:16 但9:10 尼10:29；　神的律例，利26:3 王上6:12 耶44:10,23 結5:6,7 11:20 18:9,17 20:13,16,19,21；בְּחֻקּוֹת הַחַיִּים生命的律例，結33:15；還有בְּחֻקָּיו祂的律例，王上8:61 結11:12 36:27；　神的典章，詩89:30 結37:24；大衛的律例，王上3:3。負面意思：行耶和華眼中看為惡的事，拜偶像，王下21:21 結16:47 結23:31 代下22:3；用乖僻的口，箴6:12；隨從不好的風俗，利18:3 20:23 王下17:8,19 結20:18。</p>
+<p>b.與...同行（אֵת，עִם），即同伴，熟悉：בְּשָׁלוֹם וּבְמִישׁוֹר הָלַךְ אִתִּי他以平安和正直與我同行，瑪2:6；הַצְנֵעַ לֶכֶת עִם־אֱלֹהֶיךָ存謙卑的心與你的　神同行，彌6:8；וַהֲלַכְתֶּם עִמִּי קֶרִי行事與我反對，利26:23,27,40；與　神不合，利26:24,28；אֶת־חֲכָמִים與智慧人，箴13:20；עִם־אַנְשֵׁי־רֶשַׁע和惡人，伯34:8；עִם־שָׁוְא與虛謊，伯31:5。</p>
+<p>c.行在　神面前： 王上2:4 3:6 8:23,25 9:4 代下6:16 7:17；הָלַכְנוּ קְדֹרַנִּית מִפְּנֵי יְהוָה在耶和華面前悲哀地行走，瑪3:14；לַהֲלֹךְ נֶגֶד הַחַיִּים走在活人的前面（即走在他們前面），傳6:8。</p>
+<p>d.跟隨在後(אַחֲרֵי)：耶和華　神，申13:4 王上14:8 耶2:2 何11:10。隨從別的　神，士2:12 申4:3 6:14 8:19 13:2 28:14 耶2:23 7:6 8:2 11:10 16:11 25:6。事奉別　神，書23:16 申13:6,13 29:18。無益的　神，耶2:8。人的命令，何5:11。虛假的偶像，摩2:4。</p>
+<p>e.行事。בְּתֻמִּי純全，詩26:11 84:11 箴10:9；הוֹלֵךְ תָּמִים行為正直，詩15:2；לְהֹלְכֵי תֹם給行為純正的人，箴2:7。負面字義：行惡，王上15:3,26,34 16:2,26 王下13:6,11＋（尤指邪惡的王）；（邪惡的）計謀，代下22:5 詩1:1。</p>
+<p>f. 主詞：לֵב(心)＝思想，לֹא־לִבִּי הָלַךְ我的心豈沒有去呢，王下5:26。邪惡傾向，וְאַחַר עֵינַי הָלַךְ לִבִּי我的心隨著我的眼目行，伯31:7。主詞：נֶפֶשׁ(心靈、性命)＝慾望，טוֹב מַרְאֵה עֵינַיִם מֵהֲלָךְ־נָפֶשׁ眼睛所看的比心裡妄想的倒好，傳6:9。</p>
+<p>二、Nifal</p>
+<p>完成式－1單כְּצֵל־כִּנְטוֹתוֹ נֶהֱלָכְתִּי我如日影漸漸偏斜而去，詩109:23。</p>
+<p>三、Piel</p>
+<p>完成式－3複הִלְּכוּ 伯24:10 哀5:18。1單הִלַּכְתִּי 伯30:28 詩131:1；הִלָּכְתִּי 詩38:6。</p>
+<p>未完成式－3單陽יְהַלֵּךְ 結18:9。3複陽יְהַלֵּכוּ 哈3:11。3複陽+古代的詞尾יְהַלֵּכוּן , ן 詩89:15。1單אֲהַלֵּךְ 詩86:11。1複נְהַלֵּךְ 詩55:14 賽59:9。敘述式3單陽וַיְהַלֵּךְ 王上21:27。祈願式3複陽יְהַלֵּכוּ 詩81:13。</p>
+<p>祈使式－單陽הַלֵּךְ 傳11:9。</p>
+<p>分詞－單陽מְהַלֵּךְ 箴6:11 詩104:3。複陽מְהַלְּכִים 傳4:15。</p>
+<p>1.走。帶介系詞：בְּבֵית אֱלֹהִים נְהַלֵּךְ בְּרָגֶשׁ在　神的殿中同行，詩55:14；עַל-הַגֶּחָלִים在火炭上，箴6:28。指偶像，有腳卻不能走，詩115:7。貧窮的比喻，וּבָא־כִמְהַלֵּךְ רֵאשֶׁךָ你的貧窮就必如強盜速來，箴6:11。耶和華行走（威嚴地），הַמְהַלֵּךְ עַל־כַּנְפֵי־רוּחַ藉著風的翅膀而行，詩104:3。擬人化：צֶדֶק לְפָנָיו יְהַלֵּךְ公義要行在他面前，詩85:13；智慧，בְּאֹרַח־צְדָקָה אֲהַלֵּך在公義的道上走（堅定不移），箴8:20。動物四處走動、徘徊，עַל הַר־צִיּוֹן שֶׁשָּׁמֵם וּמַחְסֹרְךָ כְּאִישׁ מָגֵן在荒涼的錫安山上有狐狸在其上行，哀5:18；船，詩104:26；泉源湧在山谷，בֵּין הָרִים יְהַלֵּכוּן流在山間，詩104:10；你的箭射出發光，哈3:11。</p>
+<p>2.四處走動＝活著，הַמְהַלְּכִים תַּחַת הַשָּׁמֶשׁ日光之下一切行動的活人，傳4:15；עָרוֹם הִלְּכוּ בְּלִי לְבוּשׁ他們(指困苦人)赤身無衣行走，伯24:10；因此，像哀悼者一樣，קֹדֵר הִלַּכְתִּי哀哭行去，伯30:28 詩38:6；בָּאֲפֵלוֹת נְהַלֵּךְ行走在幽暗中，賽59:9；另外，בְּאוֹר־פָּנֶיךָ יְהַלֵּכוּן他們要行走在你臉上的光中，詩89:15（蒙受　神的恩典和福樂）。</p>
+<p>3. 比喻用法：如生活方式、動作等等。特定的人生道路，בְּאֹרַח־זוּ אֲהַלֵּךְ在我行的路上，詩142:3；亞哈וַיְהַלֵּךְ אַט緩緩而行，王上21:27表示哀痛或懺悔；以色列בִּדְרָכַי יְהַלֵּכוּ肯行我的道，詩81:13；我要照你的真理行，詩86:11 結18:9；וְהַלֵּךְ בְּדַרְכֵי לִבְּךָ וּבְמַרְאֵי עֵינֶיךָ行你心所願行的，(看)你眼所愛看的，傳11:9；וְלֹא־הִלַּכְתִּי我也不敢行，詩131:1。</p>
+<p>四、Hitpael</p>
+<p>完成式－3單陽הִתְהַלֶּךְ 創6:9 撒上30:31。3複הִתְהַלְּכוּ 創48:15。2單陽הִתְהַלָּכְתָּ 結28:14 伯38:16。1單הִתְהַלַּכְתִּי 創24:40。1複הִתְהַלַּכְנוּ 撒上25:15。連續式3單陽וְהִתְהַלֵּךְ 出21:19 撒上2:35。連續式1單וְהִתְהַלַּכְתִּי 利26:12。</p>
+<p>未完成式－3單陽יִתְהַלֵּךְ 箴23:31 伯18:8 22:14。3複陽יִתְהַלְּכוּ 撒上2:30。3複陽+古代的詞尾יִתְהַלָּכוּן , ן 詩12:8。1單אֶתְהַלֵּךְ 詩43:2。敘述式3單陽וַיִּתְהַלֵּךְ 創5:22。敘述式3複陽וַיִּתְהַלְּכוּ 士21:24 撒上23:13。鼓勵式1單אֶתְהַלְּכָה 詩119:45。</p>
+<p>祈使式－單陽הִתְהַלֵּךְ 創13:17 17:1。複陽הִתְהַלְּכוּ 書18:8 亞6:7。</p>
+<p>不定詞－附屬形הִתְהַלֵּךְ 詩56:13。</p>
+<p>分詞－單陽מִתְהַלֵּךְ 創3:8。單陰מִתְהַלֶּכֶת 結1:13。複陽מִתְהַלְּכִים 撒上25:27。</p>
+<p>1.走動、走來走去，字面意思：</p>
+<p>A.穿越過、遍歷。走遍這地，創13:17 書18:4,8；往返，伯1:7＝伯2:2；走來走去，亞1:10,11 代上21:4；在以西結先知的異象中的火，מִתְהַלֶּכֶת בֵּין הַחַיּוֹת在四活物上去下來，結1:13；在撒迦利亞先知的異象中的馬，לָלֶכֶת לְהִתְהַלֵּך走來走去，亞6:7,7；לְכוּ הִתְהַלְּכוּ走來走去，亞6:7,7；以色列人離開那裡，士21:24；你的箭也飛行四方，詩77:17；如急流的水一般，詩58:7(比喻惡人消失)。</p>
+<p>B.行走、走動。וְהִתְהַלֵּךְ בַּחוּץ עַל־מִשְׁעַנְתּוֹ扶著杖在外面走來走去，出21:19即倚靠他的杖；箴6:22；עַל־גַּג בֵּית־הַמֶּלֶךְ在王宮的平頂上，撒下11:2；וּבְחֵקֶר תְּהוֹם הִתְהַלָּכְתָּ在深淵的隱密處行走，伯38:16； בְּתוֹךְ אַבְנֵי־אֵשׁ הִתְהַלָּכְתָּ在發光如火的寶石中間往來，結28:14；在擬人化的概念中，耶和華在地上行走也是如此，קוֹל יְהוָה אֱלֹהִים מִתְהַלֵּךְ בַּגָּן耶和華　神在園子裡行走的聲音，創3:8；　神，וְחוּג שָׁמַיִם יִתְהַלָּךְ他周遊穹蒼，伯22:14；末底改，在女院前邊行走，斯2:11；参加、跟隨：הַמִּתְהַלְּכִים בְּרַגְלֵי אֲדֹנִי跟隨我主腳蹤的僕人，撒上25:27；遊蕩，以色列וַיִּתְהַלְּכוּ מִגּוֹי אֶל־גּוֹי從這邦遊到那邦，詩105:13＝代上16:20；大衛和跟隨他的人，אֲשֶׁר־הִתְהַלֶּךְ־שָׁם在那裡巡行，撒上30:31；וַיִּתְהַלְּכוּ בַּאֲשֶׁר יִתְהַלָּכוּ往他們所能往的地方去，撒上23:13（即到處流蕩）；用獅子比喻約雅斤王，וַיִּתְהַלֵּךְ בְּתוֹךְ־אֲרָיוֹת牠在眾獅子中走來走去，結19:6；比較וּבָא־כִמְהַלֵּךְ רֵאשֶׁךָ你的貧窮就必如強盜速來，箴24:34。滑行、流動，酒יִתְהַלֵּךְ בְּמֵישָׁרִים下咽舒暢，箴23:31。</p>
+<p>2. 比喻用法：指人的生活方式。這王在你們前面行，撒上12:2,2；祭司，撒上2:35。與人友好，撒上25:15；כְּרֵעַ־כְּאָח לִי הִתְהַלָּכְתִּי我這樣行，好像他是我的朋友，我的弟兄，詩35:14。人與　神的關係：הִתְהַלֵּךְ לְפָנַי וֶהְיֵה תָמִים行事為人在　神面前要完全，創17:1 24:40 48:15；הִתְהַלַּכְתִּי לְפָנֶיךָ בֶּאֱמֶת וּבְלֵבָב שָׁלֵם按誠實及完全的心行在你面前，王下20:3＝賽38:3；作為神聖恩惠的象徵，יִתְהַלְּכוּ לְפָנַי 永遠行在我面前，撒上2:30；אֶתְהַלֵּךְ לִפְנֵי יְהוָה בְּאַרְצוֹת הַחַיִּים我要在耶和華面前行活人之路，詩116:9；使我在生命光中行在　神面前，詩56:13；וּבִשְׁמוֹ יִתְהַלָּכוּ一舉一動必奉我的名，亞10:12；以諾和挪亞，אֶת-הָאֱלֹהִים與　神同行，創5:22,24 6:9；וְהִתְהַלַּכְתִּי בַּאֲמִתֶּךָ我也按你的真理而行，詩26:3；מִתְהַלֵּךְ בְּתֻמּוֹ צַדִּיק行為純正的義人，箴20:7；אֶתְהַלֵּךְ בְּתָם־לְבָבִי בְּקֶרֶב בֵּיתִי存完全的心行在我家中，詩101:2；我要自由而行，詩119:45（不受拘束，不驚惶）；惡人，מִתְהַלֵּךְ בַּאֲשָׁמָיו行在罪中的人，詩68:21；בַּחֲשֵׁכָה יִתְהַלָּכוּ在黑暗中走來走去，詩82:5；וְעַל־שְׂבָכָה יִתְהַלָּךְ走在纏人的網羅上，伯18:8。</p>
+<p>五、Hifil</p>
+<p>完成式－3單陽הוֹלִיךְ 王下24:15。3單陽2單陽詞尾הֹלִיכֲךָ 申8:2。連續式3單陽3單陽詞尾וְהוֹלִיכוֹ 箴16:29。連續式1單וָאוֹלֵךְ 利26:13；וְהוֹלַכְתִּי 結36:12。連續式1單3單陰詞尾וְהֹלַכְתִּיהָ 何2:14。</p>
+<p>未完成式－3單陽יוֹלִיךְ 傳10:20；יֹּלֵךְ 傳5:15；יוֹלִךְ 耶32:5。3單陽3複陽詞尾יוֹלִיכֵם 詩125:5。1單אוֹלִיךְ 撒下13:13 結32:14；הֶעֱלֵיתִי 摩2:10。1單3複陽詞尾אוֹלִיכֵם 耶31:9。敘述式3單陽וַיּוֹלֶךְ 出14:21；וַיֹּלֶךְ 王下6:19；וַיֹּלַךְ 哀3:2。敘述式3單陽1單詞尾וַיּוֹלִכֵנִי 結40:24 43:1 47:6。敘述式3單陽3單陽詞尾וַיּוֹלִיכֻהוּ 代下33:11。敘述式3單陽3複陽詞尾וַיּוֹלִיכֵם 詩106:9。敘述式3複陽וַיַּרְכִּבוּ 王上1:38。祈願式3單陽יוֹלֵךְ 申28:36。鼓勵式1單אוֹלִיכָה 王下6:19。</p>
+<p>祈使式－單陽הוֹלֵךְ 民16:46。單陰הֵילִיכִי 出2:9。複陽הֹלִיכוּ 王下17:27。</p>
+<p>不定詞－附屬形3單陽詞尾הֹלִיכוֹ 代下36:6。</p>
+<p>分詞－單陽מוֹלִיךְ 耶2:6。單陽2單陽詞尾מוֹלִיכֲךָ 申8:15。單陽2單陰詞尾מוֹלִיכֵךְ 耶2:17。單陽3複陽詞尾מוֹלִיכָם 賽63:13。複陰מוֹלִכוֹת 亞5:10。</p>
+<p>1.引導、帶來，後面通常是人稱受格：引你經過那大而可怕的曠野，申8:15 耶2:6 詩136:16 賽48:21；בַּדָּרֶךְ引你行路，耶2:17；領他走遍迦南，書24:3 賽63:13 詩106:9。比喻用法：וְהוֹלַכְתִּי עִוְרִים בְּדֶרֶךְ לֹא יָדָעוּ我要引瞎子行不認識的道，賽42:16。וָאוֹלֵךְ אֶתְכֶם אַרְבָּעִים שָׁנָה בַּמִּדְבָּר我領你們在曠野四十年，申29:5。</p>
+<p>2.引開。מוֹלִיךְ יוֹעֲצִים שׁוֹלָל他把謀士剝衣擄去，伯12:17,19；耶和華必使他和作惡的人一同出去受刑，詩125:5。</p>
+<p>3.帶來。送他到耶路撒冷，代下35:24；將量器抬到哪裡去，亞5:10；וַאֲנִי אָנָה אוֹלִיךְ אֶת־חֶרְפָּתִי我何以掩蓋我的羞恥，撒下13:13；הֵילִיכִי אֶת־הַיֶּלֶד妳把這孩子帶走，出2:9；。手中分毫不能帶去，傳5:15；空中的鳥必傳揚這聲音，傳10:20。</p>
+<p>4. 比喻的，對性格的影響：וְהוֹלִיכוֹ בְּדֶרֶךְ לֹא־טוֹב領他走不善之道，箴16:29（即有罪的）。</p>
+<p>5.使走開。我必使人，就是我的民以色列，行在你上面，結36:12；וָאוֹלֵךְ אֶתְכֶם קוֹמְמִיּוּת叫你們挺身而走，利26:13；使他榮耀的膀臂在摩西的右手邊行動，賽63:12。使流動：我必使...江河像油緩流，結32:14。使離開、回去：使海水一夜退去，出14:21。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] akin to 3212 ; a primitive root;<br/>to walk (in a great variety of applications, literally and figuratively)</p></div></div></div></details>
+<details class="ntfold"><summary>H04339 — מֵישָׁר「平坦、和諧、滑溜」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H04339</li><li>詞形 מֵישָׁר</li><li>音譯 meyshar</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 平坦、和諧、滑溜</li><li>字源 來自 SH3474</li><li>中文用法 正直8 公正4 舒暢2 正直的1 正直的事1 正直話1 理所當然1 約1 (19)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 平等, 正直, 公平</li><li>1a 平坦, 不偏不倚</li><li>1b (道德上) 端正, 公平</li><li>1c 正當地 (作為副詞) (<br/>詩17:2<br/><br/>歌1:4<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>複陽מֵישָׁרִים 詩17:2。</p>
+<p>1.平坦、平順。義人的道，賽26:7，比喻無障礙之路；平滑順暢，יִתְהַלֵּךְ בְּמֵישָׁרִים下咽舒暢，箴23:31 歌7:9。</p>
+<p>2. 道德上的端正、公平。如智慧學校所教導的，箴8:6 1:3 2:9。治理：יָדִין לְאֻמִּים בְּמֵישָׁרִים按正直判斷萬民，詩9:8 58:1 75:2 96:10 99:4；言語： 賽33:15 箴23:16；耶和華的應許，賽45:19；מֵישָׁרִים תִּרְצֶה喜悅正直，代上29:17；לַעֲשׂוֹת מֵישָׁרִים立約，但11:6。</p>
+<p>3. 作副詞：正當地。與חָזָה（看）連用，詩17:2；與אָהַב（愛）連用，歌1:4。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 3474 ;<br/>evenness , i.e. (figuratively) prosperity or concord ; also straightness , i.e. (figuratively) rectitude (only in plural with singular sense; often adverbially)</p></div></div></div></details>
+<details class="ntfold"><summary>H08193 — שָׂפָה「嘴唇、語言、海岸、器皿或衣服等的邊緣」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08193</li><li>詞形 שָׂפָה</li><li>音譯 saphah</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 嘴唇、語言、海岸、器皿或衣服等的邊緣</li><li>字源 可能來自 SH5595 或 SH8192</li><li>中文用法 嘴56 邊38 嘴唇33 口18 言語5 唇3 說話3 口音2 口...舌2 虛2 言2 徑1 方言1 話1 講論1 邊上1 領邊1 (170)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 嘴唇, 語言, 邊緣</li><li>1a 嘴唇 (指身體的一部份)</li><li>1b 語言</li><li>1c 邊緣 (海岸, 河岸, 容器, 祭壇, 衣服)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰שָׂפָה 創11:1。單陰附屬形שְׂפַת 詩12:2。單陰3複陽詞尾שְׂפָתָם 創11:7。單陰3單陽詞尾שְׂפָתוֹ 王上7:23。雙陰שְׂפָתַיִם 賽6:5。雙陰附屬形שִׂפְתוֹת 傳10:12。雙陰3單陽詞尾שִׂפְתוֹתָיו 歌5:13。雙陰3複陽詞尾שְׂפָתֵימוֹ 詩59:12 140:3,9。雙陰2複陽詞尾שִׂפְתוֹתֵיכֶם 賽59:3。雙陰2單陰詞尾שִׂפְתֹתַיִךְ 歌4:3,11。雙陰1複詞尾שְׂפָתֵינוּ 詩12:4。雙陰1單詞尾שְׂפָתַי 耶17:16。複陰2單陽詞尾שְׂפְתוֹתֶיךָ 詩45:2。複陰3複陽詞尾שִׂפְתוֹתֵיהֶם 詩59:7。</p>
+<p>一、嘴唇：</p>
+<p>1. 人類說話的器官，賽29:13 利5:4 伯13:6 瑪2:6 詩12:4 箴5:3；אִישׁ שְׂפָתַיִם多嘴多舌的人，伯11:2＝說話者；אֱוִיל שְׂפָתַיִם口裡愚妄的，箴10:8,10；טְמֵא-שְׂפָתַיִם嘴唇不潔的人，賽6:5,5 但10:16；拙口笨舌的人，出6:12,30；嘴裡所出的，申23:23即話語；耶17:16 民30:12 詩89:34；רוּחַ שְׂפָתָיו嘴裡的氣，賽11:4(彌賽亞王)；嘴裡的言語，詩59:12 箴14:23＝嘴巴說說而已，דְּבַר-שְׂפָתַיִם虛話，王下18:20＝賽36:5；תְּבוּאַת שְׂפָתָיו嘴所出的，箴18:20；נִוב שְׂפָתָיִם嘴唇的果子，賽57:19；嘴唇的祭，何14:2；奉承：諂媚的嘴，箴7:21；油滑的嘴唇，詩12:3,4；詭詐嘴唇，詩17:1；奸詐之言，箴17:4。惡毒語言，詩140:3（比喻）；פֶשַׁע שְׂפָתַיִם嘴中的過錯，箴12:13；乖謬的嘴，箴4:24；口吐真言，箴12:19；שְׂפַת-יֶתֶר美言，箴17:7；公義的嘴，箴16:13；שִׂפְתֵי-דָעַת嘴中有知識，箴14:7 20:15；嘴上的恩言，箴22:11；שָׂפָה בְרוּרָה清潔的言語，番3:9；שִׂפְתֵי רְנָנוֹת歡樂的嘴唇，詩63:5。</p>
+<p>2. 笑聲，伯8:21。</p>
+<p>3. 嘲笑或侮辱的動作：יַפְטִירוּ בְשָׂפָה撇嘴，詩22:7。</p>
+<p>4. 懼怕到無法說話的樣子，嘴唇發顫，哈3:16。</p>
+<p>5. 鮮豔動人的美，你的唇好像一條朱紅線，歌4:3。</p>
+<p>6. 套韁繩的位置，王下19:28＝賽37:29。</p>
+<p>7. 接受親吻，箴24:26 歌4:11；（比喻）歌7:9。</p>
+<p>8. 　神的話語，伯23:12 詩17:4。</p>
+<p>二、語言。口音，創11:1,6,7,7,9 詩81:5；עִמְקֵי שָׂפָה說話深奧，結3:5,6 賽33:19；לַעֲגֵי שָׂפָה嘲弄的嘴唇，賽28:11直譯；שְׂפַת כְּנַעַן迦南的方言，賽19:18（即希伯來語）。</p>
+<p>三、邊緣。海邊，創22:17；河邊，創41:3,17 出2:3；谷邊，申2:36；容器邊緣，王上7:23,23；祭壇的邊緣，結43:13；窗簾，出26:4,4,10,10；以弗得，出28:26＝出39:19；長袍圓形開口，出28:32＝出39:23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or (in dual and plural) שֶׂפֶת ; probably from 5595 or 8192 through the idea of termination (compare 5490 );<br/>the lip (as a natural boundary); by implication, language ; by analogy, a margin (of a vessel, water, cloth, etc.)</p></div></div></div></details>
+<details class="ntfold"><summary>H03463 — יָשֵׁן「睡著的」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03463</li><li>詞形 יָשֵׁן</li><li>音譯 yashen</li><li>約 舊約</li><li>詞類 形容詞</li><li>中文詞義 睡著的</li><li>字源 來自 SH3462</li><li>中文用法 睡3 睡臥2 睡著2 睡覺2 (9)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>形</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 睡著的</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽יָשֵׁן 撒上26:7。單陰יְשֵׁנָה 王上3:20。複陽יְשֵׁנִים 撒上26:12 歌7:9。複陽附屬形יְשֵׁנֵי 但12:2。</p>
+<p>睡著的，撒上26:7,12 王上3:20 歌5:2 7:9。比喻用法：就如烤餅的整夜睡臥，何7:6；巴力，他或許在睡覺，王上18:27；主像世人睡醒，詩78:65；死人，睡在塵埃中的，但12:2。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 3462 ;<br/>sleepy</p></div></div></div></details>
+<details class="ntfold"><summary>H01680 — דָּבַב「緩慢的移動、滑行」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01680</li><li>詞形 דָּבַב</li><li>音譯 dabab</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 緩慢的移動、滑行</li><li>字源 一原形字根(參見 SH1679 )</li><li>中文用法 流入1 (1)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 輕移, 滑動, 滑過</li><li>1a (Qal) 滑過 (分詞) (<br/>歌 7:9<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>滑過。Qal主動分詞－單陽דּוֹבֵב שִׂפְתֵי יְשֵׁנִים流入睡覺人的嘴中，歌7:9。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root (compare 1679 );<br/>to move slowly , i.e. glide</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_07_09_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第7章9節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 01:58:28 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

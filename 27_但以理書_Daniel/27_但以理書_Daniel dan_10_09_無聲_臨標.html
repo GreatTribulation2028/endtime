@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>但以理書 10:9 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="27_但以理書_Daniel dan_10_09_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p class="verse-lead">但以理書 第10章9節</p>
+<p class="verse-cuv">我卻聽見他說話的聲音，一聽見就面伏在地沉睡了。</p>
+<p>我卻聽見他說話的聲音，一聽見就面伏在地沉睡了。八節已經沒有氣力，九節卻還要聽見。那聲音不是遠遠的響動，是「他說話的聲音」。原文把這一句再說一次：我聽見，我一聽見。聽見以後，這人沒有站著答話，是臉伏下去，向著地，沉睡了。這不是得著安慰以後的安歇，是人在極大的敬畏裏，連意識也被壓住。</p>
+<p>人先要看見：有時　神的臨近，不是先把人扶起來說話，是先讓人伏在地上。力氣已經盡了，聲音再一進來，人就完全低下去。至於後來怎樣有手按在他身上、怎樣使他用膝和掌微微撐起，本節一句都不寫。本節只讓人看見這一個伏在地上的人：他聽見了，並且沉睡了。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<p class="mech-flag">本頁為機械層臨標稿，金標未達。這不是金標完成。</p>
+<nav class="verse-nav"><a href="27_%E4%BD%86%E4%BB%A5%E7%90%86%E6%9B%B8_Daniel%20dan_10_08_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　但以理書 第10章8節</a><a href="index.html">但以理書目錄</a><a href="../index.html">總目錄</a><a href="27_%E4%BD%86%E4%BB%A5%E7%90%86%E6%9B%B8_Daniel%20dan_10_10_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　但以理書 第10章10節</a></nav>
+<h2 class="ntitle">但以理書 第10章9節 原文逐節查經（臨標）</h2>
+<blockquote>但以理書 第10章9節<br/>我卻聽見他說話的聲音，一聽見就面伏在地沉睡了。
+<p>我卻聽見他說話的聲音，一聽見就面伏在地沉睡了。八節已經沒有氣力，九節卻還要聽見。那聲音不是遠遠的響動，是「他說話的聲音」。原文把這一句再說一次：我聽見，我一聽見。聽見以後，這人沒有站著答話，是臉伏下去，向著地，沉睡了。這不是得著安慰以後的安歇，是人在極大的敬畏裏，連意識也被壓住。</p>
+<p>人先要看見：有時　神的臨近，不是先把人扶起來說話，是先讓人伏在地上。力氣已經盡了，聲音再一進來，人就完全低下去。至於後來怎樣有手按在他身上、怎樣使他用膝和掌微微撐起，本節一句都不寫。本節只讓人看見這一個伏在地上的人：他聽見了，並且沉睡了。</p>
+</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 但以理書 10:9 &gt;</div>
+<div class="orig-he">וָ/אֶשְׁמַ֖ע אֶת־ ק֣וֹל דְּבָרָ֑י/ו וּ/כְ/שָׁמְעִ/י֙ אֶת־ ק֣וֹל דְּבָרָ֔י/ו וַ/אֲנִ֗י הָיִ֛יתִי נִרְדָּ֥ם עַל־ פָּנַ֖/י וּ/פָנַ֥/י אָֽרְצָ/ה׃</div>
+<p>本節原文詞（依資料庫詞序；英語詞義取自資料庫既有欄位，不另撰中文。）</p>
+<ul class="wlist">
+<li>וָ/אֶשְׁמַ֖ע　and/ I heard　Hc/Vqw1cs</li>
+<li>אֶת־　&lt;obj.&gt;　HTo</li>
+<li>ק֣וֹל　[the] sound of　HNcmsc</li>
+<li>דְּבָרָ֑י/ו　words/ his　HNcmpc/Sp3ms</li>
+<li>וּ/כְ/שָׁמְעִ/י֙　and/ just as/ heard/ I　HC/R/Vqcc/Sp1bs</li>
+<li>אֶת־　&lt;obj.&gt;　HTo</li>
+<li>ק֣וֹל　[the] sound of　HNcmsc</li>
+<li>דְּבָרָ֔י/ו　words/ his　HNcmpc/Sp3ms</li>
+<li>וַ/אֲנִ֗י　and/ I　HC/Pp1bs</li>
+<li>הָיִ֛יתִי　I was　HVqp1cs</li>
+<li>נִרְדָּ֥ם　dazed　HVNrmsa</li>
+<li>עַל־　on　HR</li>
+<li>פָּנַ֖/י　face/ my　HNcmpc/Sp1bs</li>
+<li>וּ/פָנַ֥/י　and/ face/ my　HC/Ncmpc/Sp1bs</li>
+<li>אָֽרְצָ/ה׃　[was] ground/ towards　HNcfsa/Sd</li>
+</ul>
+</div>
+<h2>二、原文字典</h2>
+<details class="ntfold"><summary><span class="heb">שָׁמַע</span> <span class="tl">shama`</span> <span class="sn">H08085</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08085</li><li>詞形 שָׁמַע</li><li>音譯 shama`</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 聽見、聆聽、傾聽、順服</li><li>字源 一原形字根</li><li>中文用法 聽見378 聽337 聽從190 垂聽40 應允23 聽了16 聽說11 使...聽見10 依從8 傳5 報告6 順從5 俯聽4 大發響聲4 宣告4 懂得4 留意聽從4 聽...見4 說明4 指示3 聽信3 聽啊3 聽聞3 得聽3 使...得聽3 報2 招聚2 明白2 留意聽2 細聽2 聽見的2 能聽的2 傳出1 傳說1 允准1 出1 告訴1 實在聽1 實在聽從1 使...得聽見1 從1 所聽見的1 招來1 招集1 指明1 放1 智1 洩漏1 發1 發聲1 總要1 聞1 聽允1 聽命1 聽得出來1 聽聽1 聽見的人1 聽訟1 聽過1 肯聽...的1 蒙應允1 表明1 被聽見1 見證1 話1 說1 論1 賜1 辨別1 通1 達1 順從的1 風聞1 風聲1 使...聽3 聽...的1 傳...的1 (1133)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 聽, 聽到, 聽從</li><li>1a (Qal) 主詞為人</li><li>1a1 聽 (由耳朵領受)</li><li>1a2 聽到</li><li>1a3 聽 (有聽的能力)</li><li>1a4 注意或留心聽, 聽從</li><li>1a5 了解 (語言)</li><li>1a6 聽訟 (判斷案件)</li><li>1a7 聽見, 留意</li><li>1a7a 應允, 同意</li><li>1a7b 答應請求</li><li>1a8 傾聽, 聽從</li><li>1a9 順服, 依從</li><li>1b (Qal) 主詞為　神</li><li>1b1 垂聽, 應允</li><li>1c (Niphal)</li><li>1c1 被聽見 (聲音或響聲)</li><li>1c2 被聽聞</li><li>1c3 被尊重, 被聽從</li><li>1c4 蒙垂聽 (<br/>代下 30:27<br/>)</li><li>1d (Piel) 使聽見, 呼籲來聽, 命令</li><li>1e (Hiphil)</li><li>1e1 使聽見, 告訴, 宣告, 發聲</li><li>1e2 發出大聲 (音樂用語)</li><li>1e3 發出宣告, 命令</li><li>1e4 使之被聽見<br/><br/>陽性名詞</li><li>2 聲音 (<br/>詩 150:5<br/>, 該字可分析成<br/>08088<br/>的停頓型)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－3單陽שָׁמַע 創24:52；שָׁמֵעַ 耶36:13。3單陰שָׁמְעָה 書24:27。3複שָׁמֵעוּ 士2:17。2單陰שָׁמַעַתְּ 王上1:11。2單陽3複陽詞尾שְׁמַעְתָּם 賽48:7。2複陽שְׁמַעְתֶּם 賽65:12。1單שָׁמַעְתִּי 創3:10。1單+2單陽詞尾שְׁמַעְתִּיךָ 創17:20。1複שָׁמַעְנוּ 申5:24。連續式3單陽וְשָׁמַע 民30:4。連續式3複וְשָׁמְעוּ 出3:18。連續式2單陽וְשָׁמַעְתָּ 申6:3。連續式2複陽וּשְׁמַעְתֶּם 撒上12:14。連續式1單3單陽詞尾וּשְׁמַעְתִּיו 申1:17。連續式1複וְשָׁמַעְנוּ 申5:27。</p>
+<p>未完成式－3單陽יִשְׁמַע 出6:30。3單陽1單詞尾יִשְׁמָעֵנִי 出6:12。3單陽2單陽詞尾יִשְׁמָעֶךָּ 伯22:27。3複陽יִשְׁמְעוּ 創11:7。3複陽+古代的詞尾 יִשְׁמְעוּן , ן 申2:25。2單陽תִּשְׁמַע 詩5:3。2複陽תִּשְׁמְעוּ 出19:5。2複陽+古代的詞尾 תִשְׁמְעוּן , ן 申8:20；תִּשְׁמָעוּן 申1:17。1單אֶשְׁמָע 詩38:13。1單+指示方向的 אֶשְׁמְעָה , ָה 民9:8。1單+2單陽詞尾אַשְׁמִיעֲךָ 撒上9:27。1複3單陰詞尾נִשְׁמָעֶנָּה 士14:13。敘述式3單陽וַיִּשְׁמַע 申1:34。敘述式3單陰וַתִּשְׁמַע 撒上4:19。敘述式3複陽וַיִּשְׁמְעוּ 創3:8。敘述式1單וָאֶשְׁמַע 賽6:8。祈願式3單陰תִשְׁמַע 申32:1。鼓勵式1單אֶשְׁמְעָה 耶4:21。鼓勵式1複נִשְׁמָעָה 出20:19。</p>
+<p>祈使式－單陽שְׁמַע 摩7:16；שִׁמְעָה 伯32:10；שְׁמָעָה 但9:19。單陽1複詞尾שְׁמָעֵנוּ 創23:6。單陰שִׁמְעִי 詩45:10。複陽שִׁמְעוּ 民16:8。複陽1單詞尾שְׁמָעוּנִי 創23:8。複陰שְׁמַעְנָה 賽32:9 耶9:19；שְׁמַעַן 創4:23。</p>
+<p>不定詞－獨立形שָׁמוֹעַ 賽6:9。附屬形שְׁמֹעַ 撒上15:22。附屬形3單陽詞尾שָׁמְעוֹ 申29:19；שָׁמְעָתוֹ 賽30:19。附屬形2複陽詞尾שָׁמְעֲכֶם 申5:23。</p>
+<p>主動分詞－單陽שֹׁמֵעַ 創42:23。單陰שֹׁמַעַת 創18:10。複陽שֹׁמְעִים 利24:14。單陽3單陽詞尾שֹׁמְעוֹ 撒上3:11。</p>
+<p>1. 主詞：人</p>
+<p>A.聽到（通過耳朵感知）：聲音，創3:10；話語，摩8:11；智慧話，王上4:34；任何話語或聲音，申4:33 撒上14:27；בְסוֹד אֱלוֹהַ תִּשְׁמָע你曾聽見　神的密旨嗎，伯15:8；＋受詞子句כִּי，出4:31；וַיִּשְׁמַע כִּי聽見他...，賽39:1；אֵת אֲשֶׁר 書2:10 5:1；-מַה 士7:11；הֲלֹא-שָׁמַעְתָּ לְמֵרָחוֹק אֹתָהּ עָשִׂיתִי你豈沒有聽見我早先所做的，王下19:25＝賽37:26；直接引語： 賽40:28 亞8:23。</p>
+<p>B. 直接受詞：人，＋מְדַבֵּר聽某人說，創27:6 耶26:7 但8:13；בֹּכֶה哭號，民11:10；נִבָּא預言，耶20:1；מְקַלְלֶךָ詛咒，傳7:21；אֹמְרִים說，創37:17；אֵת מִדַּבֵּר說話，結2:2 43:6 但12:7。</p>
+<p>C. שָׁמְעוּ לֵאמֹר聽說、聽人說，撒上13:4 撒下19:2 申13:12 書22:11 王上16:16 創41:15 賽37:9。</p>
+<p>D.聽說。關於：אֵת כָּל-אֲשֶׁר 出18:1 王下19:11；דָבָר事情，撒上3:11；רָעָה災禍，耶19:3；כַּאֲשֶׁר 撒上23:11 詩48:8；כָּזֹאת聽見像這樣的事，賽66:8；כָּאֵלֶּה 耶18:13 士9:46。</p>
+<p>E.聽（有聽力）。還能聽男女歌唱的聲音嗎，撒下19:35 賽21:3 32:3 箴20:12 亞7:11；比喻，詩38:14；反義：指偶像，不能聽，申4:28 詩115:6；比喻屬靈的辨別能力，耶5:21 申29:4 結12:2 賽42:20。</p>
+<p>F.注意聽、留心聽、聽。當聽我的話，摩4:1；尤指耶和華的דָּבַר話，民12:6；אִמְרָתִי我的言語，賽28:23；קוֹלִי我的聲音，賽28:23；זֹאת這個，彌3:9；獨立使用，士5:3；（否定）לֹא-שֹׁמֵעַ不聽見的人，詩38:14；לֵב שֹׁמֵעַ能聽的心，王上3:9；אִישׁ שׁוֹמֵעַ聽的人，箴21:28。</p>
+<p>G.了解（語言）。שְׂפַת語言，創11:7 賽33:19；לָשׁוֹן舌（語言）申28:49；דְּבָרִים話語，結3:6；מַה-יְדַבֵּר講甚麼，耶5:15；無直接受詞，聽得出來，創42:23 王下18:26＝賽36:11。</p>
+<p>H.聽訟（訴訟案件）： 申1:16,17；有耶和華在你我中間作見證，士11:10；לִשְׁמֹעַ מִשְׁפָּט聽訟，王上3:11；לִשְׁמֹעַ הַטּוֹב וְהָרָע辨別是非，撒下14:17；וְשֹׁמֵעַ אֵין-לְךָ沒有委人聽你伸訴，撒下15:3 伯31:35。</p>
+<p>I.聽（某人述說）。我主請聽，創23:6,8,11,13,15 代上28:2 代下13:4 15:2 20:20。</p>
+<p>J.聽從、應允、答應請求。獨立使用：不肯聽，創42:21 耶7:13 結2:5；שִׂים עַל-לֵב放在心上，瑪2:2；聽+做，申5:24 王下18:12；應允，創37:27 士11:17 19:25 撒上30:24 伯15:17 何9:17 利26:14,18,21,27；שְׁמַע לְקוֹל דִּבְרֵי יְהוָה你當聽從耶和華的話，撒上15:1；וְשֹׁמֵעַ לְעֵצָה聽人的勸教，箴12:15。</p>
+<p>K.聽從、順從。帶介系詞אֶל＋人稱，שִׁמְעוּ אֶל-יִשְׂרָאֵל אֲבִיכֶם要聽你們父親以色列的話，創49:2 士2:17 王下20:13 申18:19 耶29:19。</p>
+<p>L. שָׁמַעְתָּ לְקוֹל＝聽從，創3:17 士2:20 出15:26。</p>
+<p>M. 常用שְׁמַע בְּקוֹל＝依從、聽從，撒上8:7 申4:30 耶3:13。</p>
+<p>N.聽從，帶直接受詞דָּבָר話語，書1:18；耶和華的話，耶11:3 王上12:24 代下11:4；人的話，出6:12 代下28:11。</p>
+<p>O. 絕對順從（耶和華的話）。תֹּאבוּ וּשְׁמַעְתֶּם甘心聽從，賽1:19 彌5:15 耶12:17。</p>
+<p>2. 主詞：耶和華　神</p>
+<p>A. 受詞：聲音、話語等，創21:17 王下19:4,4,16 民20:16 申33:7；尤指禱告、懇求等，王上8:45 詩6:9。</p>
+<p>B. 無受詞，賽59:2 耶22:21；垂聽而赦免，王上8:30,32 賽30:19；聽見就發怒，詩78:59；聽見而苦待，詩55:19。</p>
+<p>C.能聽到，賽59:1 詩94:9。</p>
+<p>D. שָׁמַע בְּקֹלִי聽了我的聲音，創30:6。</p>
+<p>E.聽到並回答，創16:11 王上8:28。</p>
+<p>二、Nifal</p>
+<p>完成式－3單陽נִשְׁמַע 創45:16。3複נִשְׁמְעוּ 但10:12。連續式3單陽וְנִשְׁמַע 出28:35。</p>
+<p>未完成式－3單陽יִשָּׁמַע 出23:13；יִשָּׁמֵעַ 撒上1:13。3複陽יִשָּׁמְעוּ 撒下22:45。敘述式3單陰וַתִּשָּׁמַע 尼12:43。敘述式3複陽וַיְּשָּׁמְעוּ 撒上17:31。祈願式3單陰תִּשָּׁמַע 耶18:22。</p>
+<p>不定詞－附屬形הִשָּׁמַע 斯2:8。</p>
+<p>分詞－單陰נִשְׁמַעַת 耶51:46；נִשְׁמָע 尼6:6。複陽נִשְׁמָעִים 傳9:16。</p>
+<p>1.被聽見。聲音，王上6:7 伯26:14；這風聲傳到法老的宮裡，創45:16 尼6:1,6,7；你的言語巳蒙應允，但10:12。</p>
+<p>2.被聽聞。כָּמֹהוּ像你聽見，申4:32。</p>
+<p>3.被尊重、被聽從。不聽掌管愚昧人的喊聲，傳9:17；就必順從我，撒下22:45＝詩18:44。</p>
+<p>4. וַיִּשָּׁמַע בְּקוֹלָם他們的聲音蒙垂聽，代下30:27。</p>
+<p>三、Piel</p>
+<p>未完成式－敘述式3單陽וַיְשַׁמַּע掃羅招聚；撒上15:4 23:8。</p>
+<p>四、Hifil</p>
+<p>完成式－3單陽הִשְׁמִיעַ 王上15:22。3複הִשְׁמִיעוּ 耶48:4。3單陽2單陽詞尾הִשְׁמִיעֲךָ 申4:36。3單陽1複詞尾הִשְׁמִיעָנוּ 士13:23。2單陽הִשְׁמַעְתָּ 詩76:8。1單הִשְׁמַעְתִּי 賽43:12。1單2單陽詞尾הִשְׁמַעְתִּיךָ 賽44:8。連續式3單陽וְהִשְׁמִיעַ 賽30:30。連續式3複וְהִשְׁמִיעוּ 結27:30。連續式1單וְהִשְׁמַעְתִּי 耶49:2。</p>
+<p>未完成式－3單陽1複詞尾יַשְׁמִעֵנוּ 申30:12,13。3複陽יַשְׁמִיעוּ 尼8:15。3複陽1複詞尾יַשְׁמִיעֻנוּ 賽43:9。2單陽תַּשְׁמַע 士18:25。2單陽1單詞尾תַּשְׁמִיעֵנִי 詩51:8。2複陽תַשְׁמִיעוּ 書6:10。1單אַשְׁמִיעַ 結36:15。1單2單陽詞尾אַשְׁמִיעֲךָ 耶18:2。1單3複陽詞尾אַשְׁמִעֵם 申4:10。敘述式3複陽וַיַּשְׁמִיעוּ 尼12:42。</p>
+<p>祈使式－單陽1單詞尾הַשְׁמִיעֵנִי 詩143:8。單陰1單詞尾הַשְׁמִיעִינִי 歌2:14 8:13。複陽הַשְׁמִיעוּ 耶4:5。複陽3單陰詞尾הַשְׁמִיעוּהָ 耶5:20。</p>
+<p>不定詞－附屬形שְׁמִעַ 詩26:7。</p>
+<p>分詞－單陽מַשְׁמִיעַ 耶4:15。複陽מַשְׁמִעִים 代上15:28。</p>
+<p>1. 主詞：人</p>
+<p>A.使聽見、告訴、宣告、發聲。使我們聽見可以遵行，申30:12,13 歌2:14 8:13；亞撒王宣告猶大眾人，王上15:22 耶5:20；直接受詞שָׁלוֹם平安，賽52:7 鴻1:15；אָוֶן禍患，耶4:15；וְלֹא-תַשְׁמִיעוּ אֶת-קוֹלְכֶם不可讓人聽見你們的聲音，，書6:10 士18:25 賽42:2 58:4；וְהַשְׁמִיעוּ קוֹל תְּהִלָּתוֹ使人得聽讚美他的聲音，詩66:8；לַשְׁמִעַ בְּקוֹל תּוֹדָה好發稱謝的聲音，詩26:7。</p>
+<p>B.發出大聲（音樂用語）。בִּמְצִלְתַּיִם נְחֹשֶׁת לְהַשְׁמִיעַ敲銅鈸大發響聲，代上15:19 16:5；מַשְׁמִיעִים讓人聽見，代上15:16,28 16:42；לְהַשְׁמִיעַ קוֹל-אֶחָד一齊發聲，代下5:13；וַיַּשְׁמִיעוּ הַמְשֹׁרְרִים歌唱的就使人聽見，尼12:42。</p>
+<p>C.發出宣告、命令，摩3:9 4:5 賽41:26 耶4:5。</p>
+<p>2. 主詞：耶和華　神</p>
+<p>A.使之被聽見。叫他們聽見我的話，申4:10,36 王下7:6 賽30:30 44:8 48:5。</p>
+<p>B. ＝告訴。直接受詞人＋כָּזֹאת（這個），וְכָעֵת לֹא הִשְׁמִיעָנוּ כָּזֹאת這時也不會使我們聽到這個(話)，士13:23；僅用於人的受格：我就說給你們聽，賽42:9；僅用於事物的受格：我所指示的，賽48:3；我使你不再聽見各國的羞辱，結36:15。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>to hear intelligently (often with implication of attention, obedience, etc.; causatively, to tell , etc.)</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">קוֹל</span> <span class="tl">qowl</span> <span class="sn">H06963</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06963</li><li>詞形 קוֹל</li><li>音譯 qowl</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 聲音、噪音、響聲</li><li>字源 來自一不用的字根</li><li>中文用法 聲音188 聲126 話96 響聲21 雷7 告5 命令5 雷轟3 叫2 吹2 語1 說的2 風聲2 口音1 呼號1 啼叫1 嚷1 大聲喧嚷1 打雷1 發聲1 禱告1 言...語1 輕忽1 通告1 雷電1 鬨1 鳴1 鳴叫1 (475)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 聲音, 響聲, 噪音</li><li>1a 聲音</li><li>1b 聲音 (樂器的)</li><li>2 輕浮, 輕忽</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽附屬形קוֹל 創4:10。單陽3單陽詞尾קֹלוֹ 創27:38。單陽3單陰詞尾קֹלָהּ 創21:16。單陽3複陽詞尾קוֹלָם 撒上8:9。單陽3複陰詞尾קוֹלָן 得1:9。單陽2單陽詞尾קוֹלְךָ 士18:25。單陽2單陰詞尾קוֹלֵךְ 撒上25:35。單陽2複陽詞尾קֹלְכֶם 申1:45。單陽1單詞尾קוֹלִי 撒上26:17；קֹלִי 創22:18。單陽1複詞尾קֹלֵנוּ 民20:16。複陽קֹלֹת 出9:23；קוֹלֹת 出20:18。複陽附屬形קֹלֹת 出9:28。</p>
+<p>一、聲音、響聲、噪音。</p>
+<p>1. 人的，書6:10 王下7:10；發出聲，創27:22,22 撒上1:13 24:16 26:17,17；認出聲，撒上26:17；יְפֵה קוֹל聲音優美，結33:32；קוֹלֵךְ עָרֵב聲音甜美，歌2:14 8:13；歌唱的聲音，出32:18 撒下19:35 賽52:8；喊叫，士9:7；呼喊，出32:17 撒上4:6,6 王上1:40 拉3:13；快樂的，耶7:34＝耶16:9 25:10 33:11；讚美，詩66:8 26:7 珥2:11；歡樂的，耶30:19；大哭，創21:16 士2:4 撒上11:4 得1:9,14 拉3:13；哭喊，創39:15,18 撒上4:14 8:19；哀號的，耶9:19 結27:30 亞11:3 詩102:5；懇求的，詩28:2,6 31:22 86:6。קוֹל אֶחָד齊聲，出24:3；聲合為一，代下5:13；קוֹל גָּדוֹל放聲大哭，撒下15:23 創39:14 撒上28:12；קוֹל רָם高聲，申27:14；תִּשָּׂא אֶת-קֹלָהּ提高她的聲音，創21:16；הֲרִימֹתִי קוֹלִי抬高我的聲音，創39:15。</p>
+<p>2. 　神的，創3:8,10 賽6:8 出19:19 彌6:9 結10:5；קוֹל גָּדוֹל大聲，申5:22 結9:1；קוֹל דְּמָמָה微小的聲音． 王上19:12。</p>
+<p>3. 撒拉弗，賽6:4。</p>
+<p>4. 使者，但8:16；וְקוֹל דְּבָרָיו說話的聲音，但10:6,9。</p>
+<p>5. 動物：牛羊，撒上15:14,14 耶9:10；馬，耶8:16；獅子，摩3:4 耶2:15；蛇，耶46:22；鴿子，鴻2:7 番2:14 詩104:12 歌2:12 傳12:4。</p>
+<p>6. 感嘆詞，句子的開頭。קוֹל דְּמֵי אָחִיךָ你兄弟的血的聲音，創4:10；קוֹל הָמוֹן群眾的聲音，賽13:4；קוֹל שְׁאוֹן鬨嚷的聲音，賽13:4 40:3 52:8 耶4:15 10:22 50:28 歌2:8 5:2。</p>
+<p>二、聲音。</p>
+<p>1. 樂器：角聲，出19:16 20:18 摩2:2 王上1:41；לַמְחַצְּצרִים וְלַמְשֹׁרֲרִים吹號的、歌唱的，代下5:13；כִּנּוֹר琴的，結26:13；עוּגָב簫，伯21:12；大祭司袍上的響聲，出28:35。</p>
+<p>2.雷聲，קוֹלוֹ耶和華的聲音，摩1:2 賽30:30,31 耶10:13＝耶51:16 珥2:11 3:16 詩18:13＝撒下22:14 詩29:3,7 46:6 伯37:4 撒上7:10；耶和華就打雷，出9:23,28,29,33,34 19:16 20:18 撒上7:10 12:17,18 伯28:26＝伯38:25。</p>
+<p>3. קוֹל רַגְלֶיהָ腳步的響聲，王上14:6 王下6:32 創3:8；קוֹל צְעָדָה行進腳步的聲音，撒下5:24＝代上14:15；奔走聲，王下11:13 代下23:12。</p>
+<p>4. 蹄跳的響聲，耶47:3；馬車的響聲，結26:10。</p>
+<p>5. 車輛的，鴻3:2 珥2:5；輪子旋轉，結3:13 鴻3:2。</p>
+<p>6. 大海、大水，哈3:10 結1:24 43:2 詩93:3,4 耶50:42；לְקוֹל צִנּוֹרֶיךָ你的瀑布發聲，詩42:7。</p>
+<p>7. 地震，結37:7。</p>
+<p>8. 跌落聲，耶49:21 結26:15 31:16。</p>
+<p>9. 群眾喧嚷，撒上4:14 賽13:4 結23:42。</p>
+<p>10. 打仗的喧囂，出32:17 耶50:22,46 51:55 哀2:7。</p>
+<p>11. 翅膀，結1:24 3:13 10:5。</p>
+<p>12. 火燄，珥2:5；燒荊棘的劈啪聲，傳7:6；葉子被風吹，利26:36。</p>
+<p>13. 推磨的，耶25:10 傳12:4。</p>
+<p>三、口齒伶俐，說的話</p>
+<p>1. 通常是人的建議、命令或懇求，創 3:17 4:23 出3:18 4:1,9 申1:45 21:18,20 撒上2:25 8:7,9 撒下12:18；קוֹל דִּבְרֵיכֶם你們說話的聲音，申1:34 5:25 王下10:6；指傳來的消息，創45:16 傳10:20；通知或公告，出36:6 代下24:9 30:5 36:22＝拉1:1 10:7 尼8:15；קוֹל אָלָה發誓的聲音，利5:1。</p>
+<p>2.　神的話，創22:18 26:5 出5:2 15:26 19:5 申8:20 9:23 士2:2,20 6:10 撒上12:14,15 15:19,20,22 耶3:13,25 7:23。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or קֹל ; from an unused root meaning to call aloud;<br/>a voice or sound</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">דָּבָר</span> <span class="tl">dabar</span> <span class="sn">H01697</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01697</li><li>詞形 דָּבָר</li><li>音譯 dabar</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 說話、話、事實、緣由、言論、命令、行為、事件</li><li>字源 來自 SH1696</li><li>中文用法 話658 事242 言語70 言26 命20 命令14 樣13 事情10 句10 緣故8 所說的7 這樣7 如此6 分5 報5 書5 案件5 說5 信4 所求的4 話語4 默示4 例3 字3 歷史3 物3 行3 覆3 語3 誡3 說話3 令2 來往2 如此如此2 定例2 意思2 應許2 所問的2 所應許的2 病2 聲音2 言詞2 訓言2 記2 豫言2 一句話1 件1 作為1 信息1 判語1 吩咐1 商議1 商量1 因為1 工作1 常規1 念1 情由1 意念1 應對1 應驗1 所當做的1 所要的1 所記載的1 掛心1 提到1 旨1 旨意1 時候1 案1 此1 爭訟1 甚麼1 瘟疫1 真情1 籌畫1 糧1 罪1 職分1 言論1 計1 計謀1 詩詞1 論到1 諭旨1 辭1 這事1 道1 那樣1 錯1 (1231)（出現共約有1440次）</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 言論, 言語</li><li>1a 言論, 話語</li><li>1a1 人的</li><li>1a1a 命令</li><li>1a1b 訊息, 消息</li><li>1a1c 參議, 建言</li><li>1a1d 請求 (<br/>撒下 14:15,22<br/>)</li><li>1a1e 應許 (<br/>民 30:2<br/><br/>尼 5:13<br/>)</li><li>1a1f 指控, 怨言</li><li>1a1g 決議, 宣判 (<br/>申 17:9-11<br/>)</li><li>1a1h 主題, 故事</li><li>1a2 　神的</li><li>1a2a 耶和華的話臨到</li><li>1a2b 耶和華確認祂的應許</li><li>1b 說話, 發言</li><li>1c 言語, 字句</li><li>1d 事情, 事件</li><li>1d1 事業, 職業</li><li>1d2 (複數) 行動</li><li>1d3 事情</li><li>1d4 事件, 事物</li><li>1d5 案子</li><li>1d6 某事</li><li>1d7 方式</li><li>1d8 理由, 肇因</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽דָּבָר 創18:14。單陽附屬形דְּבַר 創12:17。單陽3單陽詞尾דְבָרוֹ 詩103:20。單陽2單陽詞尾דְּבָרֶךָ 詩119:16。單陽2單陰詞尾דְּבָרֵךְ 王上17:13。單陽1單詞尾דְבָרִי 民11:23。單陽1複詞尾דְּבָרֵנוּ 書2:14。複陽דְּבָרִים 出4:10。複陽附屬形דִּבְרֵי 創24:29。複陽3單陽詞尾דְּבָרָיו 創37:8。複陽3單陰詞尾דִּבָרֶיהָ 士16:16。複陽3複陽詞尾דִּבְרֵיהֶם 代下9:6。複陽2單陽詞尾דְּבָרֶיךָ 詩119:57。複陽2單陰詞尾דְּבָרָיִךְ 王上1:14。複陽2複陽詞尾דִבְרֵיכֶם 書2:21。複陽1單詞尾דְּבָרַי 詩50:17。</p>
+<p>一、言論、言語。</p>
+<p>1. 人的：</p>
+<p>A. נְבוֹן דָּבָר說話明理，撒上16:18；דְּבַר-שְׂפָתֵימוֹ他們嘴裡的言語，詩59:12；只靠嘴唇的話說，賽36:5（＝王下18:20）；箴14:23；דָּבָר מָר苦毒的言語，詩64:3；דְבַר-כָּזָב謊言，箴30:8；טוֹב דְּבָרְךָ你的話很好，撒上9:10；וּדְבַר-אַבְנֵר הָיָה עִם-זִקְנֵי יִשְׂרָאֵל有押尼珥的話帶給以色列長老，撒下3:17（比較 王上1:7和祭司亞比亞他商議）；אֲמָרְכֶם אֶת-הַדָּבָר הַזֶּה說這句話，耶23:38 31:23；比較 耶13:12 14:17 撒上8:10。</p>
+<p>B.命令。וּדְבַר הַמֶּלֶךְ王的命令，代上21:4,6 斯1:12 傳8:4 代下30:5 31:5 但9:23,25；דְבַר-מַלְכוּת國家的命令，斯1:19降旨；אֲשֶׁר דִּבֵּר照約瑟所說的話行了，創44:2 47:30 出8:10 8:31 12:35 32:28 利10:7 士11:10 拉10:5 尼5:12,13；比較 撒下17:6（忠告的話）；王上3:12（請求）；王上17:13（建議）。</p>
+<p>C.訊息、消息。הַדָּבָר הָרָע聽見這凶信，出33:4；比較 王上20:12；אֱמֶת הָיָה הַדָּבָר言論是真實的，王上10:6 代下9:5；עַד בּוֹא דָבָר מֵעִמָּכֶם לְהַגִּיד לִי直到有話從你們報給我，撒下15:28；וַיִּגַּע הַדָּבָר אֶל-מֶלֶך נִינְוֵה這消息傳到尼尼微王那裡，拿3:6；וַהֲשִׁבֵנִי דָּבָר 回來報信給我，創37:14 民13:26 22:8 申1:22,25 書14:7 22:32 王上2:30 20:9 王下22:9,20（ 代下34:16,28)。回答，照先前的話，撒上17:30 撒下3:11 24:13（＝代上21:12）王上12:6,9（ 代下10:6,9）；王上12:16 尼2:20 箴18:13 27:11 賽41:28 結9:11；回答某事或什麼都不回答，王上18:21 王下18:36 詩119:42 賽36:21 耶44:20；返回的話，出19:8 箴24:26。</p>
+<p>D.參議、建言。בִּדְבַר בִּלְעָם巴蘭的計謀，民31:16 士20:7 撒下19:43 斯5:5。</p>
+<p>E.請求。婢女所求的，撒下14:15,22。</p>
+<p>F.應許。לֹא יַחֵל דְּבָרוֹ不可食言，民30:2；יָקִים אֶת־הַדָּבָר成就這應許，尼5:13。</p>
+<p>G.指控、怨言。אֱמֶת הָיָה הַדָּבָר הַזֶּה這事若是真的，申22:20；參 申13:14 17:4；將罪歸我，撒上22:15；וְשָׂם לָהּ עֲלִילֹת דְּבָרִים信口說她，申22:14,17。</p>
+<p>H.決議、宣判。דְּבַר הַמִּשְׁפָּט將判語指示你，申17:9,10,11。</p>
+<p>I.主題、故事。רָחַשׁ לִבִּי דָּבָר טוֹב我心裡湧出美辭，詩45:1；וּדְבַר-גְּבוּרוֹת大能的事，伯41:12。</p>
+<p>2. 　神的話語，以誡命、預言和應許的形式與祂的子民進行神聖的交流：</p>
+<p>A. 耶和華的話臨到，撒上15:10 撒下7:4 王上6:11 13:20 16:1 17:2,8 21:17,28 代下11:2 賽38:4 耶1:4 結3:16 拿1:1 該2:20 亞4:8 6:9 7:4,8 8:1,18。הָיָה דְבַר-יְהוָה אֶל耶和華有話對...，創15:1 代下12:7 耶25:3 結1:3 但9:2 亞1:1,7 7:1；הִנֵּה דְבַר-יְהוָה אֵלָיו看哪！耶和華的話又臨到他，創15:4 王上19:9；דְבַר-יְהוָה הָיָה אֶל耶和華的話臨到，撒下24:11 王上16:7 18:1 王下20:4 結24:20；הָיָה דְבַר-יְהוָה בְּיַד 該1:1 2:1,10；וַיְהִי דְּבַר-יְהוָה בְּיַד 該1:3；דְּבַר־יְהוָה אֲשֶׁר הָיָה 何1:1 珥1:1 番1:1；אֲשֶׁר הָיָה דְבַר-יְהוָה אֵלָיו耶和華的話曾臨到他，王上18:31 耶1:2；אֲשֶׁר הָיָה דְבַר-יְהוָה אֶל-יִרְמְיָהוּ耶和華的話臨到耶利米，耶14:1 46:1 47:1 49:34；הַדָּבָר אֲשֶׁר הָיָה אֶל話從耶和華那裡臨到，耶7:1；אוֹתוֹ דְּבַר-יְהוָה 王下3:12 耶23:28 27:18；比較אֵלַי דָּבָר יְגֻנָּב有話暗暗地傳達給我，伯4:12；比較וְטֶרֶם יִגָּלֶה אֵלָיו דְּבַר-יְהוָה耶和華的話也未向他揭示，撒上3:7；耶和華יִשְׁלַח דְּבָרוֹ發出他的話，詩107:20 147:18 賽9:8 耶42:5；也是一個צִוָּה命令，出16:16,32 35:4 利8:5 9:6 17:2 民30:2 36:6 申4:2 12:32 15:15 書1:13 4:10 代上16:15 尼1:8 耶7:23，比較הַדְּבָרִים אֲשֶׁר-צִוָּה 出35:1 利8:36 出19:7 申6:6。</p>
+<p>B. 耶和華確認祂的應許，申9:5 撒上1:23 王上2:4 6:12 8:20 耶29:10 33:14和他的警戒，王上12:15 但9:12；他的話永遠立定，賽40:8；永遠安定在天上，詩119:89；他記念דְּבַר קָדְשׁוֹ他的聖言，詩105:42；成就他命令的，珥2:11；成全他旨意，詩103:20；和大自然的力量，詩148:8；諸天藉耶和華的命而造，詩33:6；這話卻離你甚近，申30:14；你的話是我腳前的燈，詩119:105。</p>
+<p>二、說話、發言、判決。</p>
+<p>1. 人的：</p>
+<p>A. וְדָבָר בְּעִתּוֹ話合其時，箴15:23；一句良言使心歡樂，箴12:25。複數型態：דִּבְרֵי הַשִּׁירָה這一篇歌的話，申31:30 32:44 詩18:1 137:3；大衛和先見亞薩的詩詞，代下29:30；דִּבְרֵי חֲכָמִים智慧人的言詞，箴1:6 22:17 傳9:17 12:11；比較דִּבְרֵי הָאִגֶּרֶת信上的話，斯9:26；וְהַדְּבָרִים עַתִּיקִים古時的記載，代上4:22；כְּדִבְרֵי הַסֵּפֶר書卷的言語，賽29:11,18 耶29:1。</p>
+<p>B. 著作的標題：דִּבְרֵי קֹהֶלֶת傳道者的言語，傳1:1；דִּבְרֵי אָגוּר亞古珥的言語，箴30:1；דִּבְרֵי יִרְמְיָהוּ耶利米的話，耶1:1 摩1:1 尼1:1。附加的短語或子句：עַד-הֵנָּה דִּבְרֵי יִרְמְיָהוּ耶利米的話到此為止，耶51:64；תַּמּוּ דִּבְרֵי אִיּוֹב約伯的話說完了，伯31:40。</p>
+<p>C. 在歷代志中以作品的名稱命名：דִּבְרֵי מַלְכֵי יִשְׂרָאֵל以色列諸王記，代下33:18,19；בְּדִבְרֵי שְׁמַעְיָה示瑪雅的史記，代下12:15；תוּבִים בְּדִבְרֵי耶戶的書，代下20:34；עַל-דִּבְרֵי שְׁמוּאֵל在撒母耳的紀錄上，代上29:29 代下9:29。</p>
+<p>2. 　神的：עֲשֶׂרֶת הַדְּבָרִים十條誡，出34:28 申4:13；הַדְּבָרִים其上的字，出34:1 申4:10,36 5:22 9:10 10:2；聖約法典的命令，出24:3,4,8；律法書上的一切言語，申17:19 王下22:11 23:3,24 耶11:2,8 34:19；這些話都寫在　神的律法書上，書24:26；耶和華誡命，拉7:11 9:4 尼8:9,13；耶和華藉耶利米所寫的話，耶25:13 36:4,32 51:61；藉但以理所寫的話，但12:4,9。一般命令，撒上15:11 詩50:17 119:57 119:130,139；應許，撒下7:28 尼9:8；參 代上25:5 代下36:16。</p>
+<p>三、言語、字句。</p>
+<p>1. 人的：שָׂפָה אֶחָ֑ת וּדְבָרִים אֲחָדִים 一種語言和一樣的話，創11:1；אֵין-אֹמֶר וְאֵין דְּבָרִים 無言無語，詩19:3；אִישׁ דְּבָרִים能言的人，出4:10；許多的言語，伯11:2 箴10:19 傳5:2；קְחוּ עִמָּכֶם דְּבָרִים帶著你的言語，何14:2；בְּדִבְרֵי-שָׁקֶר虛謊的言語，出5:9 23:7 箴13:5 29:12 賽59:13 耶7:4,8；דִבְרֵי-רוּחַ虛空的言語，伯16:3；וּמַה-שֵּׁמֶץ דָּבָר נִשְׁמַע-בּוֹ我們所聽於他的是何等細微的話語，伯26:14。</p>
+<p>2. 　神的話： 創20:8 出19:6 民12:6 書3:9 出4:28,30 民11:24 申18:19 書23:14 撒上3:18 8:10 15:1 代下11:4 伯42:7 箴30:6 賽31:2 但10:11 摩8:11 彌2:7 結2:7 亞1:6。</p>
+<p>四、事情、事件。</p>
+<p>1.事業、職業。דְבַר-הַמֶּלֶךְ王的事，撒上21:8 代上26:32 代上27:1 代下19:11；לְכָל-דְּבָרֶיךָ你的命令，代上28:21；דְּבַר הַמִּזְבֵּחַ壇內的事，民18:7；דָבָר אֵין-לָהֶם עִם-אָדָם與別人沒有來往，士18:7,28；דְּבַר-יוֹם בְּיוֹמוֹ每天收每天的分量，出5:13,19 16:4 利23:37 王上8:59 王下25:30 代上16:37 代下8:13 31:16 拉3:4 尼11:23 12:47 耶52:34 但1:5；דְּבַר-שָׁנָה בְּשָׁנָה每年有一定之例，王上10:25 代下9:24。</p>
+<p>2. 複數：所行的事。複陽附屬形דִּבְרֵי שְׁלֹמֹה所羅門的事，王上11:41 代上29:29 代下12:15 16:11；וּדְבָרָיו他的言行，代下13:22 35:27；וְיֶתֶר דִּבְרֵי...עַל-סֵפֶר דִּבְרֵי安其餘的事...被寫在紀錄的書上，王上14:29；וְיֶתֶר דְּבָרָיו其餘的事，代下28:26；וּשְׁאָר דִּבְרֵי其餘的事，代下9:29；大衛王的דִּבְרֵי-הַיָּמִים年代誌上，代上27:24；עַל-דִּבְרֵי מַלְכֵי יִשְׂרָאֵל它們都在以色列諸王記上，代下33:18；דְּבָרִים טוֹבִים善益的事，代下12:12 19:3；דִּבְרֵי עֲוֹנֹת罪孽之事，詩65:3；דִבְרֵי-רָע惡事，耶5:28；僅用於　神：כָל-דְּבָרָיו לֹא-יַעֲנֶה祂不回應祂的任何一件事，伯33:13；דִּבְרֵי אֹתוֹתָיו他神蹟的事，詩105:27；דִבְרֵי נִפְלְאוֹתֶיךָ你奇妙的作為，詩145:5。</p>
+<p>3.事情。בִּדְבַר אוּרִיָּה烏利亞那件事，王上15:5；שֹׁרֶשׁ דָּבָר惹事的根，伯19:28；מֶה-הָיָה הַדָּבָר事情怎樣，撒上4:16 撒下1:4；挽回這事，撒下14:20；דִּבְרֵי הָאֲתֹנוֹת驢的事，撒上10:2；זֶה דְּבַר הָרֹצֵחַ這是殺人犯的條例，申19:4；לְכָל-דְּבָרָיו一切的事，王上6:38。</p>
+<p>4.事件、事物。片語אַחַר הַדְּבָרִים הָאֵלֶּה這事以後（及時發生的事件），創15:1 22:1 40:1 王上17:17 21:1 拉7:1 斯2:1 3:1。אַחֲרֵי הַדְּבָרִים הָאֵלֶּה這些事以後，創48:1 書24:29 創22:20 代下32:1。</p>
+<p>5.案子，立案調查。כִּי-יִהְיֶה לָהֶם דָּבָר他們有事的時候，出18:16 22:9；凡有爭訟的，出24:14；你的事有情有理，撒下15:3。</p>
+<p>6. 某事。עָשָׂה דָּבָר行了這事，創22:16；אֵלֶּה הַדְּבָרִים עֲשִׂיתִם這些事我都要成就，賽42:16；הֲיִפָּלֵא מֵיְהוָה דָּבָר在耶和華豈有難成的事嗎？ 創18:14；比較 耶32:17,27；לֹא יְעַדְּרוּ דָּבָר一無所缺，王上5:7；沒有任何事，王上10:3 賽39:2 耶42:4；אֵין נִגְרָע מֵעֲבֹדַתְכֶם דָּבָר你們工作的事不能減少，出5:11；אֵין-דָּבָר沒有別的，民20:19；沒事，撒上20:21；לֹא-הָיָה דָבָר沒有一句是，書8:35 11:15 21:45 23:14；כָּל-דָּבָר任何、凡，民31:23 申23:19；דָבָר רָע邪惡的事，詩141:4；דָּבָר טוֹב善行，王上14:13；דְבַר מַה什麼事，民23:3；עֶרְוַת דָּבָר污穢之事，申23:14，即不潔或不合時宜的事物（營中不雅的行為）；休妻也是如此，申24:1。</p>
+<p>7.方式。זֶה דְּבַר הַשְּׁמִטָּה豁免的定例，申15:2；כֵן דְּבַר הַמֶּלֶךְ按王的常規，斯1:14；כַּדָּבָר הַזֶּה像這樣的事（照樣、如此），創18:25 32:19 44:7 撒下15:6 拉10:5 尼5:12,13 撒上9:21 撒下14:3 17:6 撒上17:27,30 賽8:20 尼6:4,5；比較 撒上17:30 王下7:19；כַּדָּבָר הָרָע הַזֶּה像這樣的惡事，申13:11 19:20；כַּדָּבָר הַגָּדוֹל הַזֶּה這樣的大事，申4:32；כַּדְּבָרִים הָאֵלֶּה עָשָׂהּ用這些事對待我，創39:19 撒上2:23。</p>
+<p>8.理由、肇因。זֶה דְבַר挑選的這件事，王上9:15；זֶה אֲשֶׁרהַדָּבָר行割禮的緣故，書5:4 王上11:27 撒上17:29；עַל-דְּבַר為...的緣故，創20:11,18 12:17 43:18 出8:12 民16:49 詩45:4 79:9；עַל-דִּבְרֵי論到，耶14:1；עַל-דִּבְרֵיכֶם為你們的緣故，申4:21；עַל-דְּבַר אֲשֶׁר因為，申22:24,24 23:4 撒下13:22。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 1696 ;<br/>a word ; by implication, a matter (as spoken of) or thing ; adverbially, a cause</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">רָדַם</span> <span class="tl">radam</span> <span class="sn">H07290</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07290</li><li>詞形 רָדַם</li><li>音譯 radam</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 使不省人事、沉睡</li><li>字源 一原形字根</li><li>中文用法 沉睡5 沉睡的2 (7)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 (Niphal) 酣睡, 沉睡, 熟睡</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Nifal</p>
+<p>完成式－1單נִרְדַּמְתִּי 但8:18。</p>
+<p>未完成式－敘述式3單陽וַיֵּרָדַם 拿1:5。</p>
+<p>分詞－單陽נִרְדָּם 士4:21。</p>
+<p>1.沉睡，士4:21 拿1:5,6。</p>
+<p>2. 分詞作名詞：沉睡的，箴10:5 詩76:6；太過驚慌或敬畏而導致的效果，但8:18 10:9。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>to stun , i.e. stupefy (with sleep or death)</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">פָּנִים</span> <span class="tl">paniym</span> <span class="sn">H06440</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06440</li><li>詞形 פָּנִים</li><li>音譯 paniym</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 臉面(應用變化極廣)、作前置詞：在前面</li><li>字源 一個不用的名詞之單數、來自 SH6437</li><li>中文用法 面前756 面186 前157 臉117 前面56 因56 前頭28 以前26 以先16 眼前14 先11 從前11 情面11 之先10 因為9 臉面8 上7 陳設7 朝7 的緣故6 面貌5 先前3 對面4 臉色4 緣故3 跟前3 親自2 以上2 前邊2 容2 對著2 朝著2 氣色2 為2 眼2 腮1 發怒1 久1 之下1 之前1 人的外貌1 作1 內1 刃1 前往1 口1 向1 在前1 外1 外貌1 容貌1 引領1 早1 景況1 未1 眼中1 素來1 貌1 起先1 起初1 躲避1 迎接1 還在1 面容1 (1568)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 面</li><li>1a 面, 臉</li><li>1b 面前, 人</li><li>1c 面 (撒拉弗或基路伯的)</li><li>1d 面 (動物的)</li><li>1e 面, 表面 (土地的)</li><li>1f 表位置或時間的副詞</li><li>1f1 之前與之後, 前頭, 面前, 前, 以前, 先前, 先</li><li>1g 加介系詞</li><li>1g1 在 ... 之前, 在 ... 之先, 在 ... 前頭, 在 ... 面前,<br/>在 ... 眼前, 在 ... 跟前, 從 ... 面前,<br/>從 ... 之前, 從 ... 前頭</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>複陽פָּנִים 創32:30。複陽附屬形פְּנֵי 撒下14:32。複陽3單陽詞尾פָּנָיו 創4:5；פָנֵימוֹ 詩11:7。複陽3單陰詞尾פָּנֶיהָ 創38:15。複陽3複陽詞尾פְּנֵיהֶם 出14:19。複陽2單陽詞尾פָּנֶיךָ 詩16:11。複陽2單陰詞尾פָּנָיִךְ 撒上25:35。複陽2複陽詞尾פְּנֵיכֶם 創40:7。複陽1單詞尾פָנַי 創43:3。複陽1複詞尾פָּנֵינוּ 士11:24。</p>
+<p>一、面、臉面。</p>
+<p>1. 字義意義：面、臉，耶30:6 結27:35 10:14,21。</p>
+<p>A. 人的，創43:31 撒下19:5 王上19:13 但8:18 10:9,15；עוֹר פָּנָיו面皮，出34:29,30,35；蒼白，賽29:22 耶30:6；如火焰、變紅，賽13:8 結20:47 鴻2:10 珥2:6；充滿淚水，賽25:8 伯16:16；愁容，創40:7 尼2:2,3 傳7:3；笑容，箴15:13；וַיִּפְּלוּ פָּנָיו拉下臉，創4:5,6 撒上1:18；羞愧，結7:18。比喻蒙羞受辱、沮喪，耶51:51 詩69:7 83:16。</p>
+<p>B. 耶和華的，出33:20,23。</p>
+<p>C. פָּנִים אֶל-פָּנִים面對面，見了（　神），創32:30,30 士6:22 申34:10；審判，結20:35；說話，出33:11；פָּנִים בְּפָנִים דִּבֶּר面對面與你們說話，申5:4；נִתְרָאֶה פָנִים相見面(於戰場)，王下14:8,11 代下25:17,21。</p>
+<p>D. 與　神的關係。在敬拜中，לְהָרִים אֱלֹהַי פָּנַי向我　神仰面，拉9:6；在靈裡，不以面向我，耶2:27 32:33；אֶת-פָּנָיו לִדְרוֹשׁ לַיהוָה立定他的臉面尋求　神，代下20:3；וָאֶתְּנָה אֶת-פָּנַי אֶל-אֲדֹנָי הָאֱלֹהִים面向　神禱告祈求，但9:3；וְהַבָּנִים קְשֵׁי פָנִים這些人面無羞恥，結2:4。</p>
+<p>E. 　神自己的。וְלֹא-יָסִיר פָּנִים מִכֶּם祂必不會轉臉不顧你們，代下30:9；פְּנֵי יְהוָה בְּעֹשֵׂי רָע耶和華向行惡的人變臉，詩34:16；מִגַּעֲרַת פָּנֶיךָ יֹאבֵדוּ他們因你臉上的怒容就滅亡了，詩80:16。</p>
+<p>2.面前。耶和華的：我的臉要去(意思是親自)，出33:14,15；בְּפָנָיו親自，申4:37；וּמַלְאַךְ פָּנָיו他面前的使者，賽63:9。指耶和華忿怒的臉色，哀4:16 詩21:9。押沙龍，撒下17:11。</p>
+<p>3.臉。撒拉弗的，賽6:2；基路伯的，出25:20,20＝出37:9,9；結1:8,11 代下3:13。</p>
+<p>4. 動物的臉。פְּנֵי הַצֹּאן羊的臉，創30:40；四個活物的，結1:10 10:14 代上12:8（比喻用法）；結41:19；鱷魚，伯41:14。</p>
+<p>5.面（＝表面）。土地的表面，創2:6 4:14 7:4 詩104:30；פְּנֵי הָאָרֶץ地面上，創1:29 7:3 8:9 11:4,8,9 19:28 賽24:1；פְנֵי-תֵבֵל在世上，賽14:21 27:6；田面，箴24:31；פְּנֵי תְהוֹם淵面，創1:2,2 伯38:30；פְּנֵי הַמָּיִם水面，創7:18；רְקִיעַ הַשָּׁמָיִם穹蒼之上，創1:20；פְּנֵי-כִסֵּה寶座的面貌，伯26:9；殿面，結41:14 47:1；門的，結40:6,20,22 42:15 43:4；鍋面，耶1:13；הַמִּלְחָמָה מִפָּנִים在他前後擺陣，撒下10:9＝代上19:10；刀劍的邊緣，結21:16 傳10:10。</p>
+<p>6. 表位置的副詞。מִפָּנִים וּמֵאָחוֹר在他前後擺陣，撒下10:9＝代上19:10 結2:10 代下13:14；向後不向前，耶7:24。表時間的副詞：先前，申2:12,20；素來，書11:10；從前，士1:10,11,23 賽41:26。</p>
+<p>二、加介系詞</p>
+<p>1. אֶל-פְּנֵי在...前。אֶל-פְּנֵי הָאָדֹן יְהוָה主耶和華的面，出23:17 34:23。在動作動詞後面：אֶל-פְּנֵי הַמִּזְבֵּחַ在壇前，利6:14 9:5 16:2 民20:10。朝向或在前面： 結41:4,12,15,25 42:2,3,7,10,13 45:7 48:21。</p>
+<p>2. אֶת-פְּנֵי在...面前，אֶת-פְּנֵי עֵלִי הַכֹּהֵן在祭司以利面前，撒上2:11；侍立אֶת-פְּנֵי שְׁלֹמֹה אָבִיו在他父所羅門面前，王上12:6 斯1:10 箴17:24；אֶת-פְּנֵי יְהוָה在耶和華面前，創19:13,27 撒上2:18。</p>
+<p>3. בְּפָנֶיהָ在...面前，帶有敵意：יָרַק吐口水，民12:14 申25:9；יִתְיַצֵּב站立得住，申7:24 11:25 書10:8；וְלֹא-עָמַד אִישׁ בִּפְנֵיהֶם沒有一人能在他們面前站立得住，書21:44 23:9；עָנָה使自己卑微，何5:5；וְעָנָה גְאוֹן-יִשְׂרָאֵל בְּפָנָיו以色列的驕傲當面見證自己，何7:10 伯16:8。</p>
+<p>4. לִפְנֵי在…面前、之前：עֹמֵד לִפְנֵי יְהוָה站在耶和華面前，創18:22 出4:21 11:10 撒下2:14 箴17:18；在動作動詞之後，וַיַּצִּגֵם לִפְנֵי פַרְעֹה把他們帶到法老面前，創47:2意思是在我面前相遇；出29:10 箴18:16。לִפְנֵי可另見SH3942。</p>
+<p>5. מִפְּנֵי從...面前：וַיִּסַּע עַמּוּד הֶעָנָן מִפְּנֵיהֶם雲柱也從他們前邊移動，出14:19 賽30:11 何11:2。因為：因為害怕，士9:21 撒上21:10 23:26 耶35:11 37:11 41:9 50:16。在動詞之後，וַיִּתְחַבֵּא躲避耶和華　神的面，創3:8 4:14 賽2:10。מְעַט מְעַט אֲגָרְשֶׁנּוּ מִפָּנֶיךָ我要漸漸的將他們從你面前攆出去，出23:30 34:11,24 利18:24 申8:20 摩2:9 詩89:23。בּוֹקֵעַ מַיִם מִפְּנֵיהֶם在他們前面將水分開，賽63:12 書2:10 4:23；אֲשֶׁר עָזְבוּ מִפְּנֵי בְּנֵי יִשְׂרָאֵל就是從前在以色列人面前被人撇棄的，賽17:9。</p>
+<p>6. עַל-פְּנֵי根據名詞和介詞的定義產生不同的意義：</p>
+<p>A. עַל-פְּנֵי-רוּחַ如同風前的灰塵，詩18:42；עַל-פָּנֶיךָ在你面前經過，出33:19；וַתַּעֲבֹר הַמִּנְחָה עַל-פָּנָיו禮物先過去了，創32:21；אֲנִי אַעֲבִיר כָּל-טוּבִי עַל-פָּנֶיךָ一切的恩慈在你面前經過，出33:19 撒下15:18,23 伯4:15；＝在看到…的時候，從…觀點看來：וְעַל-פְּנֵי כָל-הָעָם אֶכָּבֵד在眾民面前，我要得榮耀，利10:3；עַל-פָּנַי תָּמִיד חֳלִי וּמַכָּה在我面前不斷有病痛與損傷，耶6:7；יִשָּׁפְטוּ גוֹיִם עַל-פָּנֶיךָ願外邦人在你面前受審判，詩9:19；אִם-לֹא עַל-פָּנֶיךָ יְבָרֲכֶךָּ他必當面棄掉你，伯1:11；וְעַל-פְּנֵיכֶם אִם-אֲכַזֵּב我決不當面說謊，伯6:28 21:31。在某人面前死去（=在他有生之年）：וַיָּמָת הָרָן עַל-פְּנֵי תֶּרַח אָבִיו בְּאֶרֶץ在他父親他拉之先，創11:28 民3:4。之前、優先於：在所惡之妻生的兒子以上，申21:16；לֹא יִהְיֶה-לְךָ אֱלֹהִים אֲחֵרִים עַל-פָּנָיַ你不可有別的神明在我面前，出20:3。</p>
+<p>B. 從表面上看：עַל-פְּנֵי הַמָּיִם在水面上，創1:2；עַל-פְּנֵי הַמִּדְבָּר曠野的表面，出16:14；עַל-פְּנֵי כָל-הָאָרֶץ地面上，創1:29 7:3；עַל-פְּנֵי הָאֲדָמָה在世上，創6:1 7:23；עַל-פְּנֵי הַשָּׂדֶה在田野裡，利17:5 民19:16 撒上14:25。</p>
+<p>7. מֵעַל פְּנֵי從...的面前：וַיָּקָם אַבְרָהָם מֵעַל פְּנֵי מֵתוֹ亞伯拉罕從死人面前起來，創23:3。常用片語：מֵעַל פְּנֵי הָאֲדָמָה離開這土地的表面上，創4:14 6:7 7:4 8:8 出32:12 申6:15 撒上20:15 王上9:7 13:34 摩9:8 耶28:16 番1:2,3。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] plural (but always as singular) of an unused noun פָּנֶה ; from 6437 );<br/>the face (as the part that turns); used in a great variety of applications (literally and figuratively); also (with prepositional prefix) as a preposition ( before , etc.)</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">אֶרֶץ</span> <span class="tl">&#x27;erets</span> <span class="sn">H00776</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00776</li><li>詞形 אֶרֶץ</li><li>音譯 &#x27;erets</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 地、土地、世界</li><li>字源 來自一個不用的字根</li><li>中文用法 地1938 國166 天下44 世36 境34 地土27 方24 大地16 地方13 邦13 世上11 世界11 列邦8 土8 田地6 地上5 府4 列國3 處3 邦國3 路程2 世人1 四十1 國民1 地勢1 地境1 地業1 地球1 地面1 境內1 岸1 本國1 泥1 田1 萬國1 路1 鄉1 麈1 (2392)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 地, 土地</li><li>1a 土地</li><li>1a1 全地 (相對於部份地區)</li><li>1a2 地 (相對於天)</li><li>1a3 地 (住在其上的人)</li><li>1b 地</li><li>1b1 國家, 疆界</li><li>1b2 轄區, 區域</li><li>1b3 支派疆界</li><li>1b4 一塊地</li><li>1b5 特別指迦南地或以色列地</li><li>1b6 地上的居民</li><li>1b7 陰間, 去而不返之地, (下面的) 世界</li><li>1c 地, 地面</li><li>1c1 地面</li><li>1c2 土壤</li><li>1d (片語中)</li><li>1d1 地上的國民</li><li>1d2 邦國的空間 (度量距離)</li><li>1d3 邦國之境界</li><li>1d4 活人之地</li><li>1d5 地極</li><li>1e (幾乎都用於晚期)</li><li>1e1 諸地, 列國</li><li>1e1a 多相對於迦南</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰אָרֶץ 創1:24；אֶרֶץ 創1:10。單陰+指示方向的ָאַרְצָה , ה 創11:31。單陰附屬形אֶרֶץ 創2:11。單陰3單陽詞尾אַרְצוֹ 出6:1。單陰3複陽詞尾אַרְצָם 賽36:20。單陰2單陽詞尾אַרְצֶךָ 出23:10。單陰2單陰詞尾אַרְצֵךְ 賽60:18。單陰2複陽詞尾אַרְצְכֶם 利19:9。單陰1單詞尾אַרְצִי 創20:15。單陰1複詞尾אַרְצֵנוּ 書9:11。複陰אֲרָצוֹת 耶28:8。複陰附屬形אַרְצ֖וֹת 結39:26。複陰3複陽詞尾אַרְצֹתָם 創10:5。</p>
+<p>一、土地</p>
+<p>1. 全地（相對於部份地區）： 創18:18,25 22:18 賽37:16,20 耶25:26,29,30 26:6 亞4:10,14。</p>
+<p>2.地，與天相對，創1:2 出20:4 申5:8 30:19 士5:4 哀2:1；賽37:16＝王下19:15；詩146:6 代上21:16 29:11 代下2:12；是永恆的，傳1:4；是建立在根基上，撒上2:8 詩104:5 伯38:4 賽48:13 51:13,16 詩82:5；是堅定的，因此大地震動是可怕的，並且象徵著可怕的力量，撒上14:15；撒下22:8＝詩18:7；伯9:6 詩46:2,6 摩8:8 賽2:19,21 24:18,19,20 詩60:2 77:18 99:1 114:7；懸掛在虛空之上，伯26:7；地底下有水，出20:4＝申5:8。擬人化，特別是如所提及的、傳喚作證的等等，申32:1 耶6:19 22:29 賽1:2 彌1:2 伯16:18。</p>
+<p>3.地＝住在上的居民，創6:11 王上2:2 10:24 詩33:8 66:4；בְּתֵבֵל אַרְצוֹ在世界、就是祂的大地，箴8:31 伯37:12。</p>
+<p>二、地</p>
+<p>1.國家、疆界。אֶרֶץ שִׁנְעָר示拿地，創10:10,11 11:28,31;אֶרֶץ מִצְרָיִם埃及地，創21:21 47:6,27 50:8 賽7:18 23:1,13 27:13 耶25:20。擬人化： 賽62:4 傳10:16,17。</p>
+<p>2.轄區、區域。創19:28 22:2 書11:3 詩42:6。</p>
+<p>3. 支派疆界。申34:2 士21:21 撒上9:4,16 13:7 王上15:20 賽8:22。更小的領土，撒上9:4,5。</p>
+<p>4. 一塊地： 創23:15。</p>
+<p>5. 特別指迦南地或以色列地： 創11:31 12:1,5,6,7 31:3 申17:14 18:9 王下5:2,4。</p>
+<p>6. 地上的居民： 利19:29 結14:13 亞12:12。</p>
+<p>7.陰間、去而不返之地、（下面的）世界： 伯10:21,22 詩139:15 賽44:23。</p>
+<p>三、地、地面。</p>
+<p>1.地面： 創1:26,30 18:2 33:3 38:9 出4:3 得2:10 撒上5:3,4。</p>
+<p>2.土壤： 創1:11,12 利19:9 25:9 26:4 王下18:32 拉9:12 尼9:35 詩72:6,16 107:34,35。</p>
+<p>四、אֶרֶץ在片語中：</p>
+<p>1. 地上的國民。לְעַ-הָאָרֶץ 創23:7,12 民14:9；以色列民，王下15:5 16:15 21:24；一般老百姓，利4:27 結7:27 王下11:18,19。</p>
+<p>2. 邦國的空間（度量距離）。כִּבְרַת-הָאָרֶץ一段路程，創35:16 48:7 王下5:19。</p>
+<p>3. 邦國之境界。עַל-הָאָרֶץ在世以來，申4:32 耶48:21。比喻用法：אֶרֶץ מִישׁוֹר平坦之地，詩143:10。</p>
+<p>4. 活人之地。אֶרֶץ חַיִּים活人之地，詩27:13；אֶרֶץ הַחַיִּים活人之地，詩142:5。</p>
+<p>5.地極。מִקְצֵה הָאָרֶץ從地極，詩135:7 箴17:24 賽42:10 43:6。אַפְסֵי-אָרֶץ地的四極，箴30:4；קְצוֹת הָאָרֶץ地極，賽40:28 41:5,9。</p>
+<p>五、אֲרָצוֹת複數，幾乎都用於晚期：國，耶16:15 賽36:20 37:11＝王下18:35 19:11 但9:7 11:40,42 詩105:44 106:27 107:3 116:9；地土，創10:5,20,31 利26:36,39。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root probably meaning to be firm ;<br/>the earth (at large, or partitively a land )</p></div></div></details>
+<h2>三、數值備考</h2>
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">שָׁמַע</span><span class="gid">H08085</span></div><ul><li><b>主數值</b> 410</li><li><b>H小數</b> 14</li><li><b>H標準</b> 410</li><li><b>H序數</b> 50</li><li><b>H_Atbash</b> 19</li><li><b>H_Sofit擴展</b> 410</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">קוֹל</span><span class="gid">H06963</span></div><ul><li><b>主數值</b> 136</li><li><b>H小數</b> 10</li><li><b>H標準</b> 136</li><li><b>H序數</b> 37</li><li><b>H_Atbash</b> 104</li><li><b>H_Sofit擴展</b> 136</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">דָּבָר</span><span class="gid">H01697</span></div><ul><li><b>主數值</b> 206</li><li><b>H小數</b> 8</li><li><b>H標準</b> 206</li><li><b>H序數</b> 26</li><li><b>H_Atbash</b> 403</li><li><b>H_Sofit擴展</b> 206</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">רָדַם</span><span class="gid">H07290</span></div><ul><li><b>主數值</b> 244</li><li><b>H小數</b> 10</li><li><b>H標準</b> 244</li><li><b>H序數</b> 37</li><li><b>H_Atbash</b> 113</li><li><b>H_Sofit擴展</b> 804</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">פָּנִים</span><span class="gid">H06440</span></div><ul><li><b>主數值</b> 180</li><li><b>H小數</b> 18</li><li><b>H標準</b> 180</li><li><b>H序數</b> 54</li><li><b>H_Atbash</b> 65</li><li><b>H_Sofit擴展</b> 740</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">אֶרֶץ</span><span class="gid">H00776</span></div><ul><li><b>主數值</b> 291</li><li><b>H小數</b> 12</li><li><b>H標準</b> 291</li><li><b>H序數</b> 39</li><li><b>H_Atbash</b> 408</li><li><b>H_Sofit擴展</b> 1101</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div></div>
+<h2>四、一行中文語意直譯</h2><p>我聽見他說話的聲音；我一聽見他說話的聲音，就面伏於地，沉睡了，臉面朝向地面。</p>
+<h2>五、逐句剖析</h2>
+<p>八節寫氣力與榮美都失去了，本節寫他聽見聲音以後的光景。וָאֶשְׁמַע אֶת־קוֹל דְּבָרָיו，我聽見他說話的聲音。שָׁמַע①作聽見、聆聽；קוֹל①作聲音；דָּבָר①作說話、話。這聲音在六節已用「大眾的聲音」來比，本節是他實在聽見了。隨後וּכְשָׁמְעִי אֶת־קוֹל דְּבָרָיו，我一聽見他說話的聲音。原文把「聽見他說話的聲音」再說一次，不是多餘的重複，是把那一刻的聽寫得很緊：一聽見，下面的事就發生了。</p>
+<p>接著：וַאֲנִי הָיִיתִי נִרְדָּם עַל־פָּנַי וּפָנַי אָרְצָה，我就面伏於地，沉睡了，臉面朝向地面。רָדַם①作使不省人事、沉睡，③作酣睡、沉睡，④標明太過驚慌或敬畏而導致的效果，並見但8:18、10:9。本節按「沉睡」來讀，是敬畏裏的沉睡，不是尋常的安歇。פָּנִים①作臉面；אֶרֶץ①作地、土地，此處加方向，是臉朝向地。和合本譯「面伏在地沉睡了」。本節只寫到聽見與沉睡。後來有一手按在他身上、使他微起，屬十節，不在本節提前寫出。④雖兼列但8:18，那是本書另一處相似的光景，可作內證輕輕點明，不可在本節重寫第八章。</p>
+<p>淺白地說：我聽見他說話的聲音；一聽見，就面伏在地沉睡了，臉朝向地。這是敬畏裏的沉睡，不是平常的安歇。後來那手怎樣按他、使他起來，還不在本節。</p>
+<h2>六、對照經文</h2>
+<p>本節接續八節的無力與失色，寫他聽見那說話的聲音，一聽見就面伏在地沉睡。必須與八節連讀，也必須與十節「有一手按在我身上」連讀，卻不可把十節那手提前寫進本節。④所標但8:18是本書另一處「沉睡」的內證，只可輕輕點明，不可重寫第八章。本節不另造表。</p>
+<h2>七、語意</h2>
+<p>字面上，這是我聽見他說話的聲音；一聽見，就面伏在地沉睡了。語意是：聲音一進入耳朵，這人連殘剩的力氣也不再撐住，臉伏在地上，進入因敬畏而來的沉睡。</p>
+<p>界限必須標明。不可把十節那手按在他身上的事寫進本節。但8:18可作內證，卻不可在此重寫第八章，也不可把後章的內容寫進來。語意收在「他一聽見那聲音，就面伏沉睡」這一事上。</p>
+<h2>八、總意</h2>
+<p>我卻聽見他說話的聲音，一聽見就面伏在地沉睡了。八節已經沒有氣力，九節卻還要聽見。那聲音不是遠遠的響動，是「他說話的聲音」。原文把這一句再說一次：我聽見，我一聽見。聽見以後，這人沒有站著答話，是臉伏下去，向著地，沉睡了。這不是得著安慰以後的安歇，是人在極大的敬畏裏，連意識也被壓住。</p>
+<p>人先要看見：有時　神的臨近，不是先把人扶起來說話，是先讓人伏在地上。力氣已經盡了，聲音再一進來，人就完全低下去。至於後來怎樣有手按在他身上、怎樣使他用膝和掌微微撐起，本節一句都不寫。本節只讓人看見這一個伏在地上的人：他聽見了，並且沉睡了。</p>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="27_但以理書_Daniel dan_10_09_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">機械層臨標・金標未達</div>
+<div class="ds">本頁是但以理書 第10章9節的臨標工作稿。經文按已核對的和合本新標點抄錄，原文字典與數值只抄錄本機統一庫已有且已裁定的資料，不自算、不選邊。人手層（直譯、剖析、語意、總意）已寫入，尚未收貨，不是金標完成，亦未經獨立驗收，不得稱為全書金標，亦不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-12 21:51:08 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified・數值＝gematria_unified・機械層臨標・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

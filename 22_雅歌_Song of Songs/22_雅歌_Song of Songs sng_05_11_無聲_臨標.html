@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 5:11 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_05_11_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第5章11節<br/>他的頭像至精的金子；他的頭髮厚密纍垂，黑如烏鴉。</p>
+<p>上一節先說白而且紅、超乎萬人之上，這一節落到頭與頭髮。和合本寫：「他的頭像至精的金子；他的頭髮厚密纍垂，黑如烏鴉。」頭是金子，頭髮卻是黑的，兩種質地被寫在同一顆頭上。</p>
+<p>原文是 רֹאשׁוֹ כֶּתֶם פָּז「他的頭是至精之金、純金」。כֶּתֶם 與 פָּז 都指精金、純金，連用是把成色說夠；和合本寫「像至精的金子」，加上「像」，原文是判斷句，沒有另加「像」字。隨後 קְוֻצּוֹתָיו תַּלְתַּלִּים「他的髮綹是厚密纍垂的」。קְוֻצָּה 在 5:2 是他頭上沾著夜露的髮綹，本節用來稱讚；תַּלְתַּל 字典記作蔓延的枝、厚密纍垂，和合本正好取「厚密纍垂」。有的資料另記「捲曲」一類譯法，只可在註中說明，不可寫進徵引的經文。最後 שְׁחֹרוֹת כָּעוֹרֵב「黑的，像那烏鴉」。</p>
+<p>本節經文沒有角色標示。金子的頭與烏鴉那樣黑的髮，並排而不相消。5:2 那些被夜露滴濕的髮綹，到了本節成為被稱讚的厚密與黑。稱讚仍在回答 5:9 的那一問，下一節會走到他的眼。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_05_10_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第5章10節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_05_12_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第5章12節</a></nav>
+<h2 class="ntitle">雅歌 第5章11節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第5章11節<br/>他的頭像至精的金子；他的頭髮厚密纍垂，黑如烏鴉。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 5:11 &gt;</div>
+<div class="orig-he">רֹאשׁ֖/וֹ כֶּ֣תֶם פָּ֑ז קְוּצּוֹתָי/ו֙ תַּלְתַּלִּ֔ים שְׁחֹר֖וֹת כָּ/עוֹרֵֽב׃</div>
+<div class="orig-zh">他的頭是至精的純金；他的髮綹是厚密纍垂的，黑如烏鴉。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_05_11</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>他的頭像至精的金子；他的頭髮厚密纍垂，黑如烏鴉。</p>
+<p>原文 רֹאשׁוֹ כֶּתֶם פָּז 是「他的頭是至精之金、純金」，兩個名詞都指精金，沒有「像」字；和合本寫「他的頭像至精的金子」，加上「像」，並把兩個金名收成一個「至精的金子」。קְוֻצּוֹתָיו תַּלְתַּלִּים 是「他的髮綹是厚密纍垂的／蔓延如枝的」；和合本寫「他的頭髮厚密纍垂」，把髮綹寫成頭髮，並取字典「厚密纍垂」這一義。有的資料另記「捲曲」，只可在註中據實說明，不可寫進徵引的經文。שְׁחֹרוֹת כָּעוֹרֵב 是「黑的，像那烏鴉」；和合本寫「黑如烏鴉」，與原文一致。5:2 同一詞 קְוֻצּוֹת 是沾著夜露的髮綹，本節用來稱讚。原文此節沒有角色標示。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 他的頭是至精的純金｜רֹאשׁוֹ כֶּתֶם פָּז</h3>
+<blockquote>רֹאשׁ֖/וֹ כֶּ֣תֶם פָּ֑ז</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>רֹאשׁ֖/וֹ</strong>（陽性名詞單數附屬形加第三人稱陽性單數詞尾，他的頭，<code><span class="sn">H07218</span></code> rosh。5:2 是「我的頭滿了露水」，本節改稱「他的頭」）</li>
+<li><strong>כֶּ֣תֶם</strong>（陽性名詞單數附屬形，精金、純金，<code><span class="sn">H03800</span></code> ketem；字義「金子、純金」）</li>
+<li><strong>פָּ֑ז</strong>（陽性名詞單數絕對形，純金，<code><span class="sn">H06337</span></code> paz；字義「純金」。與前一詞連用，把成色說夠）</li>
+</ul>
+<p>稱讚先落到頭上：他的頭是至精的純金。兩個金名連用，不是兩種不同的金屬，乃是把成色說到極精。和合本寫「像至精的金子」，加上「像」，讀起來更像比喻；原文是判斷句，直接說「是」。5:10 已經用白而且紅給出總的顏色，本節用金子來寫這顆頭的質地與光。5:2 那顆滿了露水的頭，到了本節成為被稱讚的金。</p>
+<h3>2️⃣ 他的髮綹厚密纍垂，黑如烏鴉｜קְוֻצּוֹתָיו תַּלְתַּלִּים שְׁחֹרוֹת כָּעוֹרֵב</h3>
+<blockquote>קְוּצּוֹתָי/ו֙ תַּלְתַּלִּ֔ים שְׁחֹר֖וֹת כָּ/עוֹרֵֽב׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>קְוּצּוֹתָי/ו֙</strong>（陰性名詞複數附屬形加第三人稱陽性單數詞尾，他的髮綹，<code><span class="sn">H06977</span></code> evuttsah；字義「前額的頭髮、髮綹」。和合本寫「頭髮」。5:2 用過同一詞）</li>
+<li><strong>תַּלְתַּלִּ֔ים</strong>（陽性名詞複數絕對形，厚密纍垂、蔓延如枝，<code><span class="sn">H08534</span></code> taltal；字義「蔓延樹枝、厚密纍垂」。和合本取「厚密纍垂」。或譯「捲曲」，只在註中說明）</li>
+<li><strong>שְׁחֹר֖וֹת</strong>（形容詞陰性複數絕對形，黑的，<code><span class="sn">H07838</span></code> shachor；字義「烏黑的」。性數與髮綹一致）</li>
+<li><strong>כָּ/עוֹרֵֽב׃</strong>（介詞「如」加冠詞加陽性名詞單數絕對形，像那烏鴉，<code><span class="sn">H06158</span></code> orev；字義「烏鴉」）</li>
+</ul>
+<p>頭是金的，頭髮卻是黑的。厚密纍垂，是把髮綹寫成一絡絡沉下來、像枝子垂著的樣子；和合本正取這一義。或譯「捲曲」只可在註中說明，不可改寫經文。黑如烏鴉，是用一種本身就深黑的鳥，把這黑說到具體。金子的光與烏鴉的黑並排在同一顆頭上，並不互相抵消：一個寫頭的質地，一個寫髮的色與形。5:2 那些被夜露滴濕的髮綹，本節把它們寫成可以稱讚的厚密與黑。</p>
+<h3>3️⃣ 收束｜本節歸納</h3>
+<p>本節寫他的頭是至精的純金，髮綹厚密纍垂，黑如烏鴉。和合本加上「像」，並把髮綹寫成頭髮。原文此節沒有角色標示。白而且紅之後，稱讚先落到這顆頭上，下一節才走到眼。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H07218、H03800、H06337、H06977、H08534、H07838、H06158。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">רֹאשׁ</span><span class="gid">H07218</span></div><ul><li><b>主數值</b> 501</li><li><b>H小數</b> 6</li><li><b>H標準</b> 501</li><li><b>H序數</b> 42</li><li><b>H_Atbash</b> 405</li><li><b>H_Sofit擴展</b> 501</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 501 的詞條共 27 個（含本詞）。其中已有中文詞義者如 H00574 אֵמְתָּנִי「可怕的」、H00781 אָרַשׂ「訂婚、聘定」、H00833 אָשַׁר「坦白、公正、誠實、直行」、H00834 אֲשֶׁר「就是、的、為要、何處、如何、因為、每一個」、H00835 אֶשֶׁר「蒙福、幸福、福氣」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　רֹאשׁוֹ 是他的頭。5:2 是「我的頭滿了露水」，本節改為被稱讚的頭。和合本寫「他的頭」。</p>
+<p><span class="gl">④精意</span>　頭在本節是稱讚的起點。夜間那顆沾著露水的頭，到了這裏成為金子的頭。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">כֶּתֶם</span><span class="gid">H03800</span></div><ul><li><b>主數值</b> 460</li><li><b>H小數</b> 10</li><li><b>H標準</b> 460</li><li><b>H序數</b> 46</li><li><b>H_Atbash</b> 41</li><li><b>H_Sofit擴展</b> 1020</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 460 的詞條共 10 個（含本詞）。其中已有中文詞義者如 H03370 יׇקְשָׁן「詭詐的」、H03799 כָּתַם「污染」、H04815 מְרִירִי「苦的(有毒的)」、H04937 מִשְׁעֵן「支撐、支持」、H05637 סָרַר「反叛、頑強」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　כֶּתֶם 是精金、純金，與 פָּז 連用。和合本寫「至精的金子」的前半。</p>
+<p><span class="gl">④精意</span>　精金把頭的質地說成極純。本節先用這成色，讓人看見他的頭如何發亮。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">פָּז</span><span class="gid">H06337</span></div><ul><li><b>主數值</b> 87</li><li><b>H小數</b> 15</li><li><b>H標準</b> 87</li><li><b>H序數</b> 24</li><li><b>H_Atbash</b> 76</li><li><b>H_Sofit擴展</b> 87</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 87 的詞條共 33 個（含本詞）。其中已有中文詞義者如 H00028 אֲבִידָע「知識之父」、H00436 אֵלוֹן「橡樹、巨樹」、H00437 אַלּוֹן「橡樹」、H00438 אַלּוֹן「橡樹」、H00610 אָסוּךְ「油瓶」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　פָּז 是純金，緊接在 כֶּתֶם 之後。兩個金名把成色說夠。和合本把它們收成一個「至精的金子」。</p>
+<p><span class="gl">④精意</span>　純金是再加一筆的精。本節不肯只用一個金名，就把這顆頭的光說盡。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">קְוֻצָּה</span><span class="gid">H06977</span></div><ul><li><b>主數值</b> 201</li><li><b>H小數</b> 21</li><li><b>H標準</b> 201</li><li><b>H序數</b> 48</li><li><b>H_Atbash</b> 179</li><li><b>H_Sofit擴展</b> 201</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 201 的詞條共 2 個（含本詞）。其中已有中文詞義者如 H06710 צַחְצָחָה「乾地、曠野」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　קְוֻצּוֹתָיו 是他的髮綹。5:2 是沾著夜露的髮綹，本節用來稱讚。和合本寫「頭髮」。</p>
+<p><span class="gl">④精意</span>　髮綹從門前的潮濕，轉成可以被細看的美。本節讓同一部位，走入稱讚裏。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">תַּלְתַּל</span><span class="gid">H08534</span></div><ul><li><b>主數值</b> 860</li><li><b>H小數</b> 14</li><li><b>H標準</b> 860</li><li><b>H序數</b> 68</li><li><b>H_Atbash</b> 42</li><li><b>H_Sofit擴展</b> 860</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 860 的詞條共 5 個（含本詞）。其中已有中文詞義者如 H07434 רָמַת הַמִּצְפֶּה「望樓的高處」、H08238 שְׁפַרְפַר「破曉」、H08503 תַּכְלִית「完全、極限」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　תַּלְתַּלִּים 是厚密纍垂、蔓延如枝。和合本取「厚密纍垂」。或譯「捲曲」，只在註中說明。</p>
+<p><span class="gl">④精意</span>　厚密纍垂把頭髮寫成一絡絡沉下來的。本節讓人看見的不是稀薄的幾根，乃是沉甸甸垂著的那些髮。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">שָׁחֹר</span><span class="gid">H07838</span></div><ul><li><b>主數值</b> 508</li><li><b>H小數</b> 13</li><li><b>H標準</b> 508</li><li><b>H序數</b> 49</li><li><b>H_Atbash</b> 65</li><li><b>H_Sofit擴展</b> 508</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 508 的詞條共 22 個（含本詞）。其中已有中文詞義者如 H01175 בְּעָלוֹת「女主人們」、H01265 בְּרוֹשׁ「柏樹、松樹」、H01308 בְּשׂוֹר「高興的」、H01646 גְרֻשָׁה「剝奪、勒索」、H02615 חַנָּתֹן「蒙恩的」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　שְׁחֹרוֹת 是黑的，修飾那些髮綹。和合本寫「黑」。</p>
+<p><span class="gl">④精意</span>　黑與金子的頭並排。本節讓這份黑，成為稱讚，不是陰影。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">עֹרֵב</span><span class="gid">H06158</span></div><ul><li><b>主數值</b> 272</li><li><b>H小數</b> 11</li><li><b>H標準</b> 272</li><li><b>H序數</b> 38</li><li><b>H_Atbash</b> 310</li><li><b>H_Sofit擴展</b> 272</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 272 的詞條共 30 個（含本詞）。其中已有中文詞義者如 H01197 בָּעַר「秏盡、焚燒、除掉、愚昧、粗魯」、H01198 בַּעַר「殘忍的人、無知的人、畜類人」、H01298 בֶּרַע「邪惡之子」、H04342 מַכְבִּיר「豐富」、H05674 עָבַר「越過、經過、遷移、傳遞
+、除掉、使受孕」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　הָעוֹרֵב 是那烏鴉，作黑的比喻。和合本寫「黑如烏鴉」。</p>
+<p><span class="gl">④精意</span>　烏鴉把黑說得具體。本節不用空泛的「很黑」，乃是用一種人人認得的深黑來比這頭髮。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>本節承接 5:10 的總印象，開始按部位稱讚。5:2 已寫過他的頭與髮綹，那是門前沾滿夜露的現場；本節同一部位轉為稱讚，宜辨明場面不同，不可把露水整段搬回來。</p>
+<p>本節不被新約直接引用。後來的讀者若把精金的頭或烏鴉的黑髮讀成別的指向，那是後世的讀法，不可倒填進本節。這裏不另造對讀。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「他的頭是至精的純金；他的髮綹是厚密纍垂的，黑如烏鴉」。和合本加上「像」，把兩個金名收成「至精的金子」，並把髮綹寫成頭髮。原文此節沒有角色標示。</p>
+<p><strong>本書用法</strong>　本節是 5:10 之後第一個部位：頭與頭髮。5:2 的頭與髮綹是夜露的現場，本節是稱讚。後文若再寫他的頭髮，屬後文。</p>
+<p><strong>舊約根源</strong>　精金與烏鴉都是舊約可見的物。本節借用金的成色與烏鴉的深黑，來說頭與髮，不是重述聖所黃金的分量，也不是討論這種鳥的潔與不潔。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把金頭或黑髮讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<p><strong>跨篇深意</strong>　同一顆頭，可以在門外沾滿露水，也可以在稱讚裏成為金子。本節讓人看見：先問「有何強處」的人，現在被帶到可以細看的部位上。光與黑並排，都不妨是美。</p>
+<h2>六、總意</h2>
+<p>頭被說成至精的純金。兩個金名連用，把成色說夠。和合本加上「像」，讀起來更像比喻；原文卻直接說：他的頭是這樣的金。</p>
+<p>頭髮卻是黑的，厚密纍垂，像烏鴉那樣深。金子的光與這份黑，寫在同一顆頭上。5:2 那些被夜露滴濕的髮綹，到了這一節，成了可以細看的美。</p>
+<p>或譯「捲曲」只可在註中說明。和合本取「厚密纍垂」，與字典的這一義相符。無論垂或捲，都是把髮寫成有分量、有形狀的，不是一筆帶過的黑。</p>
+<p>稱讚已經從總的顏色，走到頭與髮。下一節是眼。本節先讓人看見：他的頭如何發亮，他的頭髮如何又密又黑。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H07218 — רֹאשׁ「頭、頂點、首領、在前的、起初、開始、總數」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07218</li><li>詞形 רֹאשׁ</li><li>音譯 ro&#x27;sh</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 頭、頂點、首領、在前的、起初、開始、總數</li><li>字源 來自一不用的字根</li><li>中文用法 頭251 長68 頂43 首領30 首17 首級16 隊13 山頂11 族長11 統領7 總數7 大6 長子6 上4 口上4 領袖4 元首3 數3 率領3 羅施3 起初3 高3 上半截2 初2 山上2 朔2 梢2 上品1 上好1 上等1 上面1 儘上的1 儘尖的1 元帥1 初次1 口1 士1 太初1 太子1 始1 官長1 尖1 引導1 最1 正1 第一1 總綱1 至寶1 起頭1 道1 長者1 頂上1 領1 頭目1 頭頂1 首位1 首先1 (556)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 頭, 頂, 高階, 上面, 首領, 全部, 極點, 高處, 前面,<br/>開始</li><li>1a 人或動物的頭</li><li>1b 山頂或山峰</li><li>1c 高處(星宿)</li><li>1d 首領, 領袖 (人的, 城的, 國家的, 地方的, 家庭的, 祭司的)</li><li>1e 起頭, 前面, 開始</li><li>1f 首領, 精選的, 最好的</li><li>1g 頭, 宗, 群, 隊</li><li>1h 極點</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽רֹאשׁ 創3:15。單陽附屬形רֹאשׁ 創40:20。單陽3單陽詞尾רֹאשׁוֹ 出12:9。單陽3複陽詞尾רֹאשָׁם 賽35:10。單陽2單陽詞尾רֹאשְׁךָ 申28:23。單陽2複陽詞尾רֹאשְׁכֶם 利19:27。單陽1單詞尾רֹאשִׁי 創40:16。單陽1複詞尾רֹאשֵׁנוּ 書2:19。複陽רָאשִׁים 出18:25。複陽附屬形רָאשֵׁי 何4:13。複陽3單陽詞尾רָאשָׁיו 書23:2。複陽3複陽詞尾רָאשֵׁיהֶם 出36:38。複陽2複陽詞尾רָאשֵׁיכֶם 賽29:10。複陽1複詞尾רָאשֵׁינוּ 代上12:19。</p>
+<p>一、頭：</p>
+<p>1. 人類的： 創40:16,17；לְרֹאשׁ גֶּבֶר男人的頭，士5:30；女人的，王下9:30 申21:12 民5:18 斯2:17；男孩的，王下4:19,19 創48:14,14。比喻以色列地的主權是　神的，詩60:7＝詩108:8。偶像的，撒上5:4。擬人化用法： 詩24:7,9。</p>
+<p>2. 動物的：蛇的，創3:15；狗的，撒下3:8；驢的，王下6:25；活物的，結1:22,22,26；基路伯，結10:1,11；鱷魚，伯41:7；לִוְיָתָן海中大怪獸，詩74:14；תַנִּינִים大海怪，詩74:13；祭牲，出12:9 29:15,19 利1:4,8,12,15 3:2,8。</p>
+<p>二、山頂或山峰：山的，創8:5 出19:20,20 24:17 34:2；在道旁高處的頂上，箴8:2；街頭，箴1:21；רֹאשׁ גֵּיא-שְׁמָנִים在肥美谷的山上，賽28:1,4；高峰，民23:9；塔頂，創11:4；堡壘頂端，士6:26；梯子的頭，創28:12；樹梢，撒下5:24＝代上14:15；儘上的枝梢，賽17:6；香柏樹儘尖，結17:4,22；桅杆上，箴23:34；穀粒的頂端，伯24:24；澆油在上面，創28:18；床頭，創47:31；寶座的圓頂，王上10:19；帳幕的頂端，出26:24＝出36:29；柱頭的頂端，王上7:16,17；盆座頂端，王上7:35；燈的頂上，亞4:2；大祭司的外袍上，出28:32；房角的頭塊石頭，詩118:22；星宿的高處，伯22:12。</p>
+<p>三、首領、領袖：</p>
+<p>1. 人的： 士10:18 11:8,9,11 出18:25 民1:16 申1:15 彌3:1。</p>
+<p>2. 城的： 書11:10 賽7:8,8,9,9。</p>
+<p>3. 國家的： 耶31:7。</p>
+<p>4. 地方的： 撒上9:22 王上21:9,12 申20:9 代上4:42。</p>
+<p>5. 祭司的：</p>
+<p>大祭司，王下25:18＝耶52:24 代下19:11 24:11 26:20 代上27:5 代下31:10 拉7:5。</p>
+<p>6. 家庭的：家長，出6:14；族長，民7:2 17:3 書22:14 代上5:24 7:7,9,40 民1:4 代上5:15,24 7:2 9:13 24:4 民32:28 書 14:1 21:1 出6:25。</p>
+<p>四、起頭、前面、開始：</p>
+<p>1.起頭、前面。耶和華引導他們，彌2:13；率領，代下20:27；首先，摩6:7。</p>
+<p>2. 指時間：開始。在三更之初，士7:19 哀2:19；起初，賽40:21 41:4,26 48:16；太初，箴8:23；從始至終，傳3:11；正月，出12:2；月朔，民10:10 28:11；初次，代上16:7。</p>
+<p>3. 河流的源頭，創2:10；上好的香料，結27:22 出30:23 歌4:14；我所最喜樂的，詩137:6。</p>
+<p>五、頭＝群、隊。分作三隊，士7:16,20 9:34,37,43,44 撒上11:11 13:17,18 伯1:17。</p>
+<p>六、片語：נָשָׂא אֶת-רֹאשׁ בְּנֵי-יִשְׂרָאֵל數點以色列人的人頭，出30:12計算總數；民1:2,49 4:2,22 26:2 31:26,49；如數歸還，利6:5 民5:7；其數何等眾多，詩139:17；得以昂首高過四面的仇敵，詩27:6；抬起頭來，詩3:3；מְנוֹד-רֹאשׁ搖頭，詩44:14；גְּמֻלְךָ יָשׁוּב בְּרֹאשֶׁךָ你的報應必歸到你頭上，俄1:15 詩7:16 王上2:33 斯9:25 士9:57 撒上25:39 王上2:44。</p>
+<p>〔羅施〕</p>
+<p>傳統譯本把此字當做一個出自瑪各民族的北方國家。但近代譯本多把它當作一般名詞，將נְשִׂיא רֹאשׁ譯為主要的王，結38:2,3 39:1。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root apparently meaning to shake;<br/>the head (as most easily shaken), whether literal or figurative (in many applications, of place, time, rank, itc.)</p></div></div></div></details>
+<details class="ntfold"><summary>H03800 — כֶּתֶם「金子、純金」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03800</li><li>詞形 כֶּתֶם</li><li>音譯 kethem</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 金子、純金</li><li>字源 來自 SH3799</li><li>中文用法 金4 精金3 純金1 金子1 (9)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 金子, 純金</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽כֶתֶם 伯28:19；כָתֶם 箴25:12。單陽附屬形כֶּתֶם 賽13:12。</p>
+<p>מִכֶּתֶם אוֹפִיר俄斐純金，賽13:12 伯28:16 詩45:9；בְּכֶתֶם אוּפָז烏法精金，但10:5 伯31:24 箴25:12；כֶּתֶם פָּז至精的金子，歌5:11；בְּכֶתֶם טָהוֹר精金，伯28:19。הַכֶּתֶם הַטּוֹב純金，哀4:1。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 3799 ;<br/>properly, something carved out, i.e. ore ; hence, gold (pure as originally mined)</p></div></div></div></details>
+<details class="ntfold"><summary>H06337 — פָּז「純金」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06337</li><li>詞形 פָּז</li><li>音譯 paz</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 純金</li><li>字源 來自 SH6338</li><li>中文用法 精金8 金子1 (9)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 精金或純金</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽פָז精金、精煉的金子，伯28:17 詩19:10 21:3 119:127 箴8:19 歌5:11,15 賽13:12 哀4:2。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 6338 ;<br/>pure (gold); hence, gold itself (as refined)</p></div></div></div></details>
+<details class="ntfold"><summary>H06977 — קְוֻצָּה「前額的頭髮」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06977</li><li>詞形 קְוֻצָּה</li><li>音譯 qᵉvutstsah</li><li>約 舊約</li><li>詞類 名、陰</li><li>中文詞義 前額的頭髮</li><li>字源 來自 SH6972 的陰性分詞</li><li>中文用法 頭髮2 (2)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 頭髮的一綹, 頭髮</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>頭髮，複陰1單詞尾קְוֻּצּוֹתַי 歌5:2；複陰3單陽詞尾קְוּצּוֹתָיו 歌5:11。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] feminine passive participle of 6972 in its original sense;<br/>a forelock (as shorn)</p></div></div></div></details>
+<details class="ntfold"><summary>H08534 — תַּלְתַּל「蔓延樹枝、厚密纍垂」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08534</li><li>詞形 תַּלְתַּל</li><li>音譯 taltal</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 蔓延樹枝、厚密纍垂</li><li>字源 藉振動之概念，來自 SH8524</li><li>中文用法 厚密纍垂1 (1)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 波浪狀的, 茂枝的(用於指女人的頭髮 - 比喻用法) (<br/>歌 5:11<br/>)</li><li>1a 意義不明確</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>複陰קְוּצּוֹתָיו תַּלְתַּלִּים他的頭髮厚密纍垂，歌5:11。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] by reduplication, from 8524 through the idea of vibration;<br/>a trailing bough (as pendulous)</p></div></div></div></details>
+<details class="ntfold"><summary>H07838 — שָׁחֹר「暗的、烏黑的」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07838</li><li>詞形 שָׁחֹר</li><li>音譯 shachor</li><li>約 舊約</li><li>詞類 形容詞</li><li>中文詞義 暗的、烏黑的</li><li>字源 來自 SH7835</li><li>中文用法 黑6 (6)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>形</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 黑色</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽שָׁחֹר 利13:31；單陰שְׁחוֹרָה 歌1:5。複陽שְׁחֹרִים 亞6:2。複陰שְׁחֹרוֹת 歌5:11。</p>
+<p>1. 髮色，利13:31,37 歌5:11。</p>
+<p>2. 膚色，人： 歌1:5。動物：馬，亞6:2,6。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or שָׁחוֹר ; from 7835 ;<br/>properly, dusky , but also (absol.) jetty</p></div></div></div></details>
+<details class="ntfold"><summary>H06158 — עֹרֵב</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06158</li><li>詞形 עֹרֵב</li><li>約 舊約</li><li>詞類 名、陽</li><li>字源 [字源] or עוֹרֵב ; from 6150 ; a raven (from its dusky hue)</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 烏鴉</li></ol></div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or עוֹרֵב ; from 6150 ;<br/>a raven (from its dusky hue)</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_05_11_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第5章11節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 01:41:04 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

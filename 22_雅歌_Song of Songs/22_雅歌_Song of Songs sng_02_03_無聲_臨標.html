@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 2:3 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_02_03_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第2章3節<br/>我的良人在男子中，如同蘋果樹在樹林中。我歡歡喜喜坐在他的蔭下，嘗他果子的滋味，覺得甘甜。</p>
+<p>上一節用百合花在荊棘中間比佳偶，這一節把同一副句法還回去：好像蘋果樹在樹林的樹木中，我的良人在眾男子中也是這樣。比較還沒有停，場面卻從花改成樹，從女子改成男子。</p>
+<p>還回去的這一句沒有就此結束。原文接著說：在他的蔭下，我戀慕並且坐下；他的果子在我的上顎是甘甜的。比方之後，有蔭可坐，有果可嘗。人不是只在遠處讚美那棵樹，乃是已經來到它的影子裏。</p>
+<p>和合本先寫「我的良人在男子中，如同蘋果樹在樹林中」，語序與上一節一樣把人提前，又把「在樹林的樹木中」寫成「在樹林中」。後半「我歡歡喜喜坐在他的蔭下，嘗他果子的滋味，覺得甘甜」，把「我戀慕並且坐下」合成「歡歡喜喜坐」，又把「在我上顎是甘甜的」寫成「嘗……滋味，覺得甘甜」。</p>
+<p>本節經文末了沒有角色標示。開口所稱的，是「我的良人」，隨後的動作都是「我」在他的蔭下做成的。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_02_02_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第2章2節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_02_04_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第2章4節</a></nav>
+<h2 class="ntitle">雅歌 第2章3節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第2章3節<br/>我的良人在男子中，如同蘋果樹在樹林中。我歡歡喜喜坐在他的蔭下，嘗他果子的滋味，覺得甘甜。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 2:3 &gt;</div>
+<div class="orig-he">כְּ/תַפּ֙וּחַ֙ בַּ/עֲצֵ֣י הַ/יַּ֔עַר כֵּ֥ן דּוֹדִ֖/י בֵּ֣ין הַ/בָּנִ֑ים בְּ/צִלּ/וֹ֙ חִמַּ֣דְתִּי וְ/יָשַׁ֔בְתִּי וּ/פִרְי֖/וֹ מָת֥וֹק לְ/חִכִּֽ/י׃</div>
+<div class="orig-zh">好像一棵蘋果樹在樹林的樹木中，我的良人在眾男子中間也是這樣。在他的蔭下我戀慕並且坐下，他的果子在我的上顎是甘甜的。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_02_03</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>我的良人在男子中，如同蘋果樹在樹林中。我歡歡喜喜坐在他的蔭下，嘗他果子的滋味，覺得甘甜。</p>
+<p>原文先寫「好像一棵蘋果樹在樹林的樹木中，我的良人在眾男子中間也是這樣」，再寫「在他的蔭下我戀慕並且坐下，他的果子在我的上顎是甘甜的」。和合本把前半的人提前，並把 בַּעֲצֵי הַיַּעַר「在樹林的樹木中」寫成「在樹林中」，少了「樹木」這一層。חִמַּדְתִּי וְיָשַׁבְתִּי 是兩個動詞：「我戀慕（或喜愛）並且我坐下」；和合本合成「我歡歡喜喜坐」，把戀慕做成坐的狀語。וּפִרְיוֹ מָתוֹק לְחִכִּי 是「他的果子對我的上顎來說是甘甜的」；和合本寫「嘗他果子的滋味，覺得甘甜」，加上「嘗」與「滋味」，並把「上顎」做成一般的感覺。差別都要留下意思，不可只說少了幾個字。原文此節沒有角色標示。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 好像蘋果樹在樹林的樹木中｜כְּתַפּוּחַ בַּעֲצֵי הַיַּעַר</h3>
+<blockquote>כְּ/תַפּ֙וּחַ֙ בַּ/עֲצֵ֣י הַ/יַּ֔עַר</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>כְּ/תַפּ֙וּחַ֙</strong>（介詞「好像」加陽性名詞單數絕對形，好像一棵蘋果樹，<code><span class="sn">H08598</span></code> tappuach；字義「蘋果、蘋果樹」，本節取樹，因後面有蔭與果子。介詞不另造編號）</li>
+<li><strong>בַּ/עֲצֵ֣י</strong>（介詞加陽性名詞複數附屬形，在……的樹木中，<code><span class="sn">H06086</span></code> ets；字義「樹、木頭」）</li>
+<li><strong>הַ/יַּ֔עַר</strong>（冠詞加陽性名詞單數絕對形，那樹林，<code><span class="sn">H03293</span></code> yaar；字義「森林、樹林」，亦可指蜂房。本節取樹林）</li>
+</ul>
+<p>句法跟上節一樣，先立比方。蘋果樹被放在「樹林的樹木中」，不是只說「在樹林裏」，乃是說它站在許多樹中間，像百合花站在荊棘中間。分別仍是在同類裏顯出來的：都是樹，這一棵卻是能結果、能給蔭的那一種。和合本寫「在樹林中」，場面還在，少了「樹木」這層對應。</p>
+<h3>2️⃣ 我的良人在眾男子中間也是這樣｜כֵּן דּוֹדִי בֵּין הַבָּנִים</h3>
+<blockquote>כֵּ֥ן דּוֹדִ֖/י בֵּ֣ין הַ/בָּנִ֑ים</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>כֵּ֥ן</strong>（副詞，也是這樣；不另造編號）</li>
+<li><strong>דּוֹדִ֖/י</strong>（陽性名詞單數附屬形，加第一人稱單數詞尾，我的良人，<code><span class="sn">H01730</span></code> dod；字義「心愛的人」，本節取此義）</li>
+<li><strong>בֵּ֣ין</strong>（介詞，在……中間；不另造編號）</li>
+<li><strong>הַ/בָּנִ֑ים</strong>（冠詞加陽性名詞複數絕對形，那些兒子／眾男子，<code><span class="sn">H01121</span></code> ben；字義「兒子」，複數在本節可指青年男子，字典也如此標明）</li>
+</ul>
+<p>「也是這樣」把蘋果樹接到良人身上。他在眾男子中間，正如那棵樹在眾樹中間。和合本寫「在男子中」，與原文一致。上一節的「我的佳偶」在這裏對成「我的良人」，兩句比較成對，卻還沒有進入樹蔭。要到下一意群，稱讚才變成靠近。</p>
+<h3>3️⃣ 在他的蔭下我戀慕並且坐下｜בְּצִלּוֹ חִמַּדְתִּי וְיָשַׁבְתִּי</h3>
+<blockquote>בְּ/צִלּ/וֹ֙ חִמַּ֣דְתִּי וְ/יָשַׁ֔בְתִּי</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>בְּ/צִלּ/וֹ֙</strong>（介詞加陽性名詞單數附屬形，加第三人稱陽性單數詞尾，在他的蔭下，<code><span class="sn">H06738</span></code> tsel；字義「蔭庇、陰影」，可指保護的蔭）</li>
+<li><strong>חִמַּ֣דְתִּי</strong>（動詞 Pi‘el 完成式第一人稱單數，我戀慕、我喜愛，<code><span class="sn">H02530</span></code> chamad；字義「喜歡、想要、貪戀」，本節取喜愛、戀慕，不是負面的貪戀）</li>
+<li><strong>וְ/יָשַׁ֔בְתִּי</strong>（連接詞加動詞 Qal 完成式第一人稱單數，並且我坐下，<code><span class="sn">H03427</span></code> yashab；字義「坐下、居住、留下」）</li>
+</ul>
+<p>比方說完，人已經在那蔭裏。先是戀慕，然後坐下。兩個動詞連著，不是一個模糊的「歡喜地坐」。戀慕是心裏被吸引，坐下是身子真正停留。和合本寫「我歡歡喜喜坐在他的蔭下」，把戀慕做成坐的樣子，少了那一個可以單獨聽見的「我戀慕」。差別的意思是：原文讓人先承認自己被這蔭吸引，再承認自己坐了下來；和合本讓人直接看見歡喜的坐姿。蔭在字典裏也可指保護，本節先按現場讀作樹蔭，那份可被遮蓋的安穩已經在其中。</p>
+<h3>4️⃣ 他的果子在我上顎是甘甜的｜וּפִרְיוֹ מָתוֹק לְחִכִּי</h3>
+<blockquote>וּ/פִרְי֖/וֹ מָת֥וֹק לְ/חִכִּֽ/י׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>וּ/פִרְי֖/וֹ</strong>（連接詞加陽性名詞單數附屬形，加第三人稱陽性單數詞尾，他的果子，<code><span class="sn">H06529</span></code> peri；字義「果子、出產」）</li>
+<li><strong>מָת֥וֹק</strong>（陽性形容詞單數絕對形，甘甜的，<code><span class="sn">H04966</span></code> mathoq；字義「甜的、甜美」）</li>
+<li><strong>לְ/חִכִּֽ/י</strong>（介詞加陽性名詞單數附屬形，加第一人稱單數詞尾，對我的上顎來說，<code><span class="sn">H02441</span></code> chek；字義「上顎、口、味道」）</li>
+</ul>
+<p>坐下以後，還有可嘗的。原文不先說「我去嘗」，乃說果子本身對我的上顎是甘甜的。上顎是辨味的地方，甜被說得很具體，不是一句空的「覺得好」。和合本加上「嘗」與「滋味」，又寫「覺得甘甜」，是把這件已經發生在口中的事，做成一個嘗過以後的判斷。意思相近，只是原文把甜放在上顎上，讓味道停留在身體裏，而不只停留在評價裏。</p>
+<h3>5️⃣ 收束｜本節歸納</h3>
+<p>本節前半是與 2:2 對等的比較：蘋果樹在眾樹中，良人在眾男子中。後半才進入他的蔭與他的果子：我戀慕並且坐下，果子在我上顎是甘甜的。和合本調整了語序，合併了戀慕與坐下，又把上顎的甜寫成嘗後的感覺。原文此節沒有角色標示。比較是認出他，蔭與果子是靠近他。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H08598、H06086、H03293、H01730、H01121、H03427、H06738、H02530、H06529、H04966、H02441。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">תַּפּוּחַ</span><span class="gid">H08598</span></div><ul><li><b>主數值</b> 494</li><li><b>H小數</b> 26</li><li><b>H標準</b> 494</li><li><b>H序數</b> 53</li><li><b>H_Atbash</b> 147</li><li><b>H_Sofit擴展</b> 494</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 494 的詞條共 6 個（含本詞）。其中已有中文詞義者如 H02448 חַכְלִלוּת「(眼睛的)發紅、呆滯」、H04434 מַלְכֹּדֶת「羅網、捕機、陷阱」、H04965 מֶתֶג הָאַמָּה「母城的嚼環」、H06603 פִּתּוּחַ「雕刻品」、H08599 תַּפּוּחַ「蘋果」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是本節開頭的蘋果樹，也是後半果子的來源。字典記作蘋果或蘋果樹，本節先取樹，因它在眾樹中顯出分別，又能給蔭、結果子。</p>
+<p><span class="gl">④精意</span>　這一棵樹不只是好看。它能遮蓋，也能餵養。本節用它來稱良人，是要把可靠近、可停留、可品嘗的那一層一起說出來。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">עֵץ</span><span class="gid">H06086</span></div><ul><li><b>主數值</b> 160</li><li><b>H小數</b> 16</li><li><b>H標準</b> 160</li><li><b>H序數</b> 34</li><li><b>H_Atbash</b> 12</li><li><b>H_Sofit擴展</b> 970</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 160 的詞條共 42 個（含本詞）。其中已有中文詞義者如 H00467 אֱלִיפֶלֶט「拯救之　神」、H01135 בֶּן־חָנָן「哈南之子」、H03243 יָנַק「吮吸、餵奶」、H03286 יָעַף「疲乏、軟弱」、H03287 יָעֵף「疲乏的、軟弱的」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是「樹林的樹木」中的「樹木」，複數附屬形。和合本略去這一層，原文卻讓蘋果樹站在許多樹中間，與上一節花在荊棘中間相應。</p>
+<p><span class="gl">④精意</span>　分別要在相近的事物中間才顯得出來。本節不把良人放在無樹的空地，乃把他放在眾樹之中，好叫人看出這一棵的不同。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">יַעַר</span><span class="gid">H03293</span></div><ul><li><b>主數值</b> 280</li><li><b>H小數</b> 10</li><li><b>H標準</b> 280</li><li><b>H序數</b> 46</li><li><b>H_Atbash</b> 50</li><li><b>H_Sofit擴展</b> 280</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 280 的詞條共 29 個（含本詞）。其中已有中文詞義者如 H01799 דִּכְרוֹן「記錄、紀念物」、H02034 הֲרִיסָה「毀壞」、H03415 יָרַע「懼怕、顫抖」、H03750 כַּרְכֹּם「番紅花」、H04354 מָכִירִי「賣出」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是那些樹木所屬的「樹林」。字典記作森林、灌木叢，也可指蜂房；本節取樹林，作為蘋果樹所在的背景。</p>
+<p><span class="gl">④精意</span>　樹林是密的，蔭卻出自其中那一棵。背景的茂密，反而把能讓人坐下的那一處蔭襯得更清楚。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">דּוֹד</span><span class="gid">H01730</span></div><ul><li><b>主數值</b> 14</li><li><b>H小數</b> 14</li><li><b>H標準</b> 14</li><li><b>H序數</b> 14</li><li><b>H_Atbash</b> 280</li><li><b>H_Sofit擴展</b> 14</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 14 的詞條共 25 個（含本詞）。其中已有中文詞義者如 H00329 אָטָד「荊棘、鼠李」、H00893 בֵּבַי「空洞」、H00959 בָּזָה「輕視、鄙視、輕蔑」、H00960 בָּזֹה「被藐視的」、H00961 בִּזָּה「搶奪、傷害、破壞」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是本節所稱的「我的良人」，被比作眾樹中的蘋果樹，隨後又以其蔭與果子被靠近。本節不取叔伯或抽象愛情之義。</p>
+<p><span class="gl">④精意</span>　稱呼在比較裏被說出，又在蔭下被經歷。人不是只得一個名字，還得以坐在他所給的蔭裏。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">בֵּן</span><span class="gid">H01121</span></div><ul><li><b>主數值</b> 52</li><li><b>H小數</b> 7</li><li><b>H標準</b> 52</li><li><b>H序數</b> 16</li><li><b>H_Atbash</b> 309</li><li><b>H_Sofit擴展</b> 702</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 52 的詞條共 28 個（含本詞）。其中已有中文詞義者如 H00037 אֲבִיטָל「露水之父」、H00453 אֱלִיהוּ「他是我的　神」、H00455 אֶלְיַחְבָּא「　神將遮蔽」、H00576 אֲנָא「我」、H00577 אָנָּא「啊！我懇求你」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是「那些兒子／眾男子」，帶冠詞的複數，與上一節的眾女子平行。字典標明此處可指青年男子。</p>
+<p><span class="gl">④精意</span>　良人仍在人中間。本節承認眾男子的存在，同時在他們中間把他認出來，正如在眾樹中認出那一棵蘋果樹。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">יָשַׁב</span><span class="gid">H03427</span></div><ul><li><b>主數值</b> 312</li><li><b>H小數</b> 6</li><li><b>H標準</b> 312</li><li><b>H序數</b> 33</li><li><b>H_Atbash</b> 342</li><li><b>H_Sofit擴展</b> 312</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 312 的詞條共 22 個（含本詞）。其中已有中文詞義者如 H02318 חָדַשׁ「更新、修理、重建」、H02319 חָדָשׁ「新的、新鮮的」、H02320 חֹדֶשׁ「新月、月份、初一」、H02321 חֹדֶשׁ「新月」、H03001 יָבֵשׁ「使乾涸(如水)、枯萎(如草)」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是「並且我坐下」，Qal 完成式，接在「我戀慕」之後。坐下是真正停留，不是只走過樹蔭。</p>
+<p><span class="gl">④精意</span>　戀慕若不到坐下，還只是心裏的吸引。本節讓人把身子留下來，蔭才成為被居住的蔭。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">צֵל</span><span class="gid">H06738</span></div><ul><li><b>主數值</b> 120</li><li><b>H小數</b> 12</li><li><b>H標準</b> 120</li><li><b>H序數</b> 30</li><li><b>H_Atbash</b> 25</li><li><b>H_Sofit擴展</b> 120</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 120 的詞條共 39 個（含本詞）。其中已有中文詞義者如 H02393 חֶזְקָה「(占優勢的)能力、力量」、H02394 חׇזְקָה「猛烈、修理、武力」、H03227 יְמִינִי「右」、H03228 יְמִינִי「右手」、H03349 יִקָּהָה「聽從、順服」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是「他的蔭」，帶第三人稱詞尾。字典記作蔭庇、陰影，可指保護。本節現場是樹蔭，人在這蔭下戀慕並且坐下。</p>
+<p><span class="gl">④精意</span>　蔭是他的，不是自己先撐起來的。人得以靠近、得以停留，是因為先有這一處可被遮蓋的地方。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">חָמַד</span><span class="gid">H02530</span></div><ul><li><b>主數值</b> 52</li><li><b>H小數</b> 16</li><li><b>H標準</b> 52</li><li><b>H序數</b> 25</li><li><b>H_Atbash</b> 170</li><li><b>H_Sofit擴展</b> 52</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 52 的詞條共 28 個（含本詞）。其中已有中文詞義者如 H00037 אֲבִיטָל「露水之父」、H00453 אֱלִיהוּ「他是我的　神」、H00455 אֶלְיַחְבָּא「　神將遮蔽」、H00576 אֲנָא「我」、H00577 אָנָּא「啊！我懇求你」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是「我戀慕」，Pi‘el 完成式第一人稱單數。字典有喜歡、想要、貪戀等義項，本節按愛情的現場取戀慕、喜愛，不取負面的貪戀。和合本把這詞收進「歡歡喜喜」。</p>
+<p><span class="gl">④精意</span>　坐下以前，心裏已經被吸引。本節不隱藏這份想要靠近的心，也不把它僅僅說成臉上的歡喜。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">פְּרִי</span><span class="gid">H06529</span></div><ul><li><b>主數值</b> 290</li><li><b>H小數</b> 11</li><li><b>H標準</b> 290</li><li><b>H序數</b> 47</li><li><b>H_Atbash</b> 49</li><li><b>H_Sofit擴展</b> 290</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 290 的詞條共 22 個（含本詞）。其中已有中文詞義者如 H00044 אֲבִיעֶזֶר「幫助之父」、H01909 הֲדַדְעֶזֶר「哈達(是他的)幫助」、H03759 כַּרְמֶל「果園、園地的出產、新鮮水果」、H03760 כַּרְמֶל「花園」、H03766 כָּרַע「彎腰、屈膝、蹲伏、斜靠」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是「他的果子」。樹不只給蔭，還給可嘗的出產。果子帶著「他的」，甜隨後被說到上顎。</p>
+<p><span class="gl">④精意</span>　靠近以後，還有得著。本節的果子不是抽象的好處，乃是可以留在口中的甘甜。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">מָתוֹק</span><span class="gid">H04966</span></div><ul><li><b>主數值</b> 546</li><li><b>H小數</b> 15</li><li><b>H標準</b> 546</li><li><b>H序數</b> 60</li><li><b>H_Atbash</b> 95</li><li><b>H_Sofit擴展</b> 546</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 546 的詞條共 16 個（含本詞）。其中已有中文詞義者如 H00763 אֲרַם נַהֲרַיִם「二河流(幼發拉底與底格里斯)上的亞蘭」、H00821 אַשְׁמֻרָה「守望、守夜者」、H03480 יְשַׂרְאֵלָה「正義向著　神」、H04180 מוֹרָשׁ「產業」、H04761 מַרְאָשָׁה「頭部位置」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是形容果子的「甘甜」。甜的落點在下一詞「我的上顎」，不是一句空泛的好評。</p>
+<p><span class="gl">④精意</span>　甘甜要被嘗到，才算被說完。本節把甜放在能辨味的地方，讓人知道這份美好已經進到生命裏面。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">חֵךְ</span><span class="gid">H02441</span></div><ul><li><b>主數值</b> 28</li><li><b>H小數</b> 10</li><li><b>H標準</b> 28</li><li><b>H序數</b> 19</li><li><b>H_Atbash</b> 90</li><li><b>H_Sofit擴展</b> 508</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 28 的詞條共 14 個（含本詞）。其中已有中文詞義者如 H00031 אֲבִיהוּד「我父是威嚴的」、H00280 אֲחִידָה「難解的事、謎」、H00943 בּוּךְ「混亂、困窘」、H01774 דִּי זָהָב「多金子的」、H02069 זְבַדְיָה「耶和華已賜予」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是「我的上顎」，字典記作上顎、口、味道。和合本寫成「滋味」與「覺得甘甜」，原文卻把甜的位置說在上顎上。</p>
+<p><span class="gl">④精意</span>　味道有它停留的地方。本節不讓甘甜只成為一句評語，乃讓它留在口中，成為可以被記念的親身經歷。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>上一節（雅歌 2:2）用百合花在荊棘中間比佳偶，本節用蘋果樹在眾樹中間比良人，兩句句法相對，是緊接的對答。</p>
+<p>本卷後文 8:5 再提到蘋果樹，是後來的回響。本節不把那一節的細節提前寫進來，只先讀完這裏的蔭與果子。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。外引只止於上面已用的經文。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「好像一棵蘋果樹在樹林的樹木中，我的良人在眾男子中間也是這樣。在他的蔭下我戀慕並且坐下，他的果子在我的上顎是甘甜的」。和合本把人提前，略去「樹木」，合併戀慕與坐下，並把上顎的甜寫成嘗後的感覺。原文此節沒有角色標示。</p>
+<p><strong>本書用法</strong>　本節與 2:2 成對，又比上一節多出蔭與果子。後文的蘋果樹是後來的回響。本節自己把「認出他」做成「靠近他、停留在他那裏、嘗到他的甘甜」。</p>
+<p><strong>舊約根源</strong>　蔭在舊約常與保護、歇息有關，果子與甘甜也是舊約熟悉的意象。本節把它們用在良人這棵蘋果樹上，不重述哪一段歷史中的樹蔭，只在情歌裏讓人坐下、讓口得甜。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把樹蔭與果子讀成別的指向，那是後世的讀法，不可倒填進本節，把這棵蘋果樹說成已經寫上了新約的名稱。</p>
+<p><strong>跨篇深意</strong>　比較只能把人認出來；蔭與果子才讓人進來。本節不滿足於「他比別人好」，還要說：我因戀慕而坐下，並且甜已經在我的上顎上。認出以後若仍站在遠處，這一句就還沒有讀完。</p>
+<h2>六、總意</h2>
+<p>上一節的句法還在，這一節就把它還給良人。花換成樹，刺換成林，女子換成男子。比較仍然是「在中間也是這樣」：他不是從人群中消失，才顯出不同；乃是在眾男子中間，像蘋果樹在眾樹中間。</p>
+<p>可是本節沒有停在比較裏。話一轉，人已經在他的蔭下。先是戀慕，然後坐下。和合本把這兩步寫成「歡歡喜喜坐」，畫面溫暖，卻容易讓人只看見坐的姿態，聽不見那聲先出來的「我戀慕」。吸引在先，停留在後，這個次序值得留下。</p>
+<p>蔭是他的，果子也是他的。坐下的人沒有自己先種一棵樹，只是來到已經有蔭、已經有果的地方。甜被說在上顎上，很近，也很身體。和合本寫「嘗……覺得甘甜」，是把這件事做成一個判斷；原文卻讓甜留在口中，成為記得住的味道。</p>
+<p>讀這一節，不要只記得「他像蘋果樹」。更要記得：有人因這棵樹而戀慕，有人在這蔭下坐下，並且那份甘甜已經進到口裏。比較是起頭，靠近才是本節要人停住的地方。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H08598 — תַּפּוּחַ「蘋果、蘋果樹」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08598</li><li>詞形 תַּפּוּחַ</li><li>音譯 tappuwach</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 蘋果、蘋果樹</li><li>字源 來自 SH5301</li><li>中文用法 蘋果4 蘋果樹2 (6)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 蘋果, 蘋果樹</li><li>1a 蘋果樹</li><li>1b 蘋果</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>1.蘋果樹，單陽תַּפּוּח 歌2:3 8:5 珥1:12。</p>
+<p>2.蘋果，複陽תַּפּוּחִים 歌2:5 7:8；複陽附屬形תַּפּוּחֵי זָהָב金蘋果，箴25:4（比喻）。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 5301 ;<br/>an apple (from its fragrance), i.e. the fruit or the tree (probably includ. others of the pome order, as the quince, the orange, etc.)</p></div></div></div></details>
+<details class="ntfold"><summary>H06086 — עֵץ</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06086</li><li>詞形 עֵץ</li><li>約 舊約</li><li>詞類 名、陽</li><li>字源 [字源] from 6095 ; a tree (from its firmness); hence, wood (plural sticks)</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 樹, 木頭, 木材, 樹幹, 柴, 桿, 枝條, 木架</li><li>1a 樹, 樹林</li><li>1b 木頭, 木料, 木架, 木柴, 香柏木, 木麻</li></ol></div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 6095 ;<br/>a tree (from its firmness); hence, wood (plural sticks)</p></div></div></div></details>
+<details class="ntfold"><summary>H03293 — יַעַר「森林、樹林、蜂房」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03293</li><li>詞形 יַעַר</li><li>音譯 ya`ar</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 森林、樹林、蜂房</li><li>字源 來自一不用字根，意為密集的蔥綠草木、矮樹叢</li><li>中文用法 樹林27 林24 叢林2 樹1 樹木1 耶琳1 蜜房1 (57)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 森林, 灌木叢, 樹木濃密的高地</li><li>2 蜂巢</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽יַעַר 申19:5。單陽+指示方向的יַעְרָה , ָה 書17:15。單陽附屬形יַעַר 撒上22:5。單陽3單陽詞尾יַעְרוֹ 賽10:18。單陽3單陰詞尾יַעְרָהּ 耶46:23。單陽1單詞尾יַעְרִי 歌5:1。複陽יְעָרוֹת 詩29:9；結34:25。</p>
+<p>一、森林、高地、樹林。</p>
+<p>1.樹林。在樹林中砍伐樹木，書17:15,18 申19:5；עֵץ מִיַּעַר כְּרָתוֹ在樹林中用斧子砍伐，耶10:3；יַחְטְבוּ מִן-הַיְּעָרִים從樹林伐木，結39:10；יַעַר צוֹמֵחַ עֵצִים澆灌嫩小的樹木，傳2:6；所羅門王所建的בֵּית יַעַר הַלְּבָנוֹן黎巴嫩林宮，王上7:2 10:17,21＝代下9:16,20；בֵּית הַיָּעַר林庫，賽22:8；比喻仇敵必如樹林被砍倒和摧毀，וְנִקַּף סִבְכֵי הַיַּעַר בַּבַּרְזֶל稠密的樹林，他要用鐵器砍下，賽10:34；כָּרְתוּ יַעְרָהּ砍伐她的樹林，耶46:23 賽32:19；יַעַר הַבָּצִור茂盛的樹林，亞11:2。</p>
+<p>2. 作為藏身之處，撒上22:5；野獸濳伏的地方，摩3:4 彌5:8 王下2:24 耶5:6 12:8 賽56:9 詩80:13 104:20 結34:25。</p>
+<p>3. 被耶和華的聲音剝光，詩29:9；被火吞噬，賽9:18（סִבְכֵי הַיַּעַר濃密的森林比喻百姓）；比喻耶和華的審判，賽10:18 耶21:14 結20:46,47 詩83:14。</p>
+<p>4. 與כַּרְמֶל（田園）相反，賽29:17 32:15；יַעַר כַּרְמִלּוֹ肥田的樹林，王下19:23＝賽37:24；יַעַר בְּתוֹךְ כַּרְמֶל在迦密山的樹林中，彌7:14（比喻　神應許百姓將有隱蔽和肥沃的住所）。</p>
+<p>5. ＝灌木叢。象徵荒涼的，何2:12；בָמוֹת יָעַר叢林的高處（被灌木叢占據的荒涼之地），彌3:12＝耶26:18；בַּיַּעַר בַּעְרַב亞拉伯的樹林，賽21:13。</p>
+<p>6. 比喻用法：עֲצֵי-יַעַר林中的樹，賽7:2 10:19 44:14 結15:2 歌2:3；如同在　神面前歌唱，詩96:12＝代上16:33 賽44:23。</p>
+<p>7. 特定的樹林。יַעַר אֶפְרָיִם以法蓮樹林，撒下18:6；יַעַר חָרֶת哈列的樹林，撒上22:5；יַעַר הַשָּׂדֶה נֶגֶב南方田野的樹林和יַעַר הַנֶּגֶב南方的樹林，結20:46,47；יַעַר הַלְּבָנוֹן黎巴嫩林宮，王上7:2；בִּשְׂדֵי-יָעַר基列耶琳，詩132:6。</p>
+<p>二、蜂房。</p>
+<p>蜂巢，含有蜂蜜，撒上14:25（正確應讀為וַיְהִי דְבַשׁ עַל־פְּנֵי הַשָּׂדֶה有蜜在田地的表面上）；וַיָּבֹא הָעָם אֶל־הַיַּעַר百姓進了樹林，撒上14:26（當百姓到達蜂巢時，蜂巢中蜜蜂已經離去）；אָכַלְתִּי יַעְרִי עִם־דִּבְשִׁי吃了我的蜜房和蜂蜜，歌5:1。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root probably meaning to thicken with verdure;<br/>a copse of bushes ; hence, a forest ; hence, honey in the comb (as hived in trees)</p></div></div></div></details>
+<details class="ntfold"><summary>H01730 — דּוֹד「情侶、所愛的人、叔伯、愛情」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01730</li><li>詞形 דּוֹד</li><li>音譯 dowd</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 情侶、所愛的人、叔伯、愛情</li><li>字源 來自一不用字根，意為沸騰</li><li>中文用法 良人33 叔叔12 愛情8 伯叔5 親愛1 所愛者1 叔父1 (61)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 心愛的 (人), 愛, 叔伯或舅舅</li><li>1a 心愛的 (人)</li><li>1b 叔伯或舅舅</li><li>1c 愛 (複數, 抽象)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽דּוֹד 歌5:9。單陽附屬形דּוֹד 撒上10:14；דֹּד 利10:4 斯2:15。單陽3單陽詞尾דּוֹדוֹ 摩6:10 撒上10:16；דֹּדוֹ 利20:20。單陽3單陰詞尾דּוֹדָהּ 歌8:5。單陽2單陽詞尾דֹּדְךָ 耶32:7。單陽1單詞尾דּוֹדִי 賽5:1；דֹּדִי 耶32:8。複陽דּוֹדִים 歌5:1；דֹדִים 箴7:18 結16:8 23:17。複陽3複陰詞尾דֹדֵיהֶן 民36:11。複陽2單陽詞尾דֹּדֶיךָ 歌1:2,4。複陽2單陰詞尾דֹדַיִךְ 歌4:10。</p>
+<p>一、心愛的人。良人，歌1:13,14,16 2:3,8,9,10,16,17 4:16 5:2,4,5,6,6,8,9,9,10,16 6:1,1,2,3,3 7:10,11,12,13 8:5,14。親愛的、朋友：שִׁירַת דּוֹדִי我所愛者的歌，賽5:1。</p>
+<p>二、叔伯或舅舅，民36:11 撒上14:50 王下24:17 利20:20 25:49,49 撒上10:14,15,16 斯2:7,15 耶32:7,8,9,12；大衛的叔叔約拿單，代上27:32；死人的伯叔，摩6:10。</p>
+<p>三、複數抽象：愛，歌1:2,4 4:10,10 5:1；עֵת דֹּדִים看見你的時候正動愛情，結16:8；מִשְׁכַּב דֹּדִים愛情的床，結23:17。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or (shortened) דֹּד ; from an unused root meaning properly, to boil , i.e.<br/>(figuratively) to love ; by implication, a love-token , lover , friend ; specifically an uncle</p></div></div></div></details>
+<details class="ntfold"><summary>H01121 — בֵּן「兒子、孫子、子孫、百姓、後裔、人民」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01121</li><li>詞形 בֵּן</li><li>音譯 ben</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 兒子、孫子、子孫、百姓、後裔、人民</li><li>字源 來自 SH1129</li><li>中文用法 兒子2024 人899 子孫544 子287 兒161 兒女107 孫子83 犢38 後裔36 羔36 眾子24 孩子22 曾孫21 兒子們18 雛14 族12 門徒12 士9 兒孫7 孫7 子民6 元孫5 眾人5 子子孫孫4 徒4 所生的4 民4 男子4 嬰孩3 男孩3 輩3 外孫2 孩子們2 族長2 枝子2 比挪2 牛犢2 生2 上流1 下流1 人丁1 人民1 僕婢1 兵1 同胞1 坐1 子弟1 少年人1 崽子1 弟兄1 弟子1 所出1 樹枝1 玄孫1 男孩子1 眾民1 穀1 箭1 者1 而生的1 類1 駒1 (4444)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 兒子, 孫子, 孩子, 一群人中的成員</li><li>1a 兒子, 男孩子</li><li>1a1 可指孫子, 表兄</li><li>1a2 可作為親暱稱呼</li><li>1a3 與人名, 地名連用, 表示出自哪個民族, 地方, 家庭</li><li>1b 子女 (男與女)</li><li>1c 青年, 年輕男子 (複數) (<br/>箴 7:7<br/><br/>歌 2:3<br/>)</li><li>1e 少壯的 (動物)</li><li>1f 植物的幼苗 (<br/>創 49:22<br/><br/>詩 80:15<br/>)</li><li>1g 表非生命體, 亦即火光, 星, 箭 (比喻用法)</li><li>1h 公會, 職份, 階層的成員</li><li>1i 與表示特質, 個性的字連用 (例如: 邪惡之子)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽בֵּן 創4:25。單陽附屬形בֵּן 結18:10。單陽3單陽詞尾בְּנוֹ 民23:18 24:3,15。單陽3單陰詞尾בְּנָהּ 創21:10。單陽2單陽詞尾בִנְךָ 出20:10。單陽2單陰詞尾בְּנֵךְ 創30:14。單陽1單詞尾בְּנִי 創21:10。複陽בָנִים 創3:16。複陽附屬形בְנֵי 創6:2。複陽3單陽詞尾בָּנָיו 利6:9。複陽3單陰詞尾בָּנֶיהָ 王下4:5。複陽3複陽詞尾בְּנֵיהֶם 王下17:31。複陽2單陽詞尾בָּנֶיךָ 利10:13。複陽2單陰詞尾בָּנַיִךְ 王下4:4。複陽2複陽詞尾בְּנֵיכֶם 出3:22。複陽1單詞尾בָּנַי 創31:43。複陽1複詞尾בָּנֵינוּ 書22:25。</p>
+<p>一、兒子、孫子、後裔、人民。</p>
+<p>1.兒子，男孩。由女人所生，創4:25 16:11,15 17:19 18:10,14 19:37,38；בֶּן-בִּטְנָהּ肚腹(所生)的兒子，賽49:15。由人所生的，創5:4,28 6:10 11:11；平行詞בַּת（複數בָּנוֹת）女兒，創5:4,7,10 11:11,13,15 出20:10 申5:14 16:11,14 撒上30:3,6 伯1:2 42:13。人有子嗣的福分來自　神，創30:1-2；比較 創15:2 17:17 18:10 撒上1:5-11 王下4:14,28 詩127:3。所親愛的，出21:5 撒下19:2,4,5 王上3:26。撫養，申1:31；憐恤，瑪3:17；有管教和責備的，申8:5 箴3:12 13:24 19:18 29:17；對父母表示尊敬、服從等，箴6:20 10:1 13:1；בִּנְךָ בְכֹרְךָ你的長子，創27:32；הַבֵּן הַבְּכוֹר長子，申21:15；בְּנוֹ הַבְּכוֹר 撒上8:2；בְּנָהּ הַגָּדֹל她的大兒子，創27:15,42；בְּנוֹ הַגָּדֹל 創27:1；בְּנָהּ הַקָּטָן她的小兒子，創27:15,42。</p>
+<p>A. בֶּן-אִמּוֹ他母親的兒子，即自己的兄弟，創43:29，參 創27:29 士8:19 詩50:20 69:8；בְּנֵי אָבִיךָ你父親的兒子＝弟兄，創49:8。</p>
+<p>B. בְנֵי דֹדֵיהֶן她們伯叔的兒子們＝堂（表）兄弟，民36:11。</p>
+<p>C. בְּנִי我的兒，撒上3:6,16表達善意或愛意的用語，以利對撒母耳，撒上4:16；掃羅對大衛，撒上24:16 26:17,21,25，大衛對所羅門，箴1:8,10 2:1；בִּנְךָ便哈達對以利沙，王下8:9；亞哈斯對亞述王提革拉毗列色，王下16:7。尤指表達與　神親密和恩待的關係：耶和華稱以色列בְּנִי בְכֹרִי是我的兒子，我的長子，出4:22,23 何11:1 詩80:15；בָּנִים אַתֶּם לַיהוָה אֱלֹהֵיכֶם你們是耶和華你們　神的兒子，申14:1；בְנֵי עֶלְיוֹן至高者的兒子，詩82:6；בְּנֵי אֵל-חָי永生　神的兒子，何1:10；בָּנָיו祂的後裔，申32:5,20（בָּנִים複數）；賽1:2,4 30:1,9 耶3:14,22 4:22 31:20。未來的大衛王室的關係，撒下7:14＝代上17:13 詩2:7；明確提到所羅門，代上22:10 28:6；兒童獻祭，結16:21。</p>
+<p>D.  בְנֵי-הָאֱלֹהִים　神的兒子們，可能指超自然人種，創6:2,4 伯1:6 2:1；בְּנֵי אֱלֹהִים　神的眾子，伯38:7；בְּנֵי אֵלִים　神的眾子，詩29:1 89:6。</p>
+<p>E. בֶן-בִּנְךָ＝你的孫子，出10:2 申6:2 士8:22；參 耶27:7 出34:7 申4:9,25 士12:14 王下17:41 代上8:40 伯42:16 詩128:6 箴13:22 17:6 結37:25。拉班稱他女兒的孩子為自己的兒子，創31:28,43；拿俄米也是如此，得4:17；第四代的兒子，王下10:30；一般的後代，書22:24,25,27。</p>
+<p>F. 精確指出某人的名字，添加個人姓名：כָּלֵב בֶּן-יְפֻנֶּה耶孚尼的兒子迦勒，民14:30 32:12 34:19；יְהוֹשֻׁעַ בִּן-נוּן嫩的兒子約書亞，民11:28 14:30 32:12,28 34:17；יָרָבְעָם בֶּן-נְבָט尼八的兒子耶羅波安，王上12:2,15等。無添加個人姓名（通常帶有蔑視的意思）：בֶן-קִישׁ基士的兒子（沒指名哪個兒子），撒上10:11；בֶן-יִשַׁי耶西的兒子，撒上20:27,30,31 22:7,8,9,13 25:10 撒下20:1；בְּנֵי צְרֻיָה洗魯雅的兒子，撒下16:10；בֶן-רְמַלְיָהוּ利瑪利的兒子，賽7:4,5,9 8:6；בֶּן-טָבְאַל他比勒的兒子，賽7:6；בְּנֵי לֵוִי利未的子孫，民16:7,8。</p>
+<p>G. 特別指定是父親在晚年時所生的兒子，בֶן-זְקֻנִים年老(生)的兒子，創37:3；相反詞：בְּנֵי הַנְּעוּרִים年輕時(所生)的兒女，詩127:4；בֶן-בֵּיתִי出生在我家的，創15:3（即奴隸），בְנֵי-בַיִת(生在)家中的人，傳2:7。</p>
+<p>H. 組合詞：בֶּן-נַעֲוַת הַמַּרְדּוּת頑梗背逆之婦人(所生)的兒子，撒上20:30；בֶּן-הַמְרַצֵּחַ הַזֶּה這兇手之子，王下6:32；בְּנֵי-נָבָל愚頑人之子，伯30:8；בְּנֵי עֹנְנָה巫婆的兒子，賽57:3；בֶּן-אִשָּׁה אַחֶרֶת別的女人(生)的兒子，士11:2；בֶּן-חוֹרִים貴冑之子，傳10:17；בֶּן-חֲכָמִים智慧人的子孫，賽19:11；בֶן-מֶלֶךְ王的兒子，詩72:1；בְּנֵי-עֲבָדֶיךָ僕人的子孫，詩102:28；בְּנֵי הַמֶּלֶךְ王子，士8:18。</p>
+<p>I. 通常是複數形式，帶有祖先、人、土地或城市的名稱，表示後代、居民、國家或家庭成員等。בְּנֵי-עֵבֶר希伯人，創10:21；בְּנֵי-חֵת赫人，創23:3,5,7,10,11,16,18,20 25:10 49:32；בְּנֵי-חֲמוֹר哈抹的子孫，創33:19 書24:32；בְּנֵי עֵשָׂו以掃的兒子、子孫，創36:5,15,19 申2:4,8,12,22,29；בְנֵי-שֵׂעִיר西珥的兒子、子孫，創36:20,21；בֶן-הִנֹּם欣嫩子，書15:8；בְנֵי-לוֹט羅得的子孫，申2:9,19 詩83:8。בְנֵי יוֹסֵף約瑟的兒子們、子孫，民1:32 26:28,37 34:23 36:5（מַטֵּה בְנֵי-יוֹסֵף約瑟子孫支派的人）；詩77:15；בְנֵי חֲצִי שֵׁבֶט מְנַשֶּׁה瑪拿西半支派的人，代上5:23；בְּנֵי דָוִיד大衛子孫，代下13:8 23:3 32:33。בְּנֵי אָסָף亞薩的子孫，代下29:13 拉2:41；בְנֵי-קֹרַח可拉後裔，詩42:1 44:1 45:1 46:1 47:1 48:1 49:1 84:1 85:1 87:1 88:1的標題中。בְּנֵי יַעֲקֹב雅各子孫，王下17:34 詩105:6 瑪3:6；בְנֵי יִשְׂרָאֵל以色列人，出1:7（約用600多次）；עַם בְּנֵי יִשְׂרָאֵל這百姓就是以色列人，出1:9；עַמִּי בְנֵי-יִשְׂרָאֵל我的百姓以色列人，出3:10 7:4；כָּל-עֲדַת בְּנֵי-יִשְׂרָאֵל以色列全會眾，出16:1,2,9,10 17:1 利16:5 19:2 民1:2,53 8:9,20 13:26 15:25,26 19:9 25:6 26:2 31:12；דֹּרוֹת בְּנֵי-יִשְׂרָאֵל以色列人的後代，士3:2；כָל-בְּנֵי יִשְׂרָאֵל וְכָל-הָעָם所有的以色列人，即所有的軍兵，士20:26；בְנֵי-יִשְׂרָאֵל וּבְנֵי הַלֵּוִי以色列人和利未人，尼10:39；בְנֵי יְהוּדָה猶大子孫、猶大人、猶大族，民1:26 士1:8,9,16 撒下1:18 代上4:27 耶7:30 何1:11 珥3:6,8,19 俄1:12，包含מַטֵּה בְּנֵי יְהוּדָה猶大人的支派，書15:1,20,21 21:1。בְנֵי-לֵוִי利未的子孫、利未人，出32:28 民3:15 16:7,8 18:21 書21:10（包括亞倫的子孫）；כָּל-בְּנֵי לֵוִי利未的子孫全部，出32:26；כָּל-אַחֶיךָ בְנֵי-לֵוִי 民16:10；הַכֹּהֲנִים בְּנֵי לֵוִי祭司利未的子孫，申21:5 31:9；比較 王上12:31 代上23:24,27 24:20 拉8:15 尼12:23；מַחֲנוֹת בְּנֵי לֵוִ利未人營地，代上9:18；בְּנֵי הַלֵּוִי 代上12:26；בְנֵי-הַלְוִיִּם 代上15:15 24:30。בְנֵי-אַהֲרֹן亞倫的子孫，利3:5,8,13 6:14,18 7:10 書21:10 代上6:50,54,57 15:4 24:1,31 尼12:47；בְּנֵי אַהֲרֹן הַכֹּהֲנִים亞倫子孫作祭司的，利1:5,8,11 2:2 3:2 民3:8 書21:19 代下31:19；בְּנֵי אַהֲרֹן הַכֹּהֵן祭司亞倫的子孫，利1:7 書21:4,13；אֶת-כֹּהֲנֵי יְהוָה אֶת-בְּנֵי אַהֲרֹן וְהַלְוִיִּם耶和華的祭司亞倫的後裔和利未人，代下13:9；僅一次用單數：הַכֹּהֵן בֶּן-אַהֲרֹן 尼10:38。בְנֵי-צָדוֹק撒督的子孫，結40:46 44:15；כֹּהֲנִים הַמְקֻדָּשׁ מִבְּנֵי צָדוֹק撒督的子孫中成為聖的祭司，結48:11。בְּנֵי帶有人、地或城市的名稱：בְנֵי כֻשִׁיִּים古實人，摩9:7；בְּנֵי-מִצְרַיִם埃及人，結16:26；בְּנֵי אַשּׁוּר亞述人，結16:28 23:7,9,12,23；בְנֵי אֶרֶץ הַבְּרִית同盟之地的人，結30:5；בְּנֵי-בָבֶל巴比倫人，結23:15,17,23；וּבְנֵי יְרוּשָׁלַםִ耶路撒冷人，珥3:6；בְנֵי צִיּוֹן錫安的民，珥2:23 哀4:2 詩149:2。בְּנֵי עַמֶּךָ你本國人，利19:18；בְּנֵי עַמָּם 利20:17 民22:5 士14:16,17 結3:11 33:2,12,17,30 37:18 但12:1；בְנֵי פָּרִיצֵי עַמְּךָ本國的凶暴人，但11:14。קֶבֶר בְּנֵי הָעָם平民的墳，王下23:6 代下35:5,7,12；קִבְרֵי בְּנֵי הָעָם庶民的墳地，耶26:23；בְנֵי-קֶדֶם東方人，創29:1 士7:12 8:10 王上4:30 伯1:3 賽11:14 耶49:28 結25:4,10。בְּנֵי הַמְּדִינָה省民，拉2:1＝尼7:6。בְּנֵי-בָשָׁן巴珊的公羊，申32:14。</p>
+<p>2.孩子（包含男與女）。你生產兒女，創3:16 出21:5 22:24。בְּנֵי מְנַשֶּׁה הַזְּכָרִים瑪拿西子孫的男丁，書17:2。בֵּן זָכָר你得了兒子，耶20:15。</p>
+<p>3.年輕人、少年人。複數：少年人中，箴7:7；我的良人在男子中，歌2:3。</p>
+<p>4. 動物的幼雛。不可同日宰母和子，利22:28；連母帶雛，申22:6,7；牛犢，撒上6:7,10；母獅之子，伯4:11 39:4,16；騎著驢的駒子，亞9:9。</p>
+<p>5. 植物的幼苗。多結果的枝子，創49:22；堅固的枝子，詩80:15。</p>
+<p>6. 無生命之物的比喻：בְנֵי רֶשֶׁף火焰之子，伯5:7；עַיִשׁ עַל-בָּנֶיהָ北斗和隨它的眾星，伯38:32；בְּנֵי אַשְׁפָּתוֹ箭袋中的箭，哀3:13；בֶן-גָּרְנִי我場上的穀啊，賽21:10。</p>
+<p>7. 階層的成員、會員或一個職份。בְּנֵי הַנְּבִיאִים先知門徒，王上20:35 王下2:3,5,7,15 4:1,38,38 5:22 6:1 9:1。בְּנֵי הַכֹּהֲנִים祭司的子孫，代上9:30 拉2:61 10:18；בְּנֵי הַשֹּׁעֲרִים守門的子孫，拉2:42；בְנֵי הַגְּדוּד軍隊，代下25:13；בְנֵי הַגּוֹלָה被擄歸回的人，拉4:1 6:19,20 8:35 10:7,16；בֶּן-נֵכָר外人，創17:12,27 出12:43 利22:25 結44:9；בֶּן-הַנֵּכָר外邦之子，賽56:3；בְּנֵי נֵכָר外邦人，撒下22:45,46＝詩18:44,45 尼9:2 賽60:10 61:5 62:8 結44:7 詩144:7,11；בְנֵי הַנֵּכָר外邦人，賽56:6。指動物：בָקָר וּבְנֵי בָקָר牛和牛犢，撒上14:32 利9:2；適合作食物，創18:7,8；作祭牲，民15:8,9；פַּר אֶחָד בֶּן-בָּקָר取一隻公牛犢，出29:1 利4:3,14 16:3 23:18 民7:15 結43:19,23,25 45:18 46:6；פָּרִים בְּנֵי-בָקָר兩頭公牛犢，民28:11,19,27 29:13,17；בְּנִי אֲתֹנוֹ驢駒，創49:11；בְנֵי-צֹאן羊羔，詩114:4,6；בֶן-רְאֵמִים野牛犢，詩29:6；בְּנֵי הָרַמָּכִים 斯8:10；בְּנֵי הַיּוֹנָה雛鴿，利1:14 民6:10；בֶן-יוֹנָה 利12:6；בְנֵי-נָשֶׁר雛鷹，箴30:17；בְנֵי עֹרֵב小烏鴉，詩147:9。</p>
+<p>8. 與בֵּן連用描素個性特質。בְנֵי-חַיִל勇士， 撒上14:52；英勇的人，撒下2:7；撒下13:28；撒下17:10；אֲנָשִׁים בְּנֵי-חַיִל勇士，士18:2；壯士，王下2:16。בְנֵי-עַוְלָה罪孽之輩，撒下3:34 何10:9。兇惡之子，撒下7:10 代上17:9。בְּנֵי הַתַּעֲרֻבוֹת帶人去為質，王下14:14 代下25:24。בְּנֵי תְמוּתָה那些將要死的人，詩79:11 102:20。בְּנֵי-עֹנִי困苦人，箴31:5。בְּנֵי חֲלוֹף將要滅亡的人，箴31:8。בְּנֵי שָׁאוֹן鬨嚷人，耶48:45。</p>
+<p>二、專有名詞</p>
+<p>〔比挪〕人名</p>
+<p>雅西雅的兒子，代上24:26,27。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 1129 ;<br/>a son (as a builder of the family name), in the widest sense (of literal and figurative relationship, including grandson, subject, nation, quality or condition, etc., (like father or brother), etc.)</p></div></div></div></details>
+<details class="ntfold"><summary>H03427 — יָשַׁב「坐下、居住、留下、定居、結婚」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03427</li><li>詞形 יָשַׁב</li><li>音譯 yashab</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 坐下、居住、留下、定居、結婚</li><li>字源 一原形字根</li><li>中文用法 住381 居民198 坐178 居住118 居30 坐下16 坐著12 人9 住了7 等候6 存5 安居5 同住4 在4 娶4 靜坐4 使...坐4 使...住4 使...居住3 坐了3 娶了3 安置2 留3 人煙2 仍2 仍在2 住下2 叫2 安2 座2 登了2 住...的人2 看守2 等2 藏2 仍舊1 住宿1 住處1 便溺1 囚1 在位1 坐席1 坐落1 坐起來1 埋伏1 守1 安坐1 安息1 安歇1 寄居的人1 寶座1 居住的1 居所1 徒1 所住的1 把...安置1 正坐1 民1 登1 等著1 處1 設立1 蹲伏1 還在1 (1056)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 居住, 留下, 坐</li><li>1a (Qal)</li><li>1a1 坐, 坐下</li><li>1a2 留下, 耽擱</li><li>1a3 居住, 住處在...</li><li>1a4 (城市, 土地) 座落其處 = 有人居住</li><li>1b (Niphal) 有人居住</li><li>1c (Piel) 放置, 安放</li><li>1d (Hiphil)</li><li>1d1 使坐下</li><li>1d2 使居住, 使安置</li><li>1d3 使住下</li><li>1d4 使 (城邑) 有人居住 (<br/>賽54:3<br/><br/>結36:33<br/>)</li><li>1d5 娶 (給予住處)</li><li>1e (Hophal)</li><li>1e1 被使之居住 (<br/>賽5:8<br/>)</li><li>1e2 被居住 (有人居住) (<br/>結35:9<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－3單陽יָשַׁב 創13:12。3單陰יָשְׁבָה 哀1:1。3複יָשְׁבוּ 撒上25:13。2單陽יָשַׁבְתָּ 士5:16。2單陰יָשַׁבְתְּ 耶3:2。2複陽יְשַׁבְתֶּם 申1:46 利18:3。1單יָשַׁבְתִּי 代上17:5。1複יָשַׁבְנוּ 申29:16。連續式3單陽וְיָשַׁב 利14:8。連續式3單陰וְיָשְׁבָה 亞14:10。連續式3複וְיָשְׁבוּ 耶50:39。連續式2單陽וְיָשַׁבְתָּה 申17:14。連續式2複陽וִישַׁבְתֶּם 利25:18。連續式1單3複陽詞尾וְהֹשַׁבְתִּים 耶32:37。連續式1複וְיָשַׁבְנוּ 創34:16。</p>
+<p>未完成式－3單陽יֵשֵׁב 撒上5:7；יֵשֶׁב 創44:33 結44:3。3單陰תֵּשֵׁב 利12:4。3複陽יֵשְׁבוּ 書1:14；יֵשֵׁבוּ 傳10:6。2單陽תֵּשֵׁב 詩102:12。2單陰תֵּשְׁבִי 何3:3。2複陽תֵּשְׁבוּ 利8:35。1單אֵשֵׁב 士6:18。1單+指示方向的אֵשְׁבָה , ָה 撒上27:5。1複נֵשֵׁב 耶42:13,14。敘述式3單陽וַיֵּשֶׁב 創4:16 得4:1。敘述式3單陰וַתֵּשֶׁב 創21:16。敘述式3複陽וַיֵּשְׁבוּ 創37:25。敘述式2複陽וַתֵּשְׁבוּ 書24:7。敘述式1單וָאֵשֵׁב 申9:9 結3:15。敘述式1複וַנֵּשֶׁב 民20:15。祈願式3單陽יֵשֵׁב 申23:16。祈願式3單陰תֵּשֵׁב 賽42:11。祈願式3複陽יֵשְׁבוּ 創47:4。祈願式1單אֵשֵׁב 賽14:13。鼓勵式1單אֵשֵׁבָה 賽49:20。</p>
+<p>祈使式－單陽שֵׁב 創20:15；שְׁבָה 創27:19；שֶׁב 創35:1。單陰שְׁבִי 創38:11。複陽שְׁבוּ 創22:5。</p>
+<p>不定詞－獨立形יָשֹׁב 撒上20:5。附屬形שֶׁבֶת 撒上7:2；שָׁבֶת 賽40:22；לָשֶׁבֶת 創13:6,6。附屬形3單陽詞尾שִׁבְתּוֹ 俄1:3。附屬形3單陰詞尾שִׁבְתָּהּ 得2:7。附屬形3複陽詞尾שִׁבְתָּם 王下17:25。附屬形2單陽詞尾שִׁבְתְּךָ 出15:17。附屬形2複陽詞尾שִׁבְתְּכֶם 利26:35。附屬形1單詞尾שִׁבְתִּי 撒下7:5。附屬形1複詞尾שִׁבְתֵּנוּ 出16:3。</p>
+<p>主動分詞－單陽יֹשֵׁב 創4:20 24:3。單陰יֹשְׁבָה 鴻3:8；יוֹשֶׁבֶת 士4:5；יוֹשָׁבֶת 書2:15 王下4:13；יֹשֶׁבֶתי 耶10:17 結27:3。單陽附屬形יוֹשֵׁב 創50:11。單陽附屬形+連結的 יֹשְׁבִי , י 詩123:1。單陰附屬形יֹשַׁבְתְּי 耶22:23；יוֹשֶׁבֶתי 哀4:21。複陽יֹשְׁבִים 撒上24:3。複陰יֹשְׁבוֹת 歌5:12。複陰附屬形יֹשְׁבוֹת 撒上27:8。複陽附屬形יֹשְׁבֵי 創19:25。複陽3單陽詞尾יוֹשְׁבָיו 耶19:12。複陽3單陰詞尾יֹשְׁבֶיהָ 賽24:5。複陽3複陰詞尾יֹשְׁבֵיהֶן 賽37:27。</p>
+<p>1.坐、坐下。</p>
+<p>A.坐在位子上，撒上20:25；石頭上，出17:12；馱簍上，創31:34；床上，創48:2 結23:41；膝上，王下4:20；寶座，出11:5 12:29；國位，申17:18 撒上1:9 4:13 王上1:13,17,20；塵埃上，賽47:1；地上，結26:16；在灰中，拿3:6；在井旁，出2:16；在池這邊，撒下2:13；在床上，撒上28:23；在宮中、街道、城門口、集會等處，撒下7:1 士19:15 創38:14 耶15:17 26:10 詩1:1 歌2:3 結31:6,17（比喻）；挪亞們הַיֹּשְׁבָה בַּיְאֹרִים坐落在眾河之間，鴻3:8；לָאָרֶץ在土地上，賽3:26 47:1 哀2:10；לְכִסֵּא在寶座上，詩9:4；וְיָשְׁבָה לְפֶתַח בֵּיתָהּ她坐在自己家門口，箴9:14；לִימִינוֹ在他的右邊，王上2:19 詩110:1；לַמַּבּוּל在洪水上，詩29:10；לְפָנָיו在他的面前，創43:33；שָׁם在那裡，士20:26 21:2 撒下7:18＝代上17:16；אֵשֵׁב עִם-הַמֶּלֶךְ與王同席，撒上20:5 箴31:23 耶16:8 伯2:13；תַּחַת在…之下，士6:11；在葡萄樹下，彌4:4；תַּחְתֶּיהָ בַּצֵּל在棚子的蔭影下，拿4:5；מִנֶּגֶד相對而坐，創21:16,16；נֶגֶד 賽47:14；מִקֶּדֶם לָעִיר在城的東邊，拿4:5 撒上20:25 得2:14；與動詞同源的受格，מוֹשַׁב אֱלֹהִים יָשַׁבְתִּי坐　神之位，結28:2；לִשְׁפֹּט審判百姓，出18:13 珥3:12；坐著為王或法官，出18:14 詩61:7 瑪3:3；יוֹשְׁבִים坐著的，賽10:13 摩1:5,8；耶和華坐在天上，詩2:4 9:7 29:10 55:19 102:12 哀5:19；坐在基路伯，撒上4:4 撒下6:2＝代上13:6 王下19:15 詩99:1；יוֹשֵׁב תְּהִלּוֹת יִשְׂרָאֵל你用以色列的讚美為寶座，詩22:3；שָׁמָּה יָשְׁבוּ כִסְאוֹת לְמִשְׁפָּט他們在那裡設立審判的寶座，詩122:5。</p>
+<p>B.坐、坐下。士19:6 得4:1,2 尼1:4 耶36:15 創37:25 斯3:15；相反קוּם起來SH6965，出32:6 詩139:2；מְאַחֲרֵי-שֶׁבֶת夜晚安歇，詩127:2 賽37:28＝王下19:27；קוּמִי שְּׁבִי起來坐在位上，賽52:2 撒下19:8。</p>
+<p>C.坐在外面排泄，申23:13。</p>
+<p>D.安置（如珠寶）：שְׁבוֹת עַל-מִלֵּאת安得合式，歌5:12。</p>
+<p>2.留下、耽擱。住幾天，創24:55 士19:4 撒下16:18 創27:44 29:19 士17:10 撒上7:2 13:16 14:2 24:3 撒下10:5 民35:25 伯24:13；שָׁם在那裡，王上11:16；שָׁם עַד-עוֹלָם在那裡直到永遠，撒上1:22；יָשְׁבוּ עַל-הַכֵּלִים看守器具，撒上25:13 30:24；יָשַׁבְנוּ פֹה留在這裡，王下7:4；שְׁבוּ-לָכֶם פֹּה עִם-הַחֲמוֹר你們和驢子要停留在此，創22:5；בֵּין在...內，士5:16；מִחוּץ לְאָהֳלוֹ在帳棚外，利14:8；בֵּית家中，撒下6:11 13:20 得2:7 撒上1:23,23；居住，彌5:4；וִיהוּדָה לְעוֹלָם תֵּשֵׁב猶大必存到永遠，珥3:20。וַתֵּשֶׁב בְּאֵיתָן קַשְׁתּוֹ他的弓仍舊堅硬，創49:24；תֵּשֵׁב בִּדְמֵי טָהֳרָה婦女產血的潔淨，要家居三十三天，利12:4；עַל-דְּמֵי טָהֳרָה為了產血的潔淨，家居六十六天，利12:5。</p>
+<p>3.居住、住處在…。居住在地上、城市、屋子，創4:16 13:7,12 19:29 24:62 申1:4 3:2 書20:6 撒下7:6。在帳棚裡，耶35:7,10 代上5:10。比喻用法：公義要居在肥田，賽32:16；יוֹשֵׁב בְּקִרְבּוֹ住在中間，書13:13 16:10 士1:30,32,33 3:5。יֹשֵׁב בְּתוֹךְ坐在…中間，創23:10；　神住עַל-הָאָרֶץ在地上，王上8:27 代下6:18；人，利25:18,19 26:35 伯15:28；בֵּין中間，創20:1；וְיָשַׁבְנוּ אִתְּכֶם與你們同住，創34:16,22 出2:21 書15:63 士1:16,21 17:11；יֵשְׁבוּ יְשָׁרִים אֶת-פָּנֶיךָ正直人必住在你面前，詩140:13 書20:4 申23:16；與耶和華יַחְדָּו在一起，創13:6,6 36:7 申25:5；שֶׁבֶת אַחִים גַּם-יָחַד弟兄同住，詩133:1 申2:12,12,22,23 代上4:41 5:22；לָשֶׁבֶת יְצָרָהּ要給人居住的，賽45:18；你的居所，王上8:30 代下6:21 王上8:39,43,49</p>
+<p>代下6 :30,33,39 詩33:14 出15:17 王上8:13 代下6:2。分詞作名詞：יֹשֵׁב אֹהָלִים留在帳棚裡，創25:27；集合名詞：יֹשֵׁב אֹהֶל住在帳篷裡，創4:20；יֹשֵׁב הָאָרֶץ住在地上，創34:30 50:11 出34:12,15；יוֹשֶׁבֶת שָׁפִיר沙斐的居民哪，彌1:11,11,12,13,15；יוֹשֶׁבֶת צִיּוֹן錫安的居民哪，賽12:6 耶51:35；同樣，耶10:17 21:13 48:19；יוֹשֶׁבֶת בַּת-מִצְרָיִם住在埃及的民哪，耶46:19 48:18；יֹשְׁבֵי הֶעָרִים城裡的居民，創19:25 申13:13；יֹשְׁבֵי הָאָרֶץ地上的居民，出23:31；יֹשְׁבֵי תֵבֵל世上的居民，賽18:3；יוֹשְׁבֵי חָדֶל短暫世界居民，賽38:11；יֹשְׁבֶיהָ它的居民，利18:25 25:10 民13:32。獨立使用：יוֹשֵׁב居民（集合名詞），摩1:5,8 賽49:19；הַיּוֹשְׁבִים住，代上9:2；יֹשְׁבוֹת הָאָרֶץ住在那地，撒上27:8＝土地上的人口；מֵאֵין יוֹשֵׁב無人居住，賽5:9 耶4:7 26:9 33:10 34:22 44:22 46:19 51:29,37 番2:5 3:6；מֵאֵין יוֹשֵׁב בָּהֵן無居民在其內，耶48:9；מִבְּלִי יֹשֵׁב無人居住，耶2:15 9:11；לֹא-יִהְיֶה יוֹשֵׁב בָּהּ無人居住在其上，耶50:3；לְבִלְתִּי הֱיוֹת-בּוֹ יוֹשֵׁב不再有人居住在其中，耶51:62。</p>
+<p>4. 城市或土地座落其處＝有人居住，比喻用法：居住，耶17:6,25 50:13,39 結26:20 29:11 36:35 賽13:20 亞2:7 9:5 14:11；יָשְׁבָה תַּחְתֶּיהָ住她本處，亞12:6 14:10 結35:9；וְאַרְמוֹן עַל-מִשְׁפָּטוֹ יֵשֵׁב宮殿也必照舊有人居住，耶30:18。</p>
+<p>二、Nifal</p>
+<p>完成式－3單陰נוֹשָׁבָה 耶6:8。3複נוֹשָׁבוּ 結26:19；נוֹשָׁבֻה 耶22:6。連續式3複וְנֹשְׁבוּ 結36:10。</p>
+<p>分詞－單陰נוֹשֶׁבֶת 結26:17；נוֹשָׁבֶת 出16:35。複陰נוֹשָׁבוֹת 結12:20。</p>
+<p>有人居住。地上，出16:35 耶6:8；城市，耶22:6 結12:20 26:19 36:10；חֳרָבוֹת נוֹשָׁבֹת從前荒涼現在有人居住之地，結38:12。</p>
+<p>三、Piel</p>
+<p>完成式－連續式3複וְיִשְּׁבוּ 結25:4在你的地上安營居住。</p>
+<p>四、Hifil</p>
+<p>完成式－3單陽השִׁיב 拉10:14。3單陽1單詞尾הוֹשִׁיבַנִי 哀3:6 詩143:3。3複הֹשִׁיבוּ 王上21:12。1單הוֹשַׁבְתִּי 利23:43。連續式1單וְהוֹשַׁבְתִּי 結36:11,33。連續式1單3複陽詞尾וְהוֹשַׁבְתִּים 何11:11 耶32:37。連續式1單2單陰詞尾וְהוֹרַדְתִּיךְ 結26:20。</p>
+<p>未完成式－3複陽יוֹשִׁיבוּ 賽54:3。2單陽1單詞尾תּוֹשִׁיבֵנִי 詩4:8。1單2單陽詞尾אוֹשִׁיבְךָ 何12:9。敘述式3單陽וַיּוֹשֵׁב 創47:11 代下8:2 詩107:36。敘述式3單陽1單詞尾וַיּוֹשִׁיבַינִי 王上2:24。敘述式3單陽3複陽詞尾וַיֹּשִׁיבֵם 伯36:7。敘述式3複陽וַיֵּשְׁבוּ 王下17:24；וַיּוֹשִׁיבוּ 代下23:20。敘述式3複陽3複陽詞尾וַיֹּשִׁבוּם 撒上12:8。敘述式2單陽וַתּוֹשֶׁב 王下17:26。敘述式2複陽וַתֹּשִׁיבוּ 拉10:10。敘述式1複וַנֹּשֶׁב 拉10:2。</p>
+<p>祈使式－單陽הוֹשֵׁב 創47:6。複陽הוֹשִׁיבוּ 王上21:9,10。</p>
+<p>不定詞－附屬形הוֹשִׁיב 撒上2:8 尼13:27；הוֹשִׁיבִי 詩113:8。</p>
+<p>分詞－單陽מוֹשִׁיב 詩68:6 113:9。</p>
+<p>1.使坐下。וַיּוֹשִׁיבַינִי עַל-כִּסֵּא使我坐在...的位上，王上2:24 代下23:20；לָנֶצַח永遠，伯36:7；נֶגְדּוֹ在他對面，王上21:10；同樣，בְּרֹאשׁ הָעָם在百姓前頭，王上21:9,12。</p>
+<p>2.使居住、使安置。留在比梭溪的二百人那裡，撒上30:21。</p>
+<p>3.使住下。使他們在這地方居住，撒上12:8 王上17:5 何12:9 創47:6,11 利23:43 哀3:6 詩143:3。使城邑有人居住。賽54:3 結36:33；בְּאֶרֶץ תַּחְתִּיּוֹת在地的深處，結26:20；直接受詞省略，王下17:24,26 代下8:2 詩107:36；וְהוֹשַׁבְתִּים עַל-בָּתֵּיהֶם我必使他們住自己的房屋，何11:11；לְהוֹשִׁיב עִם-נְדִיבִים使他們與貴族同坐，撒上2:8 詩113:8；מוֹשִׁיב יְחִידִים בַּיְתָה叫孤獨的有家可住，詩68:6；מוֹשִׁיבִי עֲקֶרֶת הַבַּיִת祂使不能生育的婦人安居家中，詩113:9；וְהֹשַׁבְתִּים לָבֶטַח使他們安然居住，耶32:37 詩4:8；וְהוֹשַׁבְתִּי אֶתְכֶם כְּקַדְמוֹתֵיכֶם我要使你們那裡照舊有人居住，結36:11；使城市有人居住，結36:33 賽54:3。</p>
+<p>4.娶（給予住處）。僅出現在以斯拉和尼希米記：娶了נָשִׁים נָכְרִיּוֹת外邦女子為妻，拉10:2,10,14,17,18 尼13:27。הֹשִׁיבוּ נָשִׁים אַשְׁדֳּודִיּוֹת娶了亞實突的女子為妻，尼13:23。</p>
+<p>五、Hofal</p>
+<p>完成式－連續式2複陽וְהוּשַׁבְתֶּם לְבַדְּכֶם בְּקֶרֶב הָאָרֶץ只顧自己獨居境內，賽5:8。</p>
+<p>未完成式－3單陰הָאֹמֵר לִירוּשָׁלַםִ תּוּשָׁב論到耶路撒冷說必有人居住，賽44:26。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>properly, to sit down (specifically as judge. in ambush, in quiet); by implication, to dwell , to remain ; causatively, to settle , to marry</p></div></div></div></details>
+<details class="ntfold"><summary>H06738 — צֵל「蔭庇、陰影」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06738</li><li>詞形 צֵל</li><li>音譯 tsel</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 蔭庇、陰影</li><li>字源 來自 SH6751</li><li>中文用法 影14 蔭下10 蔭8 影兒7 影子4 蔭庇2 護庇2 下1 陰涼1 (49)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 蔭庇, 陰影</li><li>1a 陰影 (在日規儀上)</li><li>1b 蔭庇, 陰影 (做為保護)</li><li>1c 影兒 (象徵生命變化的過程)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽צֵל 王下20:9。單陽附屬形צֵל 創19:8。單陽3單陽詞尾בְצִלּוֹ 結31:6。單陽3單陰詞尾צִלָּהּ 詩80:10。單陽3複陽詞尾צִלָּם 民14:9。單陽2單陽詞尾צִלְּךָ 詩121:5。單陽2單陰詞尾צִלֵּךְ 賽16:3。單陽1單詞尾צִלִּי 士9:15。</p>
+<p>1.陰影。在日規儀上，王下20:9,10,10 20:11 賽38:8。</p>
+<p>2.蔭庇、陰影。做為保護，士9:15 何4:13 拿4:5,6（喻意）；何14:7 結17:23 31:6,12,17 詩80:10 歌2:3(身心愉快、喜悅)；磐石的影子，賽32:2（象徵用法）；בְּצֵל קֹרָתִי我舍下，創19:8。比喻　神保護：雲下，賽4:6 16:3 25:4；將我隱藏在你翅膀的蔭下，詩17:8 36:7 57:1 63:7。一般影子，伯7:2；比喻耶和華，詩121:5＝保護、護庇；城市，耶48:45 民14:9 詩91:1 賽49:2 51:16；外邦人的保護，賽30:2,3；王的，哀4:20；也指智慧的，傳7:12；銀錢的，傳7:12。</p>
+<p>3.影兒。象徵生命變化的過程，伯8:9 14:2 詩144:4 傳6:12 8:13；יָמַי כְּצֵל נָטוּי如日影偏斜，詩102:11；כְּצֵל-כִּנְטוֹתוֹ日影漸漸偏斜，詩109:23；וִיצֻרַי כַּצֵּל כֻּלָּם我的百體好像影兒，伯17:7。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 6751 ;<br/>shade , whether literal or figurative</p></div></div></div></details>
+<details class="ntfold"><summary>H02530 — חָמַד「喜歡、想要、貪戀」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02530</li><li>詞形 חָמַד</li><li>音譯 chamad</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 喜歡、想要、貪戀</li><li>字源 一原形字根</li><li>中文用法 貪戀3 貪圖2 悅人的2 所喜悅的2 戀慕1 歡歡喜喜1 願1 積蓄1 羨慕1 想得1 喜歡1 喜愛1 貪慕1 貪愛1 笑容1 可羨慕1 (21)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 渴望, 貪圖, 樂於做…, 喜歡做…</li><li>1a (Qal) 渴望</li><li>1b (Niphal) 值得追求的</li><li>1c (Piel) 很喜歡, 強烈地希望<br/>陰性名詞</li><li>2 稱心如意, 寶貴</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>完成式－3單陽חָמַד 詩68:16 箴12:12。3複חָמְדוּ 箴1:22。2複陽חֲמַדְתֶּם 賽1:29。連續式3複וְחָמְדוּ 彌2:2。</p>
+<p>未完成式－3單陽יַחְמֹד 出34:24。2單陽תַחְמֹד 出20:17,17 箴6:25。1複3單陽詞尾נֶחְמְדֵהוּ 賽53:2。敘述式1單3複陽詞尾וָאֶחְמְדֵם 書7:21。</p>
+<p>被動分詞－單陽3單陽詞尾חֲמוּדוֹ 詩39:11 伯20:20。複陽3複陽詞尾חֲמוּדֵיהֶם 賽44:9。</p>
+<p>1. 負面字義：過度的、自私的慾望。貪戀人的房屋，出20:17,17＝申5:21 出34:24 申7:25 書7:21 彌2:2；想得，箴12:12；戀慕她的美色，箴6:25。</p>
+<p>2.以…為樂、喜歡。所喜愛的橡樹，賽1:29。分詞複數：וַחֲמוּדֵיהֶם他們所喜悅的都無益處，賽44:9。לֵצִים לָצוֹן חָמְדוּ褻慢人喜歡褻慢，箴1:22。</p>
+<p>3. 較少用於正面字義：הָהָר חָמַד אֱלֹהִים לְשִׁבְתּוֹ　神所願居住的山，詩68:16。　神受苦的僕人，無美貌使我們羨慕他，賽53:2；被動分詞：חֲמוּדוֹ他的笑容（他所喜愛的），詩39:11 伯20:20。</p>
+<p>二、Nifal</p>
+<p>分詞－單陽נֶחְמָד 創2:9 3:6。複陽נֶּחֱמָדִים 詩19:10。</p>
+<p>值得追求的。נֶחְמָד לְמַרְאֶה悅人的眼目，創2:9；נֶחְמָד לְהַשְׂכִּיל可喜愛的，創3:6；הַנֶּחֱמָדִים מִזָּהָב比金子可羡慕，詩19:10；אוֹצָר נֶחְמָד積蓄寶物，箴21:20。</p>
+<p>三、Piel</p>
+<p>完成式－1單חִמַּדְתִּי 歌2:3。</p>
+<p>很喜歡、強烈地希望。בְּצִלּוֹ חִמַּדְתִּי וְיָשַׁבְתִּי歡歡喜喜坐在他的蔭下，歌2:3。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>to delight in</p></div></div></div></details>
+<details class="ntfold"><summary>H06529 — פְּרִי「果子、出產」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06529</li><li>詞形 פְּרִי</li><li>音譯 pᵉriy</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 果子、出產</li><li>字源 來自 SH6509</li><li>中文用法 果子57 所生的8 所產的8 果8 出產5 結果5 所下的4 土產3 產3 生育2 功效1 善報1 土1 子孫1 所得1 所得的1 所懷的1 果實1 果效1 果木1 穀實1 肥1 (115)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 果實</li><li>1a 果實, 出產 (出自地土的)</li><li>1b 果實, 後裔, 子女, 子孫 (出自子宮的)</li><li>1c 果實 (出自行為的) (比喻用法)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽פְּרִי 何9:16；פֶרִי 耶12:2。單陽附屬形פְּרִי 創4:3。單陽3單陽詞尾פִּרְיוֹ 創3:6。單陽3單陰詞尾פִּרְיָהּ 利25:19。單陽3複陽詞尾פְּרִיהֶם 摩9:14；פִּרְיָם 哀2:20；פִּרְיָמוֹ 詩21:10。單陽3複陰詞尾פְּרִיהֶן 耶29:28；פִּרְיָן 耶29:5。單陽2單陽詞尾פֶּרְיְךָ 何14:8。單陽2單陰詞尾פִרְיֵךְ 結25:4。單陽2複陽詞尾פֶרְיְכֶם 結36:8。單陽1單詞尾פִּרְיִי 箴8:19。</p>
+<p>一、מִפְּרִי הָאֲדָמָה地裡的果實，創4:3；一般農產品，申7:13；פְּרִי הָאָרֶץ那地的果子，民13:20,26,27 結25:4；葡萄樹的，王下19:29＝賽37:30 亞8:12 賽65:21 歌8:11,12。比喻以色列，何10:1；樹上的果子，創3:2,3,6 出10:15；比喻用法： 摩2:9 何9:16 結17:23。花園的，摩9:14 耶29:5,28；樂園的，歌4:13,16；עֵץ פְּרִי結果子的樹木，創1:11 詩148:9 傳2:5；אֶרֶץ פְּרִי結果實之地，詩107:34；פְּרִי תְבוּאָה所出產的果實，詩107:37；所結的穀實，詩72:16。</p>
+<p>二、＝後裔、子女、子孫。出自子宮的，創30:2 申7:13 哀2:20 詩21:10。牲畜，申28:4,11,51 30:9；蛇、毒蛇、火焰的飛龍，喻意征服非利士的力量，賽14:29。</p>
+<p>三、比喻用法：出自行為的果實。善的，賽3:10 詩58:11；惡的，何10:13 箴1:31 彌7:13；思想的，耶6:19；除掉罪惡的結果，賽27:9；勞碌的結果，箴31:16,31；　神治理的，詩104:13；智慧的，箴8:19；פְרִי צְדָקָה公義的果子，摩6:12；פְּרִי-צַדִּיק義人所結的果子，箴11:30；照各人所行的和他作事的結果報應他，耶17:10 21:14 32:19；מִפְּרִי פִי-אִישׁ口所結的果子，箴12:14 13:2 18:20；自大的心所結的，賽10:12；舌頭所結的，箴18:21。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 6509 ;<br/>fruit (literally or figuratively)</p></div></div></div></details>
+<details class="ntfold"><summary>H04966 — מָתוֹק「甜的、甜美」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H04966</li><li>詞形 מָתוֹק</li><li>音譯 mathowq</li><li>約 舊約</li><li>詞類 形容詞</li><li>中文詞義 甜的、甜美</li><li>字源 來自 SH4985</li><li>中文用法 甜5 甘甜5 香甜1 佳美1 (12)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>形</li><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 甜的<br/>陽性名詞</li><li>2 優美, 宜人(指事物) (<br/>傳 5:12<br/><br/>11:7<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽מָתוֹק 士14:14。單陰מְתוּקָה 傳5:12。複陽מְתוּקִים 詩19:10。</p>
+<p>1.甜的。蜂蜜，士14,18（參孫的謎語）；箴24:13＝甜如蜜，結3:3。כָּל-מַר מָתוֹק一切苦物都覺甘甜，箴27:7。比喻　神的典章，比蜜甘甜，詩19:10，參 箴16:24（比喻話語令人愉悅）；喻指良人的愛，וּפִרְיוֹ מָתוֹק לְחִכִּי嘗他果子的滋味覺得甘甜，歌2:3。象徵是非顛倒，道德混亂：שָׂמִים מַר לְמָתוֹק וּמָתוֹק לְמָר以苦為甜，以甜為苦的人，賽5:20,20。</p>
+<p>2.愉快的。形容辛苦努力的可以知足而睡，睡得香甜，傳5:12；活著是可喜樂的，光本是佳美的，傳11:7。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or מָתוּק ; from 4985 ;<br/>sweet</p></div></div></div></details>
+<details class="ntfold"><summary>H02441 — חֵךְ「上顎、口、嘴巴」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02441</li><li>詞形 חֵךְ</li><li>音譯 chek</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 上顎、口、嘴巴</li><li>字源 或許來自 SH2596 ，含品嚐之意</li><li>中文用法 口8 上膛7 嘗...的滋味1 覺1 (17)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 口, 上顎, 味道, 牙床</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽חֵךְ 伯12:11 34:3。單陽2單陽詞尾חִכְּךָ 何8:1；חִכֶּךָ 結3:26 箴24:13。單陽1單詞尾חִכִּי 箴8:7。大多用於詩體，特別用在智慧文學：單陽2單陰詞尾חִכֵּךְ 歌7:9。單陽3單陽詞尾חִכּוֹ 哀4:4。單陽3單陰詞尾חִכָּהּ 箴5:3。單陽3複陽詞尾חִכָּם 伯29:10。</p>
+<p>1. אֶל-חִכְּךָ שֹׁפָר你用口吹角吧，何8:1；時常用לָשׁוֹן דָּבַק舌頭緊貼上顎，形容說不出話來，結3:26 伯29:10；咒詛，詩137:6；渴望解渴，哀4:4（בַּצָּמָא口渴）。</p>
+<p>2. 說話的器官：她的口比油更滑，箴5:3 8:7；我沒有容口犯罪，伯31:30；דִּבְּרָה לְשׁוֹנִי בְחִכִּי我的舌在我的上膛發言，伯33:2。</p>
+<p>3. 味覺器官：上膛嘗食物，伯12:11 34:3；פִרְיוֹ מָתוֹק לְחִכִּי嘗他果子的滋味，歌2:3；便覺甘甜，箴24:13（暗示智慧的比喻對靈魂來說是甘甜的）；比喻　神的話是甜蜜的，在我上膛何等甘美，詩119:103。辨別禍福：我的口裡豈不辨奸惡，伯6:30。愛戀不捨離棄，בְּתוֹךְ חִכּוֹ含在口中，伯20:13（喜歡並延長它的味道）。</p>
+<p>4. 隱喻情人的嘴很甜（親吻）及美麗（甜言蜜語）：他的口極其甘甜，歌5:16 7:9。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] probably from 2596 in the sense of tasting;<br/>properly, the palate or inside of the mouth; hence, the mouth itself (as the organ of speech, taste and kissing)</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_02_03_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第2章3節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-12 22:36:44 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

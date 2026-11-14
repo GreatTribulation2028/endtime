@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 4:14 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_04_14_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第4章14節<br/>有哪噠和番紅花，菖蒲和桂樹，並各樣乳香木、沒藥、沉香，與一切上等的果品。</p>
+<p>上一節剛寫到鳳仙花與哪噠，這一節把香料的名單接著數下去。和合本寫：「有哪噠和番紅花，菖蒲和桂樹，並各樣乳香木、沒藥、沉香，與一切上等的果品。」哪噠被再說一次，隨後是番紅花、菖蒲、桂樹，又有各樣乳香木、沒藥、沉香，末了是一切上等的果品。</p>
+<p>原文與和合本的次序一致：נֵרְדְּ וְכַרְכֹּם קָנֶה וְקִנָּמוֹן「哪噠與番紅花，菖蒲與桂樹」，隨後 עִם כָּל־עֲצֵי לְבוֹנָה「連同各樣乳香木」，再是 מֹר וַאֲהָלוֹת「沒藥與沉香」，末了 עִם כָּל־רָאשֵׁי בְשָׂמִים「連同一切香料中最上等的」。和合本寫「一切上等的果品」，把 רָאשֵׁי בְשָׂמִים「香料的那些頭、那些最上等的香料」譯成「上等的果品」。上一節已有「佳美的果子」，本節原文收束在香料的上品，不是再寫一層果子。差別要留下意思，不選邊改定經文。</p>
+<p>哪噠在 4:13 已經出現，本節再列一次，作為這一份更長名單的起頭。乳香、沒藥在 4:6 是山與岡的名稱，3:6 是薰在上來之人身上的香氣；本節是園中的乳香木與沒藥，與沉香並列。菖蒲、桂樹在聖膏油的配方裏也出現過，那是另一套場合，本節只把它們當作園中的香料來數，不把聖所的條例倒填進來。</p>
+<p>本節經文沒有角色標示。關鎖的園被打開來數點，到這裏幾乎成了一座香料園。名單很密，卻仍屬於上一節那一座石榴園林，不是另起一個不相干的地方。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_04_13_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第4章13節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_04_15_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第4章15節</a></nav>
+<h2 class="ntitle">雅歌 第4章14節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第4章14節<br/>有哪噠和番紅花，菖蒲和桂樹，並各樣乳香木、沒藥、沉香，與一切上等的果品。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 4:14 &gt;</div>
+<div class="orig-he">נֵ֣רְדְּ׀ וְ/כַרְכֹּ֗ם קָנֶה֙ וְ/קִנָּמ֔וֹן עִ֖ם כָּל־ עֲצֵ֣י לְבוֹנָ֑ה מֹ֚ר וַ/אֲהָל֔וֹת עִ֖ם כָּל־ רָאשֵׁ֥י בְשָׂמִֽים׃</div>
+<div class="orig-zh">有哪噠與番紅花，菖蒲與桂樹，連同各樣乳香木，沒藥與沉香，以及一切最上等的香料。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_04_14</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>有哪噠和番紅花，菖蒲和桂樹，並各樣乳香木、沒藥、沉香，與一切上等的果品。</p>
+<p>原文是「哪噠與番紅花，菖蒲與桂樹，連同各樣乳香木，沒藥與沉香，連同一切香料中最上等的」。和合本寫「有哪噠和番紅花，菖蒲和桂樹，並各樣乳香木、沒藥、沉香，與一切上等的果品」。主要差別在末句：רָאשֵׁי בְשָׂמִים 是「香料的那些頭／最上等的香料」，和合本寫「上等的果品」，把收束從香料改寫成果品。עֲצֵי לְבוֹנָה 是「乳香的那些樹」，和合本寫「乳香木」。哪噠在 4:13 已出現，本節再列。原文此節沒有角色標示。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 哪噠、番紅花，菖蒲與桂樹，並各樣乳香木｜נֵרְדְּ וְכַרְכֹּם קָנֶה וְקִנָּמוֹן עִם כָּל־עֲצֵי לְבוֹנָה</h3>
+<blockquote>נֵ֣רְדְּ וְ/כַרְכֹּ֗ם קָנֶה֙ וְ/קִנָּמ֔וֹן עִ֖ם כָּל־ עֲצֵ֣י לְבוֹנָ֑ה</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>נֵ֣רְדְּ</strong>（名詞單數絕對形，哪噠，<code><span class="sn">H05373</span></code> nerd。4:13 是複數，本節是單數，再列一次）</li>
+<li><strong>וְ/כַרְכֹּ֗ם</strong>（連接詞加名詞，與番紅花，<code><span class="sn">H03750</span></code> karkom；字義「番紅花」）</li>
+<li><strong>קָנֶה֙</strong>（陽性名詞單數絕對形，菖蒲、香蘆，<code><span class="sn">H07070</span></code> qaneh；字義可指蘆葦、杖或香菖蒲。本頁字典在本節取香菖蒲一義，和合本寫「菖蒲」）</li>
+<li><strong>וְ/קִנָּמ֔וֹן</strong>（連接詞加名詞，與桂樹、肉桂，<code><span class="sn">H07076</span></code> qinnamon；字義「桂皮、桂樹」。和合本寫「桂樹」）</li>
+<li><strong>עִם כָּל־</strong>（介詞「連同」加「各樣／一切」。不另造編號）</li>
+<li><strong>עֲצֵ֣י</strong>（陽性名詞複數附屬形，……的那些樹，<code><span class="sn">H06086</span></code> ets；字義「樹、木」）</li>
+<li><strong>לְבוֹנָ֑ה</strong>（乳香，<code><span class="sn">H03828</span></code> levonah。和合本寫「乳香木」，即乳香的那些樹）</li>
+</ul>
+<p>名單從哪噠再次起頭，接上番紅花，再以一對發出香氣的莖與皮：菖蒲與桂樹，然後是各樣乳香木。和合本這一段與原文次序相合。哪噠在上一節已經與鳳仙花並列，本節把它用作更長名單的第一個詞，不是要把上一節作廢，乃是接著往下數。קָנֶה 在別處可指蘆葦或量度的竿，本節按香菖蒲來讀。乳香在 4:6 是岡的名稱，本節是園中的樹。同一個香料，這一處是可以種植、可以數點的木，不是人要前往的山岡。</p>
+<h3>2️⃣ 沒藥、沉香，與一切最上等的香料｜מֹר וַאֲהָלוֹת עִם כָּל־רָאשֵׁי בְשָׂמִים</h3>
+<blockquote>מֹ֚ר וַ/אֲהָל֔וֹת עִ֖ם כָּל־ רָאשֵׁ֥י בְשָׂמִֽים׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>מֹ֚ר</strong>（沒藥，<code><span class="sn">H04753</span></code> mor。4:6 是「沒藥山」，本節是園中的沒藥）</li>
+<li><strong>וַ/אֲהָל֔וֹת</strong>（連接詞加名詞複數，與沉香，<code><span class="sn">H00174</span></code> ahalim；字義「沉香木」。和合本寫「沉香」）</li>
+<li><strong>עִם כָּל־</strong>（連同一切。不另造編號）</li>
+<li><strong>רָאשֵׁ֥י</strong>（陽性名詞複數附屬形，……的那些頭、最上等的，<code><span class="sn">H07218</span></code> rosh；字義「頭、頂點、在前的」。本節取「最上等的」）</li>
+<li><strong>בְשָׂמִֽים׃</strong>（香料們，<code><span class="sn">H01314</span></code> bosem。4:10 是被勝過的「一切香品」，本節是園中最上等的那些香料）</li>
+</ul>
+<p>名單收到沒藥與沉香，再以「一切最上等的香料」作總括。和合本寫「與一切上等的果品」，把收束改寫成果品。上一節已經有「佳美的果子」，本節原文的末句卻是香料中的「頭」，也就是最上等的那些。譯文讓果品再出現一次，原文則把這一份名單收在香料上。差別要據實說明，不必為了與上一節對齊而改定任何一邊。沒藥在 4:6 是山名，1:13 是一袋，3:6 是薰香；本節是園中與沉香並列的一味。4:10 說她膏油的香氣勝過一切香品，本節卻把「一切最上等的香料」種在園裏。香料先被比下去，又在園中被數出來，兩處不宜合成一句。</p>
+<h3>3️⃣ 收束｜本節歸納</h3>
+<p>本節接著 4:13，列出哪噠、番紅花、菖蒲、桂樹、各樣乳香木、沒藥、沉香，以及一切最上等的香料。和合本把末句寫成「一切上等的果品」。關鎖之園走到這裏，裏面幾乎是一座香料園。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H05373、H03750、H07070、H07076、H06086、H03828、H04753、H00174、H07218、H01314。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">נֵרְדְּ</span><span class="gid">H05373</span></div><ul><li><b>主數值</b> 254</li><li><b>H小數</b> 11</li><li><b>H標準</b> 254</li><li><b>H序數</b> 38</li><li><b>H_Atbash</b> 112</li><li><b>H_Sofit擴展</b> 254</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 254 的詞條共 12 個（含本詞）。其中已有中文詞義者如 H02361 חוּרָם「純潔、高貴的」、H02543 חֲמוֹר「公驢」、H02544 חֲמוֹר「驢」、H04034 מְגוֹרַה「畏懼、害怕」、H04035 מְגוּרָה「穀倉」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　נֵרְדְּ 是哪噠，4:13 已以複數出現，本節再以單數列在名單之首。和合本寫「哪噠」。</p>
+<p><span class="gl">④精意</span>　同一種香植物被再說一次，名單就有了接縫。本節不是另起一座園，乃是把上一節還沒數完的香氣繼續寫下去。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">כַּרְכֹּם</span><span class="gid">H03750</span></div><ul><li><b>主數值</b> 280</li><li><b>H小數</b> 10</li><li><b>H標準</b> 280</li><li><b>H序數</b> 55</li><li><b>H_Atbash</b> 73</li><li><b>H_Sofit擴展</b> 840</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 280 的詞條共 29 個（含本詞）。其中已有中文詞義者如 H01799 דִּכְרוֹן「記錄、紀念物」、H02034 הֲרִיסָה「毀壞」、H03293 יַעַר「森林、樹林、蜂房」、H03415 יָרַע「懼怕、顫抖」、H04354 מָכִירִי「賣出」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　כַּרְכֹּם 是番紅花，本卷只在本節出現。和合本寫「番紅花」。</p>
+<p><span class="gl">④精意</span>　番紅花為名單加上一種新的顏色與香氣。本節用它接在哪噠之後，讓園裏的香料不只一種。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">קָנֶה</span><span class="gid">H07070</span></div><ul><li><b>主數值</b> 155</li><li><b>H小數</b> 11</li><li><b>H標準</b> 155</li><li><b>H序數</b> 38</li><li><b>H_Atbash</b> 103</li><li><b>H_Sofit擴展</b> 155</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 155 的詞條共 16 個（含本詞）。其中已有中文詞義者如 H03086 יְהוֹעַדִּין「耶和華喜悅的」、H03219 יַלְקוּט「錢袋、皮包、小囊」、H03939 לַעֲנָה「茵蔯(被認為是劇毒)」、H04169 מוֹקְדָה「爐床」、H04654 מַפָּלָה「被廢棄的、毀壞」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　קָנֶה 本頁字典在本節取香菖蒲一義，和合本寫「菖蒲」。同一詞在別處可指蘆葦或量竿，本節不取那些意義。</p>
+<p><span class="gl">④精意</span>　菖蒲是園中帶香的莖。本節把它與桂樹並排，當作可以數點的香料，不是當作別處的蘆葦或度量工具。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">קִנָּמוֹן</span><span class="gid">H07076</span></div><ul><li><b>主數值</b> 246</li><li><b>H小數</b> 21</li><li><b>H標準</b> 246</li><li><b>H序數</b> 66</li><li><b>H_Atbash</b> 112</li><li><b>H_Sofit擴展</b> 896</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 246 的詞條共 18 個（含本詞）。其中已有中文詞義者如 H00565 אִמְרָה「言論、話語」、H01403 גַּבְרִיאֵל「　神的戰士」、H03994 מְאֵרָה「咒詛」、H04057 מִדְבָּר「草場、曠野」、H04171 מוּר「改變、更換」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　קִנָּמוֹן 是桂樹、肉桂。和合本寫「桂樹」。</p>
+<p><span class="gl">④精意</span>　桂樹把香氣寫進木與皮。本節讓它與菖蒲成對，都是園裏可以指名的香料。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">עֵץ</span><span class="gid">H06086</span></div><ul><li><b>主數值</b> 160</li><li><b>H小數</b> 16</li><li><b>H標準</b> 160</li><li><b>H序數</b> 34</li><li><b>H_Atbash</b> 12</li><li><b>H_Sofit擴展</b> 970</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 160 的詞條共 42 個（含本詞）。其中已有中文詞義者如 H00467 אֱלִיפֶלֶט「拯救之　神」、H01135 בֶּן־חָנָן「哈南之子」、H03243 יָנַק「吮吸、餵奶」、H03286 יָעַף「疲乏、軟弱」、H03287 יָעֵף「疲乏的、軟弱的」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　עֲצֵי 是那些樹，作「乳香的那些樹」。和合本寫「乳香木」。</p>
+<p><span class="gl">④精意</span>　樹把乳香說成可以種植的木，而不只是焚燒時的一縷煙。本節讓香料在園中有根。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">לְבוֹנָה</span><span class="gid">H03828</span></div><ul><li><b>主數值</b> 93</li><li><b>H小數</b> 21</li><li><b>H標準</b> 93</li><li><b>H序數</b> 39</li><li><b>H_Atbash</b> 499</li><li><b>H_Sofit擴展</b> 93</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 93 的詞條共 23 個（含本詞）。其中已有中文詞義者如 H00077 אֶבֶץ「或許意為隱約閃光」、H00173 אׇהֳלִיבָמָה「高處的帳棚」、H01421 גִּדּוּף「誹謗、辱駡」、H02014 הֲפֻגָה「停止、止息」、H02537 חֲמוּטַל「露水的公公」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　לְבוֹנָה 是乳香，本節作「乳香木」。4:6 是「乳香岡」，3:6 是薰香。本節是園中的樹。</p>
+<p><span class="gl">④精意</span>　同一個詞，這一處是園林裏的木。本節不再請人往岡上去，只把乳香數進已經關鎖的這座園。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">מֹר</span><span class="gid">H04753</span></div><ul><li><b>主數值</b> 240</li><li><b>H小數</b> 6</li><li><b>H標準</b> 240</li><li><b>H序數</b> 33</li><li><b>H_Atbash</b> 13</li><li><b>H_Sofit擴展</b> 240</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 240 的詞條共 21 個（含本詞）。其中已有中文詞義者如 H03156 יִזְרַחְיָה「耶和華將照亮」、H03593 כִּידוֹר「攻擊、猛攻」、H03603 כִּכָּר「圓圈、環繞(山谷)、圓形的(麵包)、他連得」、H03604 כִּכֵּר「他連得」、H04738 מִקְסָם「占卜」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　מֹר 是沒藥。4:6 是「沒藥山」，1:13 是一袋，3:6 是薰香；本節與沉香並列，是園中的一味。</p>
+<p><span class="gl">④精意</span>　沒藥在本節回到可被數點的香料。山、袋子與薰香都是別節的用法，本節只要它在園裏，與沉香在一起。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">אֲהָלִים</span><span class="gid">H00174</span></div><ul><li><b>主數值</b> 86</li><li><b>H小數</b> 14</li><li><b>H標準</b> 86</li><li><b>H序數</b> 41</li><li><b>H_Atbash</b> 560</li><li><b>H_Sofit擴展</b> 646</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 86 的詞條共 12 個（含本詞）。其中已有中文詞義者如 H00430 אֱלֹהִים「　神、諸神」、H00644 אָפָה「烘烤」、H01691 דִּבְלַיִם「兩個餅」、H03563 כּוֹס「杯子、貓頭鷹」、H03594 כִּיּוּן「雕像」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　אֲהָלוֹת 是沉香。和合本寫「沉香」。與沒藥並列。</p>
+<p><span class="gl">④精意</span>　沉香為名單再加一味濃香。本節把它放在沒藥旁邊，然後才用「最上等的香料」把全部收住。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">רֹאשׁ</span><span class="gid">H07218</span></div><ul><li><b>主數值</b> 501</li><li><b>H小數</b> 6</li><li><b>H標準</b> 501</li><li><b>H序數</b> 42</li><li><b>H_Atbash</b> 405</li><li><b>H_Sofit擴展</b> 501</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 501 的詞條共 27 個（含本詞）。其中已有中文詞義者如 H00574 אֵמְתָּנִי「可怕的」、H00781 אָרַשׂ「訂婚、聘定」、H00833 אָשַׁר「坦白、公正、誠實、直行」、H00834 אֲשֶׁר「就是、的、為要、何處、如何、因為、每一個」、H00835 אֶשֶׁר「蒙福、幸福、福氣」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　רָאשֵׁי 在本節取「最上等的、那些頭」。和合本寫「上等的果品」，把所屬的對象從香料寫成果品。原文是「香料的那些頭」。4:8 這個詞作「頂」。</p>
+<p><span class="gl">④精意</span>　頭，在本節是上品的意思。本節用它來收束整份香料名單，不是再寫一座山頂。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">בֶּשֶׂם</span><span class="gid">H01314</span></div><ul><li><b>主數值</b> 342</li><li><b>H小數</b> 9</li><li><b>H標準</b> 342</li><li><b>H序數</b> 36</li><li><b>H_Atbash</b> 312</li><li><b>H_Sofit擴展</b> 902</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 342 的詞條共 7 個（含本詞）。其中已有中文詞義者如 H01313 בָּשָׂם「香料、甜味、香氣」、H04016 מָבֻשׁ「男性生殖器、私處」、H04770 מַרְבֵּק「牛棚、圈養牲畜的地方」、H05878 עֵין חֲרֹד「顫抖之泉」、H07635 שָׁבִיל「路、通道」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　בְשָׂמִים 是香料們。和合本把「最上等的香料」寫成「上等的果品」。4:10 是被勝過的一切香品，本節是園中的上品。</p>
+<p><span class="gl">④精意</span>　香料在本節不再站在被比下去的那一邊，乃是被種在園裏，並且是最上等的那些。比較與種植，是兩件不同的事。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>雅歌 4:13 已寫哪噠與佳美的果子，本節從哪噠再起頭，把香料數完，末了在原文收於「最上等的香料」。兩節是同一座園的連續名單。和合本本節寫「上等的果品」，容易與上一節的果子連成一句；對讀時宜辨明原文末句是香料，不是果子。</p>
+<p>雅歌 4:6、3:6、1:13 已用過沒藥與乳香，4:10 已寫「勝過一切香品」。本節是園中的乳香木、沒藥，以及最上等的香料，用法不同，不宜把山岡、薰香或膏油的比較直接搬進這一份名單。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。後來的讀者若把這些香料讀成別卷中的禮物或聖所配方，那是後世或他處的讀法，不可倒填進本節。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「哪噠與番紅花，菖蒲與桂樹，連同各樣乳香木，沒藥與沉香，連同一切香料中最上等的」。和合本大體照此次序，只把末句「最上等的香料」寫成「上等的果品」。</p>
+<p><strong>本書用法</strong>　本節緊接 4:13 的哪噠與果子，把園中香料數完。沒藥、乳香、香料都是本卷已用過的詞，本節改寫成園中的木與上品。下一節將轉寫園中的泉與活水。</p>
+<p><strong>舊約根源</strong>　菖蒲、桂樹、沒藥、乳香在聖膏油或聖香的配方裏也出現過，那是另一套禮儀場合。本節只把它們當作園中可數的香料，不把聖所的條例倒填進來。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把沒藥、乳香或這一份香料名單讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<p><strong>跨篇深意</strong>　關鎖的園被數到這裏，幾乎全是香氣。名單越密，越顯出上一節那把鎖不是因為園是空的。本節把最上等的香料放在園裏，讓人知道被守住的地方，裏面可以極其豐盛。</p>
+<h2>六、總意</h2>
+<p>哪噠還沒數完，這一節又從它數起。番紅花，菖蒲和桂樹，各樣乳香木，沒藥，沉香。名字一個接一個，像是怕把園裏的香漏掉一樣。</p>
+<p>和合本在末了寫「一切上等的果品」。原文收束的卻是香料中最上等的那些。上一節已經有佳美的果子，本節要把香料說滿。譯文讓果子再出現一次，原文則讓香氣作結。兩種收法都當據實讀，不必合成一句。</p>
+<p>沒藥與乳香，本卷早已用過：一袋、一縷薰香，一座山，一座岡。本節它們回到園中，成為可以種植、可以數點的木與香料。舊詞換了位置，意思也就不再是山頭上的那一句。</p>
+<p>讀到這裏，4:12 那座關鎖的園已經被打開來看過果木，也看過一整排香料。下一節將寫水。園若只有香，還沒有泉，畫面仍未完。本節先把香料的名單收到最上等的那一層。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H05373 — נֵרְדְּ「哪噠香膏、一種芳香植物」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H05373</li><li>詞形 נֵרְדְּ</li><li>音譯 nerd</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 哪噠香膏、一種芳香植物</li><li>字源 屬外國起源</li><li>中文用法 哪噠樹1 哪噠香膏1 哪噠1 (3)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 香穗草, 甘松</li><li>1a 一種來自印度的芳香植物</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽נֵרְדְּ哪噠，歌4:14；單陽1單詞尾נִרְדִּי我的哪噠香膏，歌1:12；複陽נְרָדִים哪噠樹，歌4:13。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] of foreign origin;<br/>nard , an aromatic</p></div></div></div></details>
+<details class="ntfold"><summary>H03750 — כַּרְכֹּם「番紅花」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03750</li><li>詞形 כַּרְכֹּם</li><li>音譯 karkom</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 番紅花</li><li>字源 或許屬國外起源</li><li>中文用法 番紅花1 (1) 參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 番紅花 (<br/>歌 4:14<br/>)</li><li>1a &quot;番紅花&quot;科中的一種橘黃色的花, 用於飲料和甜點中調味, 可促進流汗幫助身體散熱</li></ol></div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] probably of foreign origin;<br/>the crocus</p></div></div></div></details>
+<details class="ntfold"><summary>H07070 — קָנֶה「蘆葦、杖、管子、柄、橫桿」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07070</li><li>詞形 קָנֶה</li><li>音譯 qaneh</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 蘆葦、杖、管子、柄、橫桿</li><li>字源 來自 SH7069</li><li>中文用法 竿16 枝子12 蘆葦6 菖蒲5 枝4 肘3 榦2 葦2 麥子2 天平1 羊矢骨1 葦子1 (55)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 蘆葦, 莖桿</li><li>1a 穀類的莖桿</li><li>1b 水生植物, 蘆葦</li><li>1c 菖蒲 (一種散發香味的蘆葦)</li><li>1d 引申的意義</li><li>1d1 測量的竿子</li><li>1d2 一竿(計量的單位- 六肘尺)</li><li>1d3 天平的秤 (<br/>賽 46:6<br/>)</li><li>1d4 燈柱 (<br/>出 25:31<br/><br/>37:17<br/>)</li><li>1d5 燈台的杈枝</li><li>1d6 肩胛 (<br/>伯 31:22<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽קָנֶה 王上14:15。單陽附屬形קְנֵה 結40:3。單陽3單陰詞尾קָנָהּ 出25:31 37:17＝קָנָה 伯31:22。複陽קָנִים 出25:32；複陽附屬形קְנֵי 出37:18。複陽3複陽詞尾קְנֹתָם 出25:36 37:22。</p>
+<p>1. 穀類的莖桿，創41:5,22。</p>
+<p>2.水生植物、蘆葦，王上14:15 賽19:6 35:7；蘆葦中的野獸，詩68:30。比喻軟弱中的依靠：臥在蘆葦隱密處，伯40:21；壓傷的葦杖，王下18:21＝賽36:6；מִשְׁעֶנֶת קָנֶה蘆葦的杖，結29:6；קָנֶה רָצוּץ壓傷的蘆葦，賽42:3。</p>
+<p>3.菖蒲，一種散發香味的蘆葦。וְקָנֶה הַטּוֹב מֵאֶרֶץ מֶרְחָק從遠方出的菖蒲，耶6:20；וּקְנֵה-בֹשֶׂם香菖蒲，出30:23；קָנֶה單獨使用，結27:19 賽43:24 歌4:14。</p>
+<p>4. 引申的意義：</p>
+<p>A. 測量的竿子。וּקְנֵה הַמִּדָּה量度的竿，結40:3,5 42:16,16,17,18,19。</p>
+<p>B.一竿（計量的單位：六肘尺），結40:5,5,6,7,8；מְלוֹ הַקָּנֶה足一竿，結41:8。</p>
+<p>C. 天平的秤，賽46:6。</p>
+<p>D. 燈柱，出25:31＝出37:17。</p>
+<p>E. 燈台的杈枝，出25:32＝出37:18。</p>
+<p>F.肩胛，伯31:22。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 7069 ;<br/>a reed (as erect ); by resemblance a rod (especially for measuring), shaft , tube , stem , the radius (of the arm), beam (of a steelyard)</p></div></div></div></details>
+<details class="ntfold"><summary>H07076 — קִנָּמוֹן「桂皮、桂樹」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07076</li><li>詞形 קִנָּמוֹן</li><li>音譯 qinnamown</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 桂皮、桂樹</li><li>字源 來自一不用的字根</li><li>中文用法 桂樹1 桂皮1 肉桂1 (3)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 肉桂</li><li>1a 芳香樹皮用來做調味料 (<br/>出 30:23<br/><br/>箴 7:17<br/><br/>歌 4:14<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽附屬形קִנְּמָן肉桂，出30:23；單陽קִנָּמוֹן桂皮，箴7:17；桂樹，歌4:14。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root (meaning to erect );<br/>cinnamon bark (as in upright rolls)</p></div></div></div></details>
+<details class="ntfold"><summary>H06086 — עֵץ</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H06086</li><li>詞形 עֵץ</li><li>約 舊約</li><li>詞類 名、陽</li><li>字源 [字源] from 6095 ; a tree (from its firmness); hence, wood (plural sticks)</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 樹, 木頭, 木材, 樹幹, 柴, 桿, 枝條, 木架</li><li>1a 樹, 樹林</li><li>1b 木頭, 木料, 木架, 木柴, 香柏木, 木麻</li></ol></div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 6095 ;<br/>a tree (from its firmness); hence, wood (plural sticks)</p></div></div></div></details>
+<details class="ntfold"><summary>H03828 — לְבוֹנָה「乳香」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03828</li><li>詞形 לְבוֹנָה</li><li>音譯 lebownah</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 乳香</li><li>字源 來自 SH3836</li><li>中文用法 乳香21 (21)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 乳香</li><li>1a 一種被當作香焚燒的樹脂</li><li>1a1 聖所的香火成份 (<br/>出 30:34<br/>)</li><li>1a2 當作香來焚燒 (<br/>耶 6:20<br/>)</li><li>1a3 用在素祭</li><li>1a4 當作香料焚燒 (<br/>歌 3:6<br/>)</li><li>1a5 獻給錫安 (<br/>賽 60:6<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰לְבֹנָה 出30:34。單陰3單陰詞尾לְבֹנָתָהּ 利2:2,16。</p>
+<p>用於製作聖香，出30:34；當作香來焚燒。耶6:20；素祭，利2:1,2,15,16 6:15 耶17:26 41:5 賽43:23 66:3；與陳設餅，利24:7 尼13:5,9 代上9:29；當作香料焚燒，歌3:6；גִּבְעַת הַלְּבוֹנָה乳香崗，歌4:6；עֲצֵי לְבוֹנָה乳香木，歌4:14；獻給錫安，賽60:6。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or לְבֹנָה ; from 3836 ;<br/>frankincense (from its whiteness or perhaps that of its smoke)</p></div></div></div></details>
+<details class="ntfold"><summary>H04753 — מֹר「沒藥（被用作香膏、香料或聖油的重要成分）」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H04753</li><li>詞形 מֹר</li><li>音譯 more</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 沒藥（被用作香膏、香料或聖油的重要成分）</li><li>字源 來自 SH4843</li><li>中文用法 沒藥12 (12)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 沒藥</li><li>1a 一種從樹皮取得的阿拉伯樹脂, 用來滲於聖油或香料裡</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽מֹר 詩45:8；מוֺר 歌4:6。單陽附屬形מָר 出30:23。單陽1單詞尾מוֹרִי 歌5:1。</p>
+<p>מָר-דְּרוֹר流質的沒藥，出30:23，聖膏油的成分之一；מוֹר עֹבֵר我的兩手滴下沒藥，歌5:5,13（用作芬芳的香料）；歌1:13 4:14 5:1,5；הַר הַמּוֹר沒藥山，歌4:6（比喻沒藥的採集地）；詩45:8 箴7:17；作香料：מְקֻטֶּרֶת מוֹר וּלְבוֹנָה薰以沒藥、乳香，歌3:6；作香膏：שֶׁמֶן הַמֹּר沒藥油，斯2:12。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or מוֹר ; from 4843 ;<br/>myrrh (as distilling in drops, and also as bitter )</p></div></div></div></details>
+<details class="ntfold"><summary>H00174 — אֲהָלִים「沉香木」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H00174</li><li>詞形 אֲהָלִים</li><li>音譯 &#x27;ahaliym</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 沉香木</li><li>字源 屬國外起源</li><li>中文用法 沉香4（4）</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 蘆薈, 沉香</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>沉香，複陽אֲהָלִים 民24:6 詩45:8 箴7:17 歌4:14。*</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or (feminine) אֲהָלוֹת (only used thus in the plural); of foreign origin;<br/>aloe wood (i.e. sticks)</p></div></div></div></details>
+<details class="ntfold"><summary>H07218 — רֹאשׁ「頭、頂點、首領、在前的、起初、開始、總數」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07218</li><li>詞形 רֹאשׁ</li><li>音譯 ro&#x27;sh</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 頭、頂點、首領、在前的、起初、開始、總數</li><li>字源 來自一不用的字根</li><li>中文用法 頭251 長68 頂43 首領30 首17 首級16 隊13 山頂11 族長11 統領7 總數7 大6 長子6 上4 口上4 領袖4 元首3 數3 率領3 羅施3 起初3 高3 上半截2 初2 山上2 朔2 梢2 上品1 上好1 上等1 上面1 儘上的1 儘尖的1 元帥1 初次1 口1 士1 太初1 太子1 始1 官長1 尖1 引導1 最1 正1 第一1 總綱1 至寶1 起頭1 道1 長者1 頂上1 領1 頭目1 頭頂1 首位1 首先1 (556)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 頭, 頂, 高階, 上面, 首領, 全部, 極點, 高處, 前面,<br/>開始</li><li>1a 人或動物的頭</li><li>1b 山頂或山峰</li><li>1c 高處(星宿)</li><li>1d 首領, 領袖 (人的, 城的, 國家的, 地方的, 家庭的, 祭司的)</li><li>1e 起頭, 前面, 開始</li><li>1f 首領, 精選的, 最好的</li><li>1g 頭, 宗, 群, 隊</li><li>1h 極點</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽רֹאשׁ 創3:15。單陽附屬形רֹאשׁ 創40:20。單陽3單陽詞尾רֹאשׁוֹ 出12:9。單陽3複陽詞尾רֹאשָׁם 賽35:10。單陽2單陽詞尾רֹאשְׁךָ 申28:23。單陽2複陽詞尾רֹאשְׁכֶם 利19:27。單陽1單詞尾רֹאשִׁי 創40:16。單陽1複詞尾רֹאשֵׁנוּ 書2:19。複陽רָאשִׁים 出18:25。複陽附屬形רָאשֵׁי 何4:13。複陽3單陽詞尾רָאשָׁיו 書23:2。複陽3複陽詞尾רָאשֵׁיהֶם 出36:38。複陽2複陽詞尾רָאשֵׁיכֶם 賽29:10。複陽1複詞尾רָאשֵׁינוּ 代上12:19。</p>
+<p>一、頭：</p>
+<p>1. 人類的： 創40:16,17；לְרֹאשׁ גֶּבֶר男人的頭，士5:30；女人的，王下9:30 申21:12 民5:18 斯2:17；男孩的，王下4:19,19 創48:14,14。比喻以色列地的主權是　神的，詩60:7＝詩108:8。偶像的，撒上5:4。擬人化用法： 詩24:7,9。</p>
+<p>2. 動物的：蛇的，創3:15；狗的，撒下3:8；驢的，王下6:25；活物的，結1:22,22,26；基路伯，結10:1,11；鱷魚，伯41:7；לִוְיָתָן海中大怪獸，詩74:14；תַנִּינִים大海怪，詩74:13；祭牲，出12:9 29:15,19 利1:4,8,12,15 3:2,8。</p>
+<p>二、山頂或山峰：山的，創8:5 出19:20,20 24:17 34:2；在道旁高處的頂上，箴8:2；街頭，箴1:21；רֹאשׁ גֵּיא-שְׁמָנִים在肥美谷的山上，賽28:1,4；高峰，民23:9；塔頂，創11:4；堡壘頂端，士6:26；梯子的頭，創28:12；樹梢，撒下5:24＝代上14:15；儘上的枝梢，賽17:6；香柏樹儘尖，結17:4,22；桅杆上，箴23:34；穀粒的頂端，伯24:24；澆油在上面，創28:18；床頭，創47:31；寶座的圓頂，王上10:19；帳幕的頂端，出26:24＝出36:29；柱頭的頂端，王上7:16,17；盆座頂端，王上7:35；燈的頂上，亞4:2；大祭司的外袍上，出28:32；房角的頭塊石頭，詩118:22；星宿的高處，伯22:12。</p>
+<p>三、首領、領袖：</p>
+<p>1. 人的： 士10:18 11:8,9,11 出18:25 民1:16 申1:15 彌3:1。</p>
+<p>2. 城的： 書11:10 賽7:8,8,9,9。</p>
+<p>3. 國家的： 耶31:7。</p>
+<p>4. 地方的： 撒上9:22 王上21:9,12 申20:9 代上4:42。</p>
+<p>5. 祭司的：</p>
+<p>大祭司，王下25:18＝耶52:24 代下19:11 24:11 26:20 代上27:5 代下31:10 拉7:5。</p>
+<p>6. 家庭的：家長，出6:14；族長，民7:2 17:3 書22:14 代上5:24 7:7,9,40 民1:4 代上5:15,24 7:2 9:13 24:4 民32:28 書 14:1 21:1 出6:25。</p>
+<p>四、起頭、前面、開始：</p>
+<p>1.起頭、前面。耶和華引導他們，彌2:13；率領，代下20:27；首先，摩6:7。</p>
+<p>2. 指時間：開始。在三更之初，士7:19 哀2:19；起初，賽40:21 41:4,26 48:16；太初，箴8:23；從始至終，傳3:11；正月，出12:2；月朔，民10:10 28:11；初次，代上16:7。</p>
+<p>3. 河流的源頭，創2:10；上好的香料，結27:22 出30:23 歌4:14；我所最喜樂的，詩137:6。</p>
+<p>五、頭＝群、隊。分作三隊，士7:16,20 9:34,37,43,44 撒上11:11 13:17,18 伯1:17。</p>
+<p>六、片語：נָשָׂא אֶת-רֹאשׁ בְּנֵי-יִשְׂרָאֵל數點以色列人的人頭，出30:12計算總數；民1:2,49 4:2,22 26:2 31:26,49；如數歸還，利6:5 民5:7；其數何等眾多，詩139:17；得以昂首高過四面的仇敵，詩27:6；抬起頭來，詩3:3；מְנוֹד-רֹאשׁ搖頭，詩44:14；גְּמֻלְךָ יָשׁוּב בְּרֹאשֶׁךָ你的報應必歸到你頭上，俄1:15 詩7:16 王上2:33 斯9:25 士9:57 撒上25:39 王上2:44。</p>
+<p>〔羅施〕</p>
+<p>傳統譯本把此字當做一個出自瑪各民族的北方國家。但近代譯本多把它當作一般名詞，將נְשִׂיא רֹאשׁ譯為主要的王，結38:2,3 39:1。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root apparently meaning to shake;<br/>the head (as most easily shaken), whether literal or figurative (in many applications, of place, time, rank, itc.)</p></div></div></div></details>
+<details class="ntfold"><summary>H01314 — בֶּשֶׂם「香味、香料」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H01314</li><li>詞形 בֶּשֶׂם</li><li>音譯 besem</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 香味、香料</li><li>字源 來源同 SH1313</li><li>中文用法 香料17 料3 香花2 果品1 香1 香品1 香氣1 香草1 馨香1 (28)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 香料, 香水, 甜味</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽בֹּשֶׂם 賽3:24；בֶּשֶׂם 出30:23。單陽1單詞尾בְּשָׂמִי 歌5:1。複陽בְּשָׂמִים 出25:6。複陽3單陽詞尾בְשָׂמָיו 歌4:16。</p>
+<p>一、香料、香水、甜品。馨香，賽3:24。קִנְּמָן-בֶּשֶׂם上品的香料，出30:23,23。</p>
+<p>二、貴重的香料象徵財富，王下20:13= 賽39:2 代下32:27。皇室的禮物，王上10:2,10,25 代下9:1,9,9,24。</p>
+<p>三、作為交易商品，結27:22；葬禮用，代下16:14；做膏油的成分，出25:6 35:8,28 代上9:29,30；入宮女子潔淨身體，斯2:12。</p>
+<p>四、其他：香品，歌4:10,14；香氣，歌4:16；香料，歌5:1；הָרֵי בְשָׂמִים香草山，歌8:14；עֲרוּגוֹת הַבֹּשֶׂם香草臺，歌6:2；比喻良人的兩頰充滿香氣，歌5:13。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or בֹּשֶׂם ; from the same as 1313 ;<br/>fragrance ; by implication, spicery ; also the balsam plant</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_04_14_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第4章14節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 01:41:04 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

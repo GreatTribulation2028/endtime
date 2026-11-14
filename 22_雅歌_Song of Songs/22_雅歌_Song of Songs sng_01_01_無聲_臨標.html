@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 1:1 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_01_01_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第1章1節<br/>所羅門的歌，是歌中的雅歌。〔新娘〕</p>
+<p>這節是全卷的門牌。它不先寫親吻，也不先寫園子，只先告訴讀者：下面是一組歌，這組歌屬所羅門，並且它在所有歌唱中間佔著最特別的位置。</p>
+<p>希伯來文的說法是「歌中之歌」，用最上級的說法，把這一卷從別的歌裏分別出來。不是說別的歌都不算歌，乃是說這一卷要被人當作歌中的至極來聽。後面的「屬所羅門」，把這組歌歸在所羅門名下。和合本把次序倒過來，先寫「所羅門的歌」，再寫「是歌中的雅歌」，讀起來像中文標題，意思卻仍是同一扇門。</p>
+<p>新標點本在經文末了加上「〔新娘〕」。這幾個字是編者加的角色標示，本節希伯來原文沒有，不是經文自己寫上的稱謂。讀者一進門，先看見的仍是歌，是至極的歌，也是歸在所羅門名下的歌。</p>
+<p>門牌立好了，下一節才真正開口。人若把這節只當成書名頁翻過去，就錯過了它要人先站住的那一刻：先承認這是歌，先承認它的至極，再進去聽裏面的人怎樣彼此呼喚。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="../21_%E5%82%B3%E9%81%93%E6%9B%B8_Ecclesiastes/21_%E5%82%B3%E9%81%93%E6%9B%B8_Ecclesiastes%20ecc_12_14_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　傳道書 第12章14節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_01_02_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第1章2節</a></nav>
+<h2 class="ntitle">雅歌 第1章1節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第1章1節<br/>所羅門的歌，是歌中的雅歌。〔新娘〕</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 1:1 &gt;</div>
+<div class="orig-he">שִׁ֥יר הַ/שִּׁירִ֖ים אֲשֶׁ֥ר לִ/שְׁלֹמֹֽה׃</div>
+<div class="orig-zh">歌中之歌，就是屬所羅門的。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_01_01</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>所羅門的歌，是歌中的雅歌。〔新娘〕</p>
+<p>原文先寫「歌中之歌」，再用關係子句「就是屬所羅門的」。和合本先寫「所羅門的歌」，再寫「是歌中的雅歌」，是中文書名的語序，不是另寫一層意思。語意直譯按本節原文現寫。新標點本的「〔新娘〕」是角色標示，原文此節沒有這幾個字。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 歌中之歌｜שִׁיר הַשִּׁירִים</h3>
+<blockquote>שִׁ֥יר הַ/שִּׁירִ֖ים</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>שִׁ֥יר</strong>（陽性名詞單數附屬形，歌，<code><span class="sn">H07892</span></code> shiyr；字義「歌」）</li>
+<li><strong>הַ/שִּׁירִ֖ים</strong>（冠詞加陽性名詞複數，那些歌，<code><span class="sn">H07892</span></code>；「歌」的複數絕對形，帶定冠詞）</li>
+</ul>
+<p>這是本節原文開頭的兩個詞，合起來就是「歌中之歌」。前面一個「歌」用附屬形，後面一個「歌」用帶冠詞的複數，是希伯來文裏常見的最上級說法：不是隨口誇一句，乃是把這一卷放在所有歌唱之上。字典把這個字記作可以指絲絃的歌、宗教的歌、利未詩班的歌，也可以指情歌。本節不先解釋它是哪一種，只先把它標為至極。和合本的「雅歌」就是這一層意思的中文說法。</p>
+<h3>2️⃣ 就是屬所羅門的｜אֲשֶׁר לִשְׁלֹמֹה</h3>
+<blockquote>אֲשֶׁ֥ר לִ/שְׁלֹמֹֽה׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>אֲשֶׁ֥ר</strong>（關係詞，就是／那，形態標記 HTr）</li>
+<li><strong>לִ/שְׁלֹמֹֽה</strong>（介詞「屬／向」加專有名詞所羅門，<code><span class="sn">H08010</span></code> Shlomoh；字義與「平安」同族）</li>
+</ul>
+<p>這是本節原文的後半。關係詞把前面那組「歌中之歌」接到所羅門的名字上，介詞是「屬」，不是另起一首不相干的歌。名字停在本節的停號上，像一塊門牌釘好了。所羅門的名字與「平安」同族，字典如此記錄；本節卻不是要人在門牌上先講平安的教義，乃是把這組歌歸在這個名字下面。至於這一卷裏此後開口的，有時像新郎，有時像新娘，有時像耶路撒冷的眾女子，都是進了門以後才辨認的事，不是這一節已經分行標好的。</p>
+<h3>3️⃣ 收束｜本節歸納</h3>
+<p>本節只有門牌，沒有對話。它要人先承認：這是歌，是歌中的至極，並且它屬所羅門。和合本把「所羅門」提前，是為了讓中文標題好讀；原文把「歌中之歌」放在最前，是為了讓至極的身份先站住。兩種語序說的是同一件事。角色標示是後來印本加上的，不要把它讀成原文已經指定了誰在說話。門開了，下一節才有嘴，才有吻。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H07892、H08010。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">שִׁיר</span><span class="gid">H07892</span></div><ul><li><b>主數值</b> 510</li><li><b>H小數</b> 6</li><li><b>H標準</b> 510</li><li><b>H序數</b> 51</li><li><b>H_Atbash</b> 45</li><li><b>H_Sofit擴展</b> 510</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 510 的詞條共 30 個（含本詞）。其中已有中文詞義者如 H03423 יָרַשׁ「佔據、抓住、承受、驅逐、使成赤貧」、H03474 יָשַׁר「使正直、公正、合法、喜樂的、昌盛的」、H03475 יֵשֶׁר「正直」、H03476 יֹשֶׁר「正直」、H03477 יָשָׁר「正直的、適當的、公正的」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是本節原文開頭的那個「歌」，先以單數附屬形出現，再以帶冠詞的複數重現，合成「歌中之歌」。本節還沒有唱出內容，只把這一卷標為至極的歌。</p>
+<p><span class="gl">④精意</span>　還沒有人開口，歌已經被放在最高處。人要進去聽裏面的呼喚，先得承認：這不是一頁隨手翻過的書名，乃是一組被分別出來的歌。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">שְׁלֹמֹה</span><span class="gid">H08010</span></div><ul><li><b>主數值</b> 375</li><li><b>H小數</b> 15</li><li><b>H標準</b> 375</li><li><b>H序數</b> 51</li><li><b>H_Atbash</b> 122</li><li><b>H_Sofit擴展</b> 375</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 375 的詞條共 17 個（含本詞）。其中已有中文詞義者如 H02813 חֲשַׁבְנְיָה「耶和華的顧念」、H05393 נִשְׁכָּה「小屋、房間、房屋」、H06812 צְעִירָה「少年」、H06855 צִפֹּרָה「鳥」、H07086 קְעָרָה「盤子」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　這是本節原文末一個專有名詞，前面帶介詞「屬」。本節把「歌中之歌」歸在所羅門名下，停在這個名字的停號上，下一節才開始說話。</p>
+<p><span class="gl">④精意</span>　名字被寫在門牌上，不是要人在門口先議論作者的生平，乃是把這組歌放在一個可記念的名字下面。進去以後怎樣聽、怎樣認裏面的人，是後面經文的事。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>本卷下一節（雅歌 1:2）才真正開口，求「願他用口與我親嘴」。本節與 1:2 的關係，是門牌與進門，不是把書名解釋成已經發生的親吻。</p>
+<p>列王紀上 4:32 記所羅門作箴言三千句，詩歌一千零五首。本節不把那一千零五首拿來對帳，也不證明本卷就是其中哪一首，只把這一卷標為「歌中之歌」。</p>
+<p>詩篇 45 篇題作一首論到愛的歌，可作舊約裏另一首被標明為歌的平行，不是把兩首說成同一首，也不是把詩篇的君王婚禮直接填進本節。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。外引只止於上面已用的經文。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「歌中之歌，就是屬所羅門的」。和合本寫「所羅門的歌，是歌中的雅歌」，語序不同，意思同一扇門。「〔新娘〕」是新標點本的角色標示，原文此節沒有。</p>
+<p><strong>本書用法</strong>　這是全卷第一句，後面所有的呼喚、園子、葡萄園與囑咐，都從這扇門進去。本節自己不講那些情節，只先立定這是至極的歌，並且歸在所羅門名下。</p>
+<p><strong>舊約根源</strong>　「歌中之歌」這種最上級的說法，與舊約裏「日中之日」「聖中之聖」一類結構同類，是把某事從同類中分別到至極。所羅門作歌的記載在列王紀上 4:32，本節卻不重述那些數目，只留下這個名字。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若從這卷書聽見基督與教會，那是後世的讀法與指向，不可倒填進本節，把門牌說成已經寫上了新約的稱謂。</p>
+<p><strong>跨篇深意</strong>　一卷書可以以故事起頭，也可以以門牌起頭。雅歌選擇先立門牌，再讓人開口。至極的身份先被承認，裏面的愛情才被聽見。記念這一卷，先是記念它是歌，並且是歌中的至極。</p>
+<h2>六、總意</h2>
+<p>雅歌不先讓人看見園子，也不先讓人聽見親吻。它先立一塊門牌：這是歌中之歌，屬所羅門。人還沒有進門，已經被要求站住，承認這一卷不是隨口哼出的小調，乃是被放在所有歌唱之上的那一組。</p>
+<p>「歌中之歌」不是一句空的讚美。它用最上級的說法，把這一卷從別的歌裏分別出來。分別不是為了叫人驕傲，乃是為了叫人認真聽。聽這卷書的人，若只把它當成艷情的殘篇，或只把它當成可以隨意寓意的空殼，都還沒有在門口站穩。</p>
+<p>「屬所羅門」把這組歌歸在一個可記念的名字下面。名字與「平安」同族，本節卻不在門牌上展開那場平安。它只要人先知道：這歌有歸屬，不是無主的漂流。至於詩裏此後是誰在求、誰在答，要進了門，才按各節的原文去認。</p>
+<p>和合本把所羅門的名字提前，是讓中文標題好讀；原文把「歌中之歌」放在最前，是讓至極的身份先發聲。兩種寫法都把同一扇門打開。新標點本加上的角色標示，提醒後來的讀者這卷書裏常有對答，卻不可被讀成原文在這一節已經指定了說話的人。</p>
+<p>門牌立好了，下一節才有口，才有吻。讀雅歌的人，也當這樣進去：先承認這是至極的歌，再聽裏面的人怎樣彼此呼喚。呼喚還沒有響起以前，門牌已經把人攔住了。攔住不是拒絕，乃是邀請人把這一卷當真。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H07892 — שִׁיר「歌」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07892</li><li>詞形 שִׁיר</li><li>音譯 shiyr</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 歌</li><li>字源 來自 SH7891</li><li>中文用法 歌44 詩17 歌唱9 樂8 詩歌6 唱歌2 唱1 歌曲1 歌頌1 頌讚1 (90)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 歌</li><li>1a 絲絃的歌</li><li>1b 宗教歌</li><li>1c 利未詩班的歌<br/>陰性名詞</li><li>2 歌</li><li>2a 歌,詩歌</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、שִׁיר歌（陽性單數）</p>
+<p>單陽附屬形שִׁיר 士5:12 代下29:27。單陽3單陽詞尾שִׁירֹה 詩42:8。單陽1單詞尾שִׁירִי 詩28:7。複陽שִׁירִים 代上13:8 歌1:1；שִׁרִים 創31:27 箴25:20。複陽2單陽詞尾שִׁרֶיךָ 摩5:23。複陽2單陰詞尾שִׁירָיִךְ 結26:13。複陽2複陽詞尾שִׁירֵיכֶם 摩8:10。</p>
+<p>1. 絲絃的歌。+מָשָׁל詩，王上4:32，反義詞קִינָה哀歌，摩8:10；歡樂的歌，創31:27 賽30:29；שִׁיר עֲגָבִים雅歌，結33:32；勝利之歌，士5:12；情歌，歌1:1,1 詩45:1；吵雜聲，摩5:23 結26:13；醉酒狂歡，賽24:9；粗俗的歌，賽23:16；שִׁיר כְּסִילִים愚昧人的歌唱，傳7:5；傷心的人，箴25:20 詩137:3,3；בְּנוֹת הַשִּׁיר歌唱的女子，傳12:4。</p>
+<p>2. 宗教歌。在敬拜中，平行詞תְּפִלָּה禱告，詩42:8；讚美，詩69:30；מִשִּׁירִי אֲהוֹדֶנּוּ用詩歌頌讚他，詩28:7；וְשִׁיר-תְּהִלָּה וְהֹדוֹת לֵאלֹהִים讚美稱謝　神的詩歌，尼12:46；שִׁיר-יְהוָה耶和華的歌，代下29:27；שִׁיר חָדָשׁ新歌，賽42:10；上行之詩，詩120:1，約14次。שִׁיר מִזְמוֹר詩歌，詩48:1；מַשְׂכִּיל שִׁיר訓誨詩，詩45:1。</p>
+<p>3. 利未詩班的歌。帶有音樂伴奏，代上6:31,32 13:8 25:6,7 代下23:18 29:28 尼12:27；בִּכְלֵי-שִׁיר用樂器，代上15:16 摩6:5。</p>
+<p>二、שִׁירָה歌（陰性單數）</p>
+<p>單陰שִׁירָה 出15:1。單陰附屬形שִׁירַת 賽5:1 23:15。複陰附屬形שִׁירוֹת 摩8:3。</p>
+<p>歌曲、詩歌，出15:1 撒下22:1＝詩18:1 申31:19,19 31:21,22,30 32:44 民21:17 賽5:1 23:15。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or feminine שִׁירָה ; from 7891 ;<br/>a song ; abstractly, singing</p></div></div></div></details>
+<details class="ntfold"><summary>H08010 — שְׁלֹמֹה「平安的」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08010</li><li>詞形 שְׁלֹמֹה</li><li>音譯 Shᵉlomoh</li><li>約 舊約</li><li>詞類 專有名詞</li><li>中文詞義 平安的</li><li>字源 來自 SH7965</li><li>中文用法 所羅門281 (281)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>專</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 從拔示巴而生的大衛之子, 且是以色列的第三位君王;<br/>箴言及雅歌的作者</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>〔所羅門〕人名</p>
+<p>一以色列王，大衛和拔示巴所生的兒子，撒下12:24 王上1:11；生於耶路撒冷，撒下5:14 代上3:5 14:4；大衛王指定為繼承王位的人，由大祭司執行膏抹儀式，並向全以色列民宣布，王上1:30,33,34,39；坐上大衛的王位，王上2:12,17 代上29:28 代下1:1。他曾為耶和華建殿，王上5:8 6:1,2 代上6:32。是大有智慧的一王，王上3:10 4:29,30,34 10:1,2,3,4 代下1:7,11。是箴言和雅歌的作者，箴1:1 10:1 25:1 歌1:1。　神曾有兩次向他顯現，王上3:5 9:2。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 7965 ; peaceful ;<br/>Shelomah , David&#x27;s successor</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_01_01_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第1章1節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-12 22:36:43 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

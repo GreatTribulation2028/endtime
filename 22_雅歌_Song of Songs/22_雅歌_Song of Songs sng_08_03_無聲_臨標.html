@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>雅歌 8:3 原文逐節查經（臨標稿）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="22_雅歌_Song of Songs sng_08_03_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p>雅歌 第8章3節<br/>他的左手必在我頭下；他的右手必將我抱住。</p>
+<p>剛把人領進母親的家，這一節忽然靜下來，變成一雙具體的手。和合本寫：「他的左手必在我頭下；他的右手必將我抱住。」左手在頭下，右手把她抱住。和合本兩次加上「必」，是本節中文與 2:6 最明顯的差別。</p>
+<p>原文是 שְׂמֹאלוֹ תַּחַת רֹאשִׁי וִימִינוֹ תְּחַבְּקֵנִי「他的左手在我頭下；他的右手擁抱我」。這一句與 2:6 幾乎同構，卻有一處不可混為一談：2:6 是 תַּחַת לְרֹאשִׁי，在「頭」之前還有介詞 לְ，可讀作「在（向著）我的頭底下」；本節是 תַּחַת רֹאשִׁי，沒有這個 לְ，就是「在我頭下」。和合本兩處都寫「在我頭下」，沒有把 2:6 那一個 לְ 譯出，本節則本來就沒有這個介詞。對讀要據實寫出這一點，不可把 2:6 討論 לְ 的舊稿整段搬過來。</p>
+<p>右手那一句，兩節原文同是 תְּחַבְּקֵנִי，Pi‘el 未完成式第三人稱陰性單數，主詞與陰性的「右手」一致：這隻右手擁抱我。和合本兩處都寫「他的右手將我抱住」，把動作歸在「他」的名下，場面相同，只是原文讓右手自己作這個動詞的主詞。本節和合本加上「必將」，2:6 沒有「必」。原文的動詞形式與 2:6 相同，並沒有另寫一個表示「必將」的詞。「必」是本節譯文的語氣，可能把這擁抱讀成接續 8:1、8:2 的願望或決意，卻不是原文比 2:6 多出來的一個字。</p>
+<p>2:6 之後緊接著 2:7 的囑咐；本節之後也將是 8:4 類似的囑咐。疊句再次出現，前文卻不同：那一次接在求人扶持之後，這一次接在領進母親之家以後。本節經文沒有角色標示。先把這雙手臂按本節自己的用字讀完，下一節再聽那句囑咐。</p>
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_08_02_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　雅歌 第8章2節</a><a href="index.html">雅歌目錄</a><a href="../index.html">總目錄</a><a href="22_%E9%9B%85%E6%AD%8C_Song%20of%20Songs%20sng_08_04_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　雅歌 第8章4節</a></nav>
+<h2 class="ntitle">雅歌 第8章3節 原文逐節查經（臨標）</h2>
+<blockquote>雅歌 第8章3節<br/>他的左手必在我頭下；他的右手必將我抱住。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 雅歌 8:3 &gt;</div>
+<div class="orig-he">שְׂמֹאל/וֹ֙ תַּ֣חַת רֹאשִׁ֔/י וִֽ/ימִינ֖/וֹ תְּחַבְּקֵֽ/נִי׃</div>
+<div class="orig-zh">他的左手在我頭下；他的右手擁抱我。</div>
+</div>
+<p><strong>和合本</strong>（新標點，出處：<code>06_和合本經文\cuv_shen_newpunct.json</code> 鍵 <code>sng_08_03</code>；庫內該鍵以詞間空格存檔，正文按新標點書寫體徵引）</p>
+<p>他的左手必在我頭下；他的右手必將我抱住。</p>
+<p>原文是 שְׂמֹאלוֹ תַּחַת רֹאשִׁי וִימִינוֹ תְּחַבְּקֵנִי「他的左手在我頭下；他的右手擁抱我」。2:6 幾乎同構，但作 תַּחַת לְרֹאשִׁי，多一個介詞 לְ，可讀作「在（向著）我的頭底下」；本節沒有 לְ，就是「在我頭下」。和合本兩處都寫「在我頭下」，本節本來就沒有這個介詞，不必把 2:6 的討論整段搬來。תְּחַבְּקֵנִי 是 Pi‘el 未完成式第三人稱陰性單數，主詞與「右手」一致；和合本寫「他的右手將我抱住」，把動作歸在「他」的名下。本節和合本兩次加上「必」，2:6 沒有「必」；原文動詞形式與 2:6 相同，並沒有另寫「必將」。原文此節沒有角色標示。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 他的左手在我頭下｜שְׂמֹאלוֹ תַּחַת רֹאשִׁי</h3>
+<blockquote>שְׂמֹאל/וֹ֙ תַּ֣חַת רֹאשִׁ֔/י</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>שְׂמֹאל/וֹ֙</strong>（陽性名詞單數附屬形加第三人稱陽性單數詞尾，他的左手、他的左邊，<code><span class="sn">H08040</span></code> semol；字義「左邊、左手」。和合本寫「他的左手」）</li>
+<li><strong>תַּ֣חַת</strong>（名詞／介詞，在……之下。形態標記 HNcmsc。本節 gcard 未給此詞編號。不另造編號）</li>
+<li><strong>רֹאשִׁ֔/י</strong>（陽性名詞單數附屬形加第一人稱單數詞尾，我的頭，<code><span class="sn">H07218</span></code> rosh；字義「頭」。和合本寫「我頭」）</li>
+</ul>
+<p>先出現的是他的左手，位置在我的頭下面。和合本寫「他的左手必在我頭下」，加上「必」。2:6 也是左手在頭下，卻多一個 לְ，可讀作這隻手朝著頭而放；本節沒有這個介詞，就是頭下的位置。和合本兩處用字相同，都作「在我頭下」，讀中文時不容易看出這一處的異同。必須在本節寫明：本節原文沒有那個 לְ，不必把 2:6 的解說再抄一遍。領進母親的家以後，頭可以放在這隻左手上面。場面是安放，不是再解釋進屋的理由。</p>
+<h3>2️⃣ 他的右手擁抱我｜וִימִינוֹ תְּחַבְּקֵנִי</h3>
+<blockquote>וִֽ/ימִינ֖/וֹ תְּחַבְּקֵֽ/נִי׃</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>וִֽ/ימִינ֖/וֹ</strong>（連接詞加陰性名詞單數附屬形加第三人稱陽性單數詞尾，和他的右手，<code><span class="sn">H03225</span></code> yamin；字義「右邊、右手」。和合本寫「他的右手」）</li>
+<li><strong>תְּחַבְּקֵֽ/נִי׃</strong>（動詞 Pi‘el 未完成式第三人稱陰性單數加第一人稱單數詞尾，它擁抱我、它將我抱住，<code><span class="sn">H02263</span></code> chabaq；字義「擁抱、抱住」。主詞與陰性的「右手」一致。和合本寫「必將我抱住」）</li>
+</ul>
+<p>左手安放以後，右手來擁抱。動詞是陰性，主詞是這隻右手自己。和合本寫「他的右手必將我抱住」，把擁抱歸在「他」的名下，又加上「必將」。2:6 同詞同形，和合本那裏只寫「將我抱住」，沒有「必」。原文並沒有在本節多寫一個表示將要如此的詞，動詞形式與 2:6 相同。「必」是本節譯文的語氣，或是把這擁抱讀成接在 8:1、8:2 之後的決意與將來，卻不可說成原文比 2:6 多出一個字。擁抱的動作本身，兩節是一樣的：右手把她抱住。本節把這動作放在領進母親之家以後，2:6 則放在求人扶持之後。詞句幾乎相同，所跟的前文不同。</p>
+<h3>3️⃣ 收束｜本節歸納</h3>
+<p>本節寫他的左手在我頭下，他的右手擁抱我。與 2:6 幾乎同構，但本節沒有 לְ，和合本又兩次加上「必」。右手的動詞仍是陰性，主詞是這隻手。原文此節沒有角色標示。2:6 之後是囑咐，本節之後也將是囑咐；疊句要作為這一節來讀，不可整段複製 2:6 的稿。</p>
+<hr/>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。本節機械包已列詞條為 H08040、H07218、H03225、H02263。數值只抄錄已裁定值，不自算、不選邊。①等值取統一庫同主數值詞條；沒有出處的傳統象徵不寫。</p>
+
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">שְׂמֹאול</span><span class="gid">H08040</span></div><ul><li><b>主數值</b> 377</li><li><b>H小數</b> 17</li><li><b>H標準</b> 377</li><li><b>H序數</b> 53</li><li><b>H_Atbash</b> 512</li><li><b>H_Sofit擴展</b> 377</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 377 的詞條共 8 個（含本詞）。其中已有中文詞義者如 H04018 מְבַשְּׁלָה「烹飪的地方」、H07653 שִׂבְעָה「滿足」、H07654 שׇׂבְעָה「滿足」、H07655 שִׁבְעָה「七」、H07656 שִׁבְעָה「七、第七」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　שְׂמֹאלוֹ 是他的左手，本節作「在我頭下」的主詞。和合本寫「他的左手」，並加上「必」。2:6 同詞，但那裏頭前還有介詞 לְ，本節沒有。</p>
+<p><span class="gl">④精意</span>　左手在頭下，是安放。本節讓頭有一個可以放下的地方，不必再解釋進城的理由。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">רֹאשׁ</span><span class="gid">H07218</span></div><ul><li><b>主數值</b> 501</li><li><b>H小數</b> 6</li><li><b>H標準</b> 501</li><li><b>H序數</b> 42</li><li><b>H_Atbash</b> 405</li><li><b>H_Sofit擴展</b> 501</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 501 的詞條共 27 個（含本詞）。其中已有中文詞義者如 H00574 אֵמְתָּנִי「可怕的」、H00781 אָרַשׂ「訂婚、聘定」、H00833 אָשַׁר「坦白、公正、誠實、直行」、H00834 אֲשֶׁר「就是、的、為要、何處、如何、因為、每一個」、H00835 אֶשֶׁר「蒙福、幸福、福氣」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　רֹאשִׁי 是我的頭，作左手所在的下方。本節是 תַּחַת רֹאשִׁי，沒有 2:6 的 לְ。和合本寫「我頭下」。</p>
+<p><span class="gl">④精意</span>　頭被放下。本節不寫臉上的神情，只讓這一個頭，停在他的左手下面。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">יָמִין</span><span class="gid">H03225</span></div><ul><li><b>主數值</b> 110</li><li><b>H小數</b> 11</li><li><b>H標準</b> 110</li><li><b>H序數</b> 47</li><li><b>H_Atbash</b> 99</li><li><b>H_Sofit擴展</b> 760</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 110 的詞條共 38 個（含本詞）。其中已有中文詞義者如 H00420 אֶלְדָּעָה「智慧之　神」、H00497 אֶלְעָדָה「　神已裝飾」、H00586 אֲנַחְנָא「我們」、H01751 דּוּק「碎為細屑」、H01775 דִּימוֹן「河床」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　יְמִינוֹ 是他的右手，隨後的擁抱動詞與它的陰性一致。和合本寫「他的右手」，並加上「必將」。</p>
+<p><span class="gl">④精意</span>　右手不只是擺在旁邊，乃是來抱住。本節讓兩隻手分工：一隻托住頭，一隻把人擁住。</p>
+</div></div><div class="gcard"><div class="gcard-h"><span class="gw">חָבַק</span><span class="gid">H02263</span></div><ul><li><b>主數值</b> 110</li><li><b>H小數</b> 11</li><li><b>H標準</b> 110</li><li><b>H序數</b> 29</li><li><b>H_Atbash</b> 364</li><li><b>H_Sofit擴展</b> 110</li><li>語言：希伯來文（lemma.value_status=ok）</li></ul></div><div class="gmean">
+<p><span class="gl">①等值</span>　庫中希伯來文主數值同為 110 的詞條共 38 個（含本詞）。其中已有中文詞義者如 H00420 אֶלְדָּעָה「智慧之　神」、H00497 אֶלְעָדָה「　神已裝飾」、H00586 אֲנַחְנָא「我們」、H01751 דּוּק「碎為細屑」、H01775 דִּימוֹן「河床」。等值只說明數值相同，不把同值名單改寫成本節的教義。</p>
+<p><span class="gl">②原文脈絡</span>　תְּחַבְּקֵנִי 是「它擁抱我」，主詞是右手。和合本寫「將我抱住」，本節又加上「必」。動詞形式與 2:6 相同，原文沒有多寫「必將」。</p>
+<p><span class="gl">④精意</span>　擁抱把人收在手臂裏。本節在領進家裏之後再寫這一個動作，讓進來不是只走到門口，乃是被抱住。</p>
+</div></div>
+
+</div></details>
+<h2>四、對照經文</h2>
+<p>雅歌 2:6 寫：「他的左手在我頭下；他的右手將我抱住。」原文是 תַּחַת לְרֹאשִׁי，多一個 לְ，可讀作「在（向著）我的頭底下」；本節沒有這個 לְ。和合本 2:6 沒有「必」，本節兩次加上「必」。兩節右手的動詞相同。宜據實對讀異同，不可整段複製 2:6 的稿。2:6 接在求人扶持之後，本節接在領進母親之家以後。</p>
+<p>下一節（雅歌 8:4）將再對耶路撒冷的眾女子發出囑咐，正與 2:6 之後接 2:7 的次序相似。本節先把擁抱本身讀完，不要把囑咐提前填進來。8:4 與 2:7、3:5 的異同，以那一節為準。</p>
+<p>本節不被新約直接引用，這裏不另造對讀。外引只止於上面已用的經文。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　原文是「他的左手在我頭下；他的右手擁抱我」。和合本寫「他的左手必在我頭下；他的右手必將我抱住」，兩次加上「必」。2:6 幾乎同構，但多一個 לְ，且和合本沒有「必」。原文此節沒有角色標示。</p>
+<p><strong>本書用法</strong>　本節是 2:6 的同構句，前文卻是 8:1、8:2 的願望與領進母親之家。下一節將再發囑咐，次序與 2:6、2:7 相似。本節自己只寫這雙手臂，不把囑咐提前寫進來。</p>
+<p><strong>舊約根源</strong>　左右手分工、一手托頭、一手擁抱，是本卷自己的寫法。本節與 2:6 對讀即可，不必另拉一般論及左右手的經文來改定這一個場面。</p>
+<p><strong>新約慣用</strong>　本節不被新約直接引用。後來的讀者若把這擁抱讀成別的指向，那是後世的讀法，不可倒填進本節。</p>
+<p><strong>跨篇深意</strong>　領進家裏以後，頭被放下，人也被抱住。本節讓親近再一次成為可以被觸及的手臂，而不是只停留在引導與使喝的話裏。與 2:6 幾乎相同的句子，出現在一個新的時刻上：不是求扶持之後，乃是進了母親的家之後。</p>
+<h2>六、總意</h2>
+<p>人剛被領進母親的家，這一節只剩下兩隻手。左手在頭下，右手把她抱住。和合本兩次加上「必」。話很少，場面卻很近。</p>
+<p>2:6 幾乎是同一句，只是那裏頭前還有一個 לְ，可讀作朝著頭而放；本節沒有這個介詞。和合本 2:6 也沒有「必」。對讀是為了看清本節自己的用字，不是為了把舊稿再抄一遍。擁抱的動詞，兩節都讓右手自己作主詞。</p>
+<p>「必」是本節譯文的語氣，或是把這擁抱接在前面的願望與決意之後。原文的動詞形式與 2:6 相同，並沒有多寫一個「必將」。無論讀成正在抱住，還是讀成終將抱住，本節留下的都是這一雙具體的手臂。</p>
+<p>2:6 之後是囑咐，本節之後也將是囑咐。疊句走到這裏，前文已經換過：不是求人扶持之後，乃是引導、進屋、使喝之後。本節沒有角色標示。先讓頭放下，讓人被抱住。下一節再向城裏的女子說話。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。本節機械包已列詞條，按本機條目保留①至⑤，不缺摺層，不杜撰義項。</p>
+
+<details class="ntfold"><summary>H08040 — שְׂמֹאול「左邊、左手、左方、北方（臉朝東時）」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H08040</li><li>詞形 שְׂמֹאול</li><li>音譯 sᵉmo&#x27;wl</li><li>約 舊約</li><li>詞類 名詞</li><li>中文詞義 左邊、左手、左方、北方（臉朝東時）</li><li>字源 來自 SH8041</li><li>中文用法 左32 左邊13 左手7 左面1 北邊1 (54)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 左邊, 左手, 左側</li><li>1a 左邊</li><li>1b 左手</li><li>1c 北邊 (當面向東邊)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽שְׂמֹאל 創13:9；שְׂמֹאול 王下23:8。單陽附屬形שְׂמֹאל 創48:13。單陽3單陽詞尾שְׂמֹאלוֹ 創48:13。單陽3單陰詞尾שְׂמֹאלָהּ 亞4:3。單陽3複陽詞尾שְׂמֹאלָם 出14:22。單陽2單陽詞尾שְׂמֹאלֶךָ 撒下2:21。單陽2單陰詞尾שְׂמֹאולֵךְ 結16:46。</p>
+<p>1.左邊。左側區域，創13:9；עַל-שְׂמֹאול左邊，王下23:8 結16:46 亞4:3,11；עַל-הַשְּׂמֹאול左邊，代上6:44 代下18:18；מִשְּׂמֹאלָם左，出14:22,29 撒下16:6；מֵהַשְּׂמֹאול左邊，代下3:17 結1:10；לִשְׂמֹאלוֹ居左，傳10:2；獨立使用：שְׂמֹאול בַּעֲשֹׂתוֹ他在左邊行事，伯23:9；עַל-שְׂמֹאל向左，創24:49 撒下2:21 亞12:6；עַל-הַשְּׂמֹאול偏左右，撒下2:19；שְׂמֹאול左，撒上6:12 賽9:20。</p>
+<p>2. יַד שְׂמֹאלוֹ左手，士3:21 7:20 創48:13,13,14 士16:29 結39:3 拿4:11 箴3:16 但12:7 歌2:6 8:3。</p>
+<p>3. ＝北邊，創14:15。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] or שְׂמֹאל ; a primitive word (rather perhaps from the same as 8071 (by insertion of the aleph) through the idea of wrapping up);<br/>properly, dark (as enveloped ), i.e. the north ; hence (by orientation), the left hand</p></div></div></div></details>
+<details class="ntfold"><summary>H07218 — רֹאשׁ「頭、頂點、首領、在前的、起初、開始、總數」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H07218</li><li>詞形 רֹאשׁ</li><li>音譯 ro&#x27;sh</li><li>約 舊約</li><li>詞類 名、陽</li><li>中文詞義 頭、頂點、首領、在前的、起初、開始、總數</li><li>字源 來自一不用的字根</li><li>中文用法 頭251 長68 頂43 首領30 首17 首級16 隊13 山頂11 族長11 統領7 總數7 大6 長子6 上4 口上4 領袖4 元首3 數3 率領3 羅施3 起初3 高3 上半截2 初2 山上2 朔2 梢2 上品1 上好1 上等1 上面1 儘上的1 儘尖的1 元帥1 初次1 口1 士1 太初1 太子1 始1 官長1 尖1 引導1 最1 正1 第一1 總綱1 至寶1 起頭1 道1 長者1 頂上1 領1 頭目1 頭頂1 首位1 首先1 (556)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陽</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 頭, 頂, 高階, 上面, 首領, 全部, 極點, 高處, 前面,<br/>開始</li><li>1a 人或動物的頭</li><li>1b 山頂或山峰</li><li>1c 高處(星宿)</li><li>1d 首領, 領袖 (人的, 城的, 國家的, 地方的, 家庭的, 祭司的)</li><li>1e 起頭, 前面, 開始</li><li>1f 首領, 精選的, 最好的</li><li>1g 頭, 宗, 群, 隊</li><li>1h 極點</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陽רֹאשׁ 創3:15。單陽附屬形רֹאשׁ 創40:20。單陽3單陽詞尾רֹאשׁוֹ 出12:9。單陽3複陽詞尾רֹאשָׁם 賽35:10。單陽2單陽詞尾רֹאשְׁךָ 申28:23。單陽2複陽詞尾רֹאשְׁכֶם 利19:27。單陽1單詞尾רֹאשִׁי 創40:16。單陽1複詞尾רֹאשֵׁנוּ 書2:19。複陽רָאשִׁים 出18:25。複陽附屬形רָאשֵׁי 何4:13。複陽3單陽詞尾רָאשָׁיו 書23:2。複陽3複陽詞尾רָאשֵׁיהֶם 出36:38。複陽2複陽詞尾רָאשֵׁיכֶם 賽29:10。複陽1複詞尾רָאשֵׁינוּ 代上12:19。</p>
+<p>一、頭：</p>
+<p>1. 人類的： 創40:16,17；לְרֹאשׁ גֶּבֶר男人的頭，士5:30；女人的，王下9:30 申21:12 民5:18 斯2:17；男孩的，王下4:19,19 創48:14,14。比喻以色列地的主權是　神的，詩60:7＝詩108:8。偶像的，撒上5:4。擬人化用法： 詩24:7,9。</p>
+<p>2. 動物的：蛇的，創3:15；狗的，撒下3:8；驢的，王下6:25；活物的，結1:22,22,26；基路伯，結10:1,11；鱷魚，伯41:7；לִוְיָתָן海中大怪獸，詩74:14；תַנִּינִים大海怪，詩74:13；祭牲，出12:9 29:15,19 利1:4,8,12,15 3:2,8。</p>
+<p>二、山頂或山峰：山的，創8:5 出19:20,20 24:17 34:2；在道旁高處的頂上，箴8:2；街頭，箴1:21；רֹאשׁ גֵּיא-שְׁמָנִים在肥美谷的山上，賽28:1,4；高峰，民23:9；塔頂，創11:4；堡壘頂端，士6:26；梯子的頭，創28:12；樹梢，撒下5:24＝代上14:15；儘上的枝梢，賽17:6；香柏樹儘尖，結17:4,22；桅杆上，箴23:34；穀粒的頂端，伯24:24；澆油在上面，創28:18；床頭，創47:31；寶座的圓頂，王上10:19；帳幕的頂端，出26:24＝出36:29；柱頭的頂端，王上7:16,17；盆座頂端，王上7:35；燈的頂上，亞4:2；大祭司的外袍上，出28:32；房角的頭塊石頭，詩118:22；星宿的高處，伯22:12。</p>
+<p>三、首領、領袖：</p>
+<p>1. 人的： 士10:18 11:8,9,11 出18:25 民1:16 申1:15 彌3:1。</p>
+<p>2. 城的： 書11:10 賽7:8,8,9,9。</p>
+<p>3. 國家的： 耶31:7。</p>
+<p>4. 地方的： 撒上9:22 王上21:9,12 申20:9 代上4:42。</p>
+<p>5. 祭司的：</p>
+<p>大祭司，王下25:18＝耶52:24 代下19:11 24:11 26:20 代上27:5 代下31:10 拉7:5。</p>
+<p>6. 家庭的：家長，出6:14；族長，民7:2 17:3 書22:14 代上5:24 7:7,9,40 民1:4 代上5:15,24 7:2 9:13 24:4 民32:28 書 14:1 21:1 出6:25。</p>
+<p>四、起頭、前面、開始：</p>
+<p>1.起頭、前面。耶和華引導他們，彌2:13；率領，代下20:27；首先，摩6:7。</p>
+<p>2. 指時間：開始。在三更之初，士7:19 哀2:19；起初，賽40:21 41:4,26 48:16；太初，箴8:23；從始至終，傳3:11；正月，出12:2；月朔，民10:10 28:11；初次，代上16:7。</p>
+<p>3. 河流的源頭，創2:10；上好的香料，結27:22 出30:23 歌4:14；我所最喜樂的，詩137:6。</p>
+<p>五、頭＝群、隊。分作三隊，士7:16,20 9:34,37,43,44 撒上11:11 13:17,18 伯1:17。</p>
+<p>六、片語：נָשָׂא אֶת-רֹאשׁ בְּנֵי-יִשְׂרָאֵל數點以色列人的人頭，出30:12計算總數；民1:2,49 4:2,22 26:2 31:26,49；如數歸還，利6:5 民5:7；其數何等眾多，詩139:17；得以昂首高過四面的仇敵，詩27:6；抬起頭來，詩3:3；מְנוֹד-רֹאשׁ搖頭，詩44:14；גְּמֻלְךָ יָשׁוּב בְּרֹאשֶׁךָ你的報應必歸到你頭上，俄1:15 詩7:16 王上2:33 斯9:25 士9:57 撒上25:39 王上2:44。</p>
+<p>〔羅施〕</p>
+<p>傳統譯本把此字當做一個出自瑪各民族的北方國家。但近代譯本多把它當作一般名詞，將נְשִׂיא רֹאשׁ譯為主要的王，結38:2,3 39:1。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from an unused root apparently meaning to shake;<br/>the head (as most easily shaken), whether literal or figurative (in many applications, of place, time, rank, itc.)</p></div></div></div></details>
+<details class="ntfold"><summary>H03225 — יָמִין「右、右側、南邊」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H03225</li><li>詞形 יָמִין</li><li>音譯 yamiyn</li><li>約 舊約</li><li>詞類 名、陰</li><li>中文詞義 右、右側、南邊</li><li>字源 來自 SH3231</li><li>中文用法 右61 右手53 右邊16 南邊2 左2 南1 右面1 (136)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>名</li><li>陰</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 右方, 右手, 右側</li><li>1a 右手</li><li>1b 右邊 (指方向)</li><li>1c 南方 (面對東邊時, 右手的方向)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>單陰יָמִין 創13:9。單陰附屬形יְמִין 創48:13。單陰3單陽詞尾יְמִינוֹ 創48:14。單陰3單陰詞尾וִימִינָהּ 士5:26。單陰3複陽詞尾יְמִינָם 出14:22。單陰2單陽詞尾יְמִינְךָ 創48:18。單陰1單詞尾יְמִינִי 詩73:23。</p>
+<p>一、右手。1. 人的。相反於שְׂמֹאול左手，創48:13,14 但12:7；יָדַע בֵּין-יְמִינוֹ לִשְׂמֹאלוֹ不能分辨左手右手，拿4:11；תִּשְׁלַחְנָה וִימִינָהּ她的右手伸出，士5:26；在右手中拿著占卜的籤，結21:22；我的右手忘記技巧，詩137:5；右手滿有賄賂，詩26:10；起假誓，ימִינָם יְמִין שָׁקֶר他們的右手是虛假的右手，詩144:8,11；יַד-יְמִינוֹ右手，創48:17 士7:20 撒下20:9；אִישׁ אִטֵּר יַד-יְמִינוֹ右手有礙的人，士3:15 20:16，即左撇子。</p>
+<p>2. 比喻堅固，　神必攙扶你的右手，賽41:13 45:1；יַד־יְמִינִי右手，詩73:23。</p>
+<p>3. יְמִינְךָ יְהוָה耶和華的右手，作為拯救以色列的工具，出15:6,6,12；בִּגְבֻרוֹת יֵשַׁע יְמִינוֹ用右手的能力救護他，詩20:6；שְׁנוֹת יְמִין עֶלְיוֹן至高者的右手有所改變，詩77:10 98:1；扶持他的僕人，詩18:35 63:8；בִּימִין צִדְקִי公義的右手，賽41:10；搜出仇敵，詩21:8；滿了公義，詩48:10；有永遠的福樂，詩16:11。</p>
+<p>二、位置在右邊，或朝向右邊的方向：</p>
+<p>1. 位置在右邊：מִימִינָם וּמִשְּׂמֹאלָם水在他們的左右作了牆垣，出14:22,29 撒下16:6 王上7:39,49 代下3:17 4:6 王上22:19 代下4:7,8 詩91:7；為了保護，詩16:8；מִימִין לְהַר-הַמַּשְׁחִית在邪僻山右邊，王下23:13 結10:3；וַתֵּשֶׁב לִימִינוֹ她便坐在他的右邊，王上2:19 詩110:1 45:9 109:31 亞3:1 代上6:39 代下18:18 尼8:4 伯30:12 詩109:6 110:5；無介系詞，יְמִין הָעִיר在城右邊，撒下24:5 伯23:9。</p>
+<p>2. 朝向右邊。נִטֶּה יָמִין不偏左右，民20:17 22:26；אָסוּר יָמִין 申2:27 撒上6:12；יָמִין וּשְׂמֹאול תִּפְרֹצִי向右且向左開展，賽54:3 創13:9；הַבֵּיט יָמִין向我右邊觀看，詩142:4 結1:10（也暗示了觀察）；וְלֹא-נָטָה לָלֶכֶת עַל-הַיָּמִין וְעַל-הַשְּׂמֹאול直追趕他不偏左右，撒下2:19,21；אֶפְנֶה עַל-יָמִין轉向右，創24:49；הָלַךְ（走）與介詞אֶל合用，וְהָלַךְ הַגְּבוּל אֶל-הַיָּמִין這地界往南走，書17:7；與介詞לְ，在城牆上לַיָּמִין往右邊向糞廠門前進，尼12:31。比喻道德偏差，לֹא תָסוּר מִן-הַדָּבָר אֲשֶׁר-יַגִּידוּ לְךָ יָמִין וּשְׂמֹאל他們所指示你的話，你不可偏離左右，申17:11 5:32 17:20 28:14 書1:7 23:6 王下22:2 代下34:2；אַל-תֵּט-יָמִין וּשְׂמֹאול不可偏向左右，箴4:27；לֵב חָכָם לִימִינוֹ智慧人的心居右，傳10:2。</p>
+<p>三、除了手，身體其他的肢體：יֶרֶךְ יְמִינוֹ右腿，士3:16,21；עֵין יָמִין右眼，撒上11:2；עֵין יְמִינוֹ 亞11:17,17；祭牲的שׁוֹק הַיָּמִין右腿，出29:22 利7:32,33 8:25,26 9:21 民18:18。</p>
+<p>四、面對東邊時，右手的方向，南方。מִימִין הַיְשִׁימוֹן南邊的哈基拉山，撒上23:19；יָשַׁב מִימִינֵךְ住在你右邊，結16:46；צָפוֹן וְיָמִין南北為你所創造，詩89:12。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from 3231 ;<br/>the right hand or side (leg, eye) of a person or other object (as the stronger and more dexterous); locally, the south</p></div></div></div></details>
+<details class="ntfold"><summary>H02263 — חָבַק「緊緊地握手、擁抱」</summary><div class="ntbody"><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 H02263</li><li>詞形 חָבַק</li><li>音譯 chabaq</li><li>約 舊約</li><li>詞類 動詞</li><li>中文詞義 緊緊地握手、擁抱</li><li>字源 一原形字根</li><li>中文用法 懷抱3 抱住3 抱著3 抱2 挨近1 躺臥1 (13)</li></ul></div><div class="dict-sec"><strong>②CBOL分類</strong><ol class="dict-ol"><li>動</li></ol></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 擁抱, 緊抱</li><li>1a (Qal)</li><li>1a1 擁抱</li><li>1a2 將雙手交臂 (閒懶之意,<br/>傳 4:5<br/>)</li><li>1b (Piel) 擁抱</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>一、Qal</p>
+<p>未完成式－敘述式3單陽וַיְחַבֶּק 創29:13。</p>
+<p>不定詞－附屬形לַחֲבוֹק 傳3:5。</p>
+<p>主動分詞－單陽חֹבֵק 傳4:5。單陰חֹבֶקֶת 王下4:16。</p>
+<p>擁抱。＋直接受詞，אַתְּי חֹבֶקֶת בֵּן抱一個兒子，王下4:16；חֹבֵק אֶת-יָדָיו抱著手，傳4:5，閒懶之意；וַיְחַבֶּק-לוֹ וַיְנַשֶּׁק-לוֹ抱著他與他親嘴，創29:13；懷抱有時，傳3:5。</p>
+<p>二、Piel</p>
+<p>完成式－3複חִבְּקוּ 伯24:8 哀4:5。</p>
+<p>未完成式－3單陰1單詞尾תְּחַבְּקֵנִי 歌2:6。2單陽וּתְחַבֵּק 箴5:20。2單陰3單陽詞尾תְחַבְּקֶנָּה 箴4:8。敘述式3單陽וַיְחַבֵּק 創48:10。敘述式3單陽3單陽詞尾וַיְחַבְּקֵהוּ 創33:4。</p>
+<p>不定詞－附屬形חַבֵּק 傳3:5。</p>
+<p>擁抱。וְעֵת לִרְחֹק מֵחַבֵּק不懷抱有時，傳3:5 創48:10 33:4 箴4:8 歌2:6 8:3；＋直接受詞挨近磐石，伯24:8；חִבְּקוּ אַשְׁפַּתּוֹת躺臥糞堆，哀4:5，即是被遺棄者。</p>
+<p>參考底本：《尋根版聖經.原文字典》／Chinese Bible With Strong&#x27;s Concordance Numbers/Biblical Greek And Hebrew-Chinese Dictionary（浸宣出版社）、梁望惠博士的舊約 parsing，以及希伯來文字典 BDB。意見請聯繫twcbhdic「@」fhl.net 註：</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primitive root;<br/>to clasp (the hands or in embrace)</p></div></div></div></details>
+
+</div></details>
+<hr/>
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="22_雅歌_Song of Songs sng_08_03_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">臨標・未經獨立驗收</div>
+<div class="ds">本頁是雅歌 第8章3節的人手修訂稿：已重寫讀稿與查經欄，補上 Gematria 各數中有出處的層次，原文字典與數值仍取本機統一庫已裁定值，未自算。全頁不用表格。本頁未經獨立驗收，不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-13 02:17:50 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・臨標（不用表格）・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>

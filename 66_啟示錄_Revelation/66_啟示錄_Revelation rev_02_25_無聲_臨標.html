@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>啟示錄 2:25 原文逐節查經（臨標）</title>
+<style>
+
+:root{--bg:#efe9dd;--ink:#3a352d;--fs:15px;--lh:1.9;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:var(--lh);}
+body{font-family:"Noto Sans HK","Microsoft JhengHei","PingFang HK","Heiti TC",sans-serif;
+     transition:background .18s ease,color .18s ease;}
+#bar{position:sticky;top:0;z-index:9;padding:8px 12px;border-bottom:1px solid rgba(128,128,128,.28);
+     background:var(--bg);}
+#bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:3px 0;}
+button{font:inherit;cursor:pointer;border:1px solid rgba(128,128,128,.45);border-radius:7px;
+       padding:5px 11px;background:transparent;color:inherit;}
+button:hover{border-color:rgba(128,128,128,.85);}
+.pri{border-width:2px;font-weight:700;}
+.alt{opacity:.85;}
+.tg.on{border-width:2px;font-weight:700;}
+.mini{font-size:.86em;opacity:.9;}
+.sw{padding:3px 9px;font-size:.84em;}
+.sw.on{border-width:2px;font-weight:700;}
+.vb{padding:3px 8px;font-size:.82em;}
+.vb.on{border-width:2px;font-weight:700;}
+.lbl{font-size:.82em;opacity:.72;margin-left:4px;}
+b{font-variant-numeric:tabular-nums;font-size:.86em;min-width:2.4em;display:inline-block;}
+#meta{font-size:.88em;opacity:.8;min-width:7.5em;font-variant-numeric:tabular-nums;}
+.hint{font-size:.78em;opacity:.6;margin-left:6px;}
+input[type=range]{width:110px;accent-color:currentColor;}
+#wrap{max-width:46em;margin:0 auto;padding:16px 18px 120px;font-size:var(--fs);line-height:var(--lh);}
+#wrap,#doc,article{font-size:var(--fs);line-height:var(--lh);}
+#doc{font-size:var(--fs);line-height:var(--lh);}
+#doc p{margin:0 0 .55em;padding:2px 6px;border-radius:6px;cursor:pointer;transition:background .15s ease;}
+#doc p:hover{background:rgba(128,128,128,.14);}
+#doc p.on{background:rgba(128,128,128,.26);}
+.foot{margin-top:26px;padding-top:12px;border-top:1px solid rgba(128,128,128,.28);font-size:.82em;opacity:.75;}
+.foot a{color:inherit;}
+
+/* ===== 2026-10-25 UI 增強 ===== */
+/* 🔴 「預設：活潑男聲（撳掣切換，會記住）」提示要開新一行，唔好擠爆控制列
+   （Ollie 2026-10-25 20:37 實測）*/
+.hint2{display:block;margin-left:0;margin-top:3px;white-space:normal;line-height:1.4;}
+/* 🔴 #bar 唔做 sticky：模板原樣係 position:sticky，而 bar 內有 4 行掣，
+   手機版約佔半個屏；bar 隨頁面捲走，靠右邊浮球做隨時控制 + 右下「回頂部」浮標。*/
+#bar{position:relative;}
+.vgroup{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.vgroup .mini{margin-left:4px;padding:2px 8px;font-size:13px;line-height:1.5;}
+.vgroup .mini.on{outline:2px solid var(--ac);font-weight:700;}
+#doc p{margin:0 0 .95em;padding-bottom:.85em;border-bottom:1px solid rgba(128,128,128,.22);}
+#doc p:last-child{border-bottom:none;}
+.hint2{font-size:12px;opacity:.72;margin-left:8px;white-space:nowrap;}
+/* 載入遮罩 */
+#loadbox{position:fixed;left:0;right:0;top:0;z-index:999;pointer-events:none;
+  background:rgba(20,18,16,.92);color:#fff;padding:9px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;}
+#loadbox .lbar{width:min(78vw,420px);height:10px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden;}
+#loadbar{height:100%;width:0;background:linear-gradient(90deg,#c9a227,#e8d9a0);transition:width .12s linear;}
+#loadtxt{font-size:16px;letter-spacing:.02em;}
+#loadbox .lhint{font-size:13px;opacity:.75;}
+/* 右邊虛浮控制球 */
+#fab{position:fixed;right:10px;top:42%;z-index:98;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(128,128,128,.45);background:rgba(60,58,55,.42);color:#fff;font-size:19px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px);
+  box-shadow:0 2px 8px rgba(0,0,0,.16);opacity:.62;transition:opacity .18s, transform .18s;}
+/* 🔴 2026-10-25（Ollie：「浮標和回頂部不見了」）—— 實測（Chromium 實機）：
+   浮標用 transform/opacity/backdrop-filter 會變「合成層」→ 一撳開面板就令成頁淨畫得晒頭一段、
+   浮標亦消失（繪製崩潰）。⇒ 改成最樸素寫法：
+     · 唔用 transform / opacity / backdrop-filter（全部會提升成合成層）
+     · 用實色背景（唔用 rgba 透明）＋ 唔用 transition
+     · 用 bottom 定位（唔用 top:%，避免網址欄改變 viewport 高度）
+     · 「滾動淡少少」改用換背景色（唔用 opacity 淡出） */
+#fab{position:fixed;right:12px;bottom:86px;top:auto;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  /* 🔴 必須顯式清走模板殘留嘅 backdrop-filter／opacity／transition：
+     模板 #fab 規則有 backdrop-filter:blur(6px) → Android Chrome 遇到 fixed + backdrop-filter
+     會成粒唔畫（Ollie 2026-10-25 手機實測：浮標同回頂部同時消失） */
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#fab.mini{background:#7b746b;}
+#fab.open{background:#1f1c19;}
+#fabpanel{position:fixed;right:70px;bottom:86px;top:auto;z-index:97;display:none;
+  flex-direction:column;gap:7px;padding:12px;border-radius:14px;
+  background:#1c1b19;color:#fff;border:1px solid #55504a;
+  backdrop-filter:none;-webkit-backdrop-filter:none;}
+#fabpanel.open{display:flex;}
+#fabpanel .frow{display:flex;gap:6px;align-items:center;justify-content:center;}
+#fabpanel button{background:#33302c;border:1px solid #5c5751;color:#fff;
+  border-radius:9px;padding:7px 11px;font-size:14px;cursor:pointer;min-width:38px;}
+#fabpanel button:active{background:#4a453f;}
+#fabpanel .fv{font-size:12px;opacity:.8;min-width:44px;text-align:center;}
+/* 男女聲上方嘅聲線標題（字大少少）*/
+#fabpanel .ftitle{font-size:16px;font-weight:700;letter-spacing:.02em;text-align:center;
+  opacity:.95;margin:2px 0 0;padding:0 4px;}
+/* 男女聲下方嘅頁面變色選擇 */
+#fabpanel .frow.theme{flex-wrap:wrap;max-width:200px;gap:5px;}
+#fabpanel .ftsw{min-width:0;padding:5px 8px;font-size:12px;border-radius:7px;border:1px solid #5c5751;}
+#fabpanel .ftsw.on{outline:2px solid #fff;outline-offset:1px;font-weight:700;}
+/* 右下角回頂部浮標 */
+#topFab{position:fixed;right:12px;bottom:24px;z-index:98;width:48px;height:48px;border-radius:50%;
+  border:2px solid #d8d2c6;background:#3a3530;color:#fff;font-size:21px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.45);
+  backdrop-filter:none;-webkit-backdrop-filter:none;opacity:1;transition:none;}
+#topFab:active{background:#1f1c19;}
+/* 底部逐節查經區 */
+.sepBig{margin:2.6em auto 1.2em;max-width:1000px;border:0;border-top:2px solid rgba(128,128,128,.4);}
+.refhead{max-width:1000px;margin:0 auto .6em;font-size:1.15em;font-weight:700;}
+.refbox{max-width:1000px;margin:0 auto 1em;border:1px solid rgba(128,128,128,.35);border-radius:10px;
+  background:rgba(128,128,128,.06);}
+.refbox>summary{cursor:pointer;padding:.85em 1em;font-size:1.05em;list-style:none;}
+.refbox>summary::-webkit-details-marker{display:none;}
+.refbox>summary::before{content:"▸ ";opacity:.6;}
+.refbox[open]>summary::before{content:"▾ ";}
+.refbody{padding:.2em 1.4em 1.4em;font-size:inherit;line-height:inherit;}
+/* ===== Notion 原色資料層（.ntx）→ 完全唔影響上方讀稿 =====
+   🔴 2026-10-25（Ollie：「逐節查經裡能否同樣轉頁色？太白，我眼痛」）
+   → .ntx 改用**頁面主題變數**（--bg/--ink），6 款主題全部跟；色塊用半透明灰，深色主題都睇得清 */
+.ntx{background:var(--bg);color:var(--ink);border-radius:12px;padding:1.1em 1.25em;
+  border:1px solid rgba(128,128,128,.35);font-size:inherit;line-height:inherit;}
+.ntx h1{font-size:1.7em;color:var(--ink);margin:.9em 0 .45em;font-weight:700;line-height:1.3;}
+.ntx h2{font-size:1.4em;color:var(--ink);margin:1.15em 0 .5em;font-weight:700;line-height:1.35;}
+.ntx h3{font-size:1.16em;color:var(--ink);margin:.9em 0 .4em;font-weight:600;line-height:1.4;}
+.ntx h4{font-size:1.02em;color:var(--ink);margin:.8em 0 .3em;font-weight:600;}
+.ntx p{margin:.25em 0 .6em;color:var(--ink);}
+.ntx a{color:var(--ink);text-decoration:underline;text-underline-offset:2px;}
+.ntx strong{font-weight:700;}
+.ntx em{font-style:italic;}
+.ntx ul,.ntx ol{margin:.3em 0 .7em;padding-left:1.45em;}
+.ntx li{margin:.22em 0;}
+.ntx blockquote{margin:.55em 0;padding:.1em 0 .1em .9em;border-left:3px solid var(--ink);color:var(--ink);}
+.ntx code{background:rgba(128,128,128,.16);color:var(--ink);border-radius:3px;padding:.12em .35em;
+  font-family:Consolas,Menlo,monospace;font-size:.9em;}
+.ntx pre.ntcode{background:rgba(128,128,128,.16);color:var(--ink);border-radius:4px;padding:.9em 1em;
+  overflow-x:auto;font-size:.9em;line-height:1.6;white-space:pre-wrap;}
+.ntx hr{border:0;border-top:1px solid rgba(128,128,128,.3);margin:1.25em 0;}
+.ntx .ntcallout{display:flex;gap:.6em;background:rgba(128,128,128,.16);border-radius:4px;
+  padding:.85em 1em;margin:.75em 0;}
+.ntx .nticon{font-size:1.15em;line-height:1.55;flex:0 0 auto;}
+.ntx .ntbody{flex:1 1 auto;min-width:0;}
+.ntx .ntbody p{margin:.22em 0;}
+.ntx .ntbody>ul{margin:.25em 0 .5em;}
+.ntx details.ntfold{margin:.55em 0;border:0;padding:0;}
+.ntx details.ntfold>summary{cursor:pointer;font-weight:600;padding:.42em .25em;color:var(--ink);list-style:none;}
+.ntx details.ntfold>summary::-webkit-details-marker{display:none;}
+.ntx details.ntfold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.ntfold[open]>summary::before{content:"▾ ";}
+.ntx details.ntfold>summary:hover{background:rgba(128,128,128,.12);}
+/* 摺起嘅分節（fold）*/
+.ntx details.fold{margin:.7em 0;border:1px solid rgba(128,128,128,.3);border-radius:8px;
+  background:rgba(128,128,128,.07);padding:0;}
+.ntx details.fold>summary{cursor:pointer;font-weight:700;font-size:1.06em;padding:.7em .9em;
+  list-style:none;color:var(--ink);}
+.ntx details.fold>summary::-webkit-details-marker{display:none;}
+.ntx details.fold>summary::before{content:"▸ ";opacity:.55;}
+.ntx details.fold[open]>summary::before{content:"▾ ";}
+.ntx .foldbody{padding:.1em .95em .95em;border-top:1px solid rgba(128,128,128,.2);}
+/* Gematria：大小標題 ＋ 點列（唔用表格）*/
+.gcards{display:flex;flex-direction:column;gap:.75em;}
+.gcard{border:1px solid rgba(128,128,128,.3);border-radius:9px;padding:.75em .95em;background:rgba(128,128,128,.07);}
+.gcard-h{display:flex;align-items:baseline;gap:.55em;flex-wrap:wrap;margin-bottom:.4em;}
+.gcard-h .gw{font-size:1.3em;font-weight:700;color:var(--ink);line-height:1.3;}
+.gcard-h .gid{font-size:.8em;background:rgba(128,128,128,.2);border-radius:999px;padding:.16em .65em;color:var(--ink);}
+.gcard ul{margin:.15em 0 0;padding-left:1.25em;}
+.gcard li{margin:.24em 0;}
+.gcard li b{color:var(--ink);}
+.gcard .gsub{margin:.25em 0 .15em;font-weight:600;opacity:.8;}
+.ntx .subpage{opacity:.75;font-size:.92em;}
+.sn{color:#c62828;font-weight:600;}
+.gcard-h .gid{color:#c62828;font-weight:600;background:rgba(198,40,40,.12);}
+.ntx details.ntfold .dict-sec{margin:.45em 0 .55em;}
+.ntx details.ntfold .dict-sec>strong{display:block;margin-bottom:.25em;color:var(--ink);}
+.ntx details.ntfold ol.dict-ol{margin:.2em 0 .4em;padding-left:1.35em;}
+.ntx details.ntfold ol.dict-ol ol{margin:.15em 0;padding-left:1.2em;list-style-type:lower-alpha;}
+.ntx details.ntfold ol.dict-ol ol ol{list-style-type:lower-roman;}
+.ntx details.ntfold ul.dict-meta{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold .dict-blob{white-space:pre-wrap;font-size:.92em;line-height:1.65;margin:.3em 0;}
+.ntx details.ntfold>summary .heb{font-size:1.12em;}
+.ntx details.ntfold ul.dict-meta{margin:.25em 0 .4em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-meta li{margin:.18em 0;}
+
+/* 逐節查經區嘅頁面變色掣 */
+.refthemewrap{margin-left:12px;font-size:13px;font-weight:400;opacity:.85;
+  display:inline-flex;align-items:center;gap:5px;vertical-align:middle;white-space:nowrap;}
+.rtsw{padding:3px 8px;font-size:12px;border-radius:6px;border:1px solid rgba(128,128,128,.45);
+  cursor:pointer;line-height:1.5;}
+.rtsw.on{outline:2px solid currentColor;font-weight:700;}
+/* 底部導航 ＋「完成，只是草稿」*/
+.footbar{max-width:1000px;margin:1.2em auto 1em;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.footbar .mini{padding:6px 12px;font-size:14px;}
+.donebar{max-width:1000px;margin:.4em auto 3.2em;padding:1em 1.2em;border-radius:12px;
+  border:2px dashed rgba(128,128,128,.45);background:rgba(128,128,128,.07);text-align:center;}
+.donebar .dt{font-size:1.25em;font-weight:700;letter-spacing:.04em;margin-bottom:.35em;}
+.donebar .ds{font-size:.95em;opacity:.78;line-height:inherit;}
+
+button:disabled,.btn-dis{opacity:.45;cursor:not-allowed;}
+.audio-later{font-size:.84em;opacity:.72;margin-left:6px;}
+#loadbox{display:none!important;}
+
+
+/* ntfold：打開後 summary 黏頂，長字典唔使搵返三角形先摺得 */
+.ntx details.ntfold[open]>summary{
+  position:sticky;top:0;z-index:3;
+  background:var(--bg,#efe9dd);
+  border-bottom:1px solid rgba(128,128,128,.28);
+}
+.ntx details.ntfold>summary::after{
+  content:"";
+}
+.ntx details.ntfold[open]>summary::after{
+  content:" · 點內容可摺回";
+  font-weight:400;font-size:.82em;opacity:.55;
+}
+.ntx details.ntfold .dict-line{display:block;margin:.18em 0;line-height:1.65;}
+.ntx details.ntfold ul.dict-plain{margin:.2em 0 .5em;padding-left:1.2em;}
+.ntx details.ntfold ul.dict-plain>li{margin:.2em 0;}
+
+
+.orig-lit{margin:.4em 0 1em;}
+.orig-lit .orig-ref{margin:0 0 .55em;font-weight:700;}
+.orig-lit .orig-he{direction:rtl;text-align:right;font-size:1.25em;line-height:1.8;margin:.1em 0 .05em;unicode-bidi:isolate;}
+.orig-lit .orig-el{direction:ltr;text-align:left;font-size:1.15em;line-height:1.8;margin:.1em 0 .05em;}
+.orig-lit .orig-zh{margin:0 0 .7em;line-height:1.7;}
+.orig-lit .orig-note{margin:.15em 0 .7em;font-size:.92em;opacity:.8;}
+
+
+.gmean{margin-top:.65em;padding-top:.55em;border-top:1px solid rgba(128,128,128,.25);}
+.gmean p{margin:.4em 0;line-height:1.85;}
+.gmean .gl{font-weight:700;}
+.gkey{margin:.2em 0 .9em;}
+
+/* 年歲線表 */
+p.yr-method {margin:0.3em 0 0.7em;}
+
+
+/* t2100 mechanical nav + lead */
+#doc p.verse-lead{font-weight:700;border-bottom:none;padding-bottom:0;margin:0 0 .15em;cursor:default;}
+#doc p.verse-cuv{border-bottom:1px solid rgba(128,128,128,.22);padding-bottom:.85em;margin:0 0 1.15em;cursor:default;}
+.verse-nav{display:flex;flex-wrap:wrap;gap:.4em .8em;align-items:center;margin:8px 0 10px;font-size:.92em;}
+.verse-nav a{color:inherit;text-decoration:none;border:1px solid rgba(128,128,128,.35);border-radius:6px;padding:3px 10px;}
+.verse-nav a:hover{text-decoration:underline;background:rgba(128,128,128,.12);}
+.verse-nav .off{opacity:.45;border:1px solid transparent;padding:3px 10px;}
+.mech-flag{font-size:.92em;opacity:.82;margin:0 0 .8em;}
+.orig-lit{margin:.4em 0 1em;}
+.orig-ref{opacity:.8;margin:.2em 0 .4em;}
+.orig-he,.orig-gr{font-size:1.15em;line-height:1.8;margin:.2em 0 .6em;}
+.wlist{margin:.3em 0 .8em;padding-left:1.25em;}
+.wlist li{margin:.18em 0;}
+.idx-wrap{max-width:52em;margin:0 auto;padding:16px 18px 80px;}
+.idx-wrap h1,.idx-wrap h2{line-height:1.35;}
+.idx-wrap ul{padding-left:1.3em;}
+.idx-wrap li{margin:.16em 0;}
+.idx-wrap a{color:inherit;}
+.res-note{opacity:.85;}
+
+</style>
+</head>
+<body>
+<div id="bar">
+<div class="row">
+<span id="sw"></span>
+<span class="lbl">字</span><input id="fr" max="32" min="15" step="1" type="range" value="15"/><b id="fsv">15px</b>
+<span class="lbl">行距</span><input id="lr" max="2.6" min="1.4" step="0.1" type="range" value="1.9"/><b id="lhv">1.9</b>
+</div>
+<div class="row">
+<a class="mini" download="66_啟示錄_Revelation rev_02_25_無聲_臨標.html" href="#" id="dlAllBar">⬇ 下載離線html</a>
+<button class="mini" id="mb">⬇ 下載 .md</button>
+<button class="mini" id="cb">⧉ 複製全文</button>
+<span class="hint">主題／字號可用 ｜ 無聲讀稿版（語音已剝） ｜ 點 ▸ 展開查經</span>
+</div>
+</div>
+<div id="wrap">
+<article id="doc">
+<p class="verse-lead">啟示錄 第2章25節</p>
+<p class="verse-cuv">但你們已經有的，總要持守，直等到我來。</p>
+<p>但你們已經有的，總要持守，直等到我來。別的擔子不加了，這一節卻把還要做的那一件說出來：把已經有的抓住，一直抓到他來。</p>
+<p>持守這個詞，在別迦摩那裏，曾經用在「持守我的名」，也用在「持守巴蘭的教訓」。現在對推雅推喇其餘的人說：你們已經有的，要持守。所持的，不是那些深奧，乃是已經在他們手裏的。</p>
+<p>直等到我來。期限不是一本年表，乃是他的來臨。已經有的，要拿到那一天。</p>
+
+</article>
+<hr class="sepBig"/>
+<div class="refhead">逐節查經<span class="refthemewrap">頁面變色 <span id="reftheme"></span></span></div>
+<details class="refbox" id="refbox" open="">
+<summary>按一下展開／收起</summary>
+<div class="refbody">
+<div class="ntx">
+<nav class="verse-nav"><a href="66_%E5%95%9F%E7%A4%BA%E9%8C%84_Revelation%20rev_02_24_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">上一節　啟示錄 第2章24節</a><a href="index.html">啟示錄目錄</a><a href="../index.html">總目錄</a><a href="66_%E5%95%9F%E7%A4%BA%E9%8C%84_Revelation%20rev_02_26_%E7%84%A1%E8%81%B2_%E8%87%A8%E6%A8%99.html">下一節　啟示錄 第2章26節</a></nav>
+<h2 class="ntitle">啟示錄 第2章25節 原文逐節查經（臨標）</h2>
+<blockquote>啟示錄 第2章25節<br/>但你們已經有的，總要持守，直等到我來。</blockquote>
+<hr/>
+<h2>一、經文。原文對照</h2>
+<div class="orig-lit">
+<div class="orig-ref">&lt; 啟示錄 2:25 &gt;</div>
+<div class="orig-gr">πλὴν (plēn) ὃ (ho) ἔχετε (echete) κρατήσατε (kratēsate) ἄχρις (achris) οὗ (hou) ἂν (an) ἥξω. (hēxō)</div>
+<p>本節原文詞（依資料庫詞序；英語詞義取自資料庫既有欄位，不另撰中文。）</p>
+<ul class="wlist">
+<li>πλὴν (plēn)　But　G4133=CONJ</li>
+<li>ὃ (ho)　to what　G3739=R-ASN</li>
+<li>ἔχετε (echete)　you have　G2192=V-PAI-2P</li>
+<li>κρατήσατε (kratēsate)　do hold fast　G2902=V-AAM-2P</li>
+<li>ἄχρις (achris)　until　G0891=PREP</li>
+<li>οὗ (hou)　which [time]　G3739=R-GSM</li>
+<li>ἂν (an)　maybe　G0302=PRT</li>
+<li>ἥξω. (hēxō)　I may come.　G2240=V-AAS-1S</li>
+</ul>
+</div>
+<p><strong>語意直譯</strong>（按本節原文停頓與詞序現寫，只取本節最貼的一個意思；其餘義項見剖析。）</p>
+<p>不過，你們已經有的，總要抓住，<br/>
+直到我來的時候。</p>
+<hr/>
+<h2>二、逐句剖析</h2>
+<h3>1️⃣ 不過，你們已經有的，總要抓住，直到我來｜πλὴν ὃ ἔχετε κρατήσατε ἄχρις οὗ ἂν ἥξω</h3>
+<blockquote>πλὴν ὃ ἔχετε κρατήσατε ἄχρις οὗ ἂν ἥξω</blockquote>
+<p><strong>逐詞拆解：</strong></p>
+<ul>
+<li><strong>πλήν</strong>（不過、只是，<code><span class="sn">G04133</span></code>）</li>
+<li><strong>ὃ ἔχετε κρατήσατε</strong>（你們已經有的，總要抓住，不定過去時命令語氣，<code><span class="sn">G02192</span></code>、<code><span class="sn">G02902</span></code>）</li>
+<li><strong>ἄχρις οὗ ἂν ἥξω</strong>（直到我來，<code><span class="sn">G00891</span></code>、<code><span class="sn">G02240</span></code>）</li>
+</ul>
+<p>πλήν 把上一節「不加別的擔子」接到這一節僅有的吩咐。κρατήσατε 是「抓住、持守」，不定過去時命令語氣，要他們切實抓住。這同一個動詞，在 2:13 是持守他的名，在 2:14-15 是有人持守錯誤的教訓。本節是正面的抓住：抓住已經有的。已經有的是甚麼，本節用關係代詞 ὃ ἔχετε 來指，沒有再列一張新清單。當連著 2:19 已被認得的愛心、信心、服事、忍耐，以及 2:24 沒有從那教訓這條界線來讀，不可另外補一套本節沒有寫出的項目。</p>
+<p>ἄχρις οὗ ἂν ἥξω 是「直到我來」。ἥξω 來自 ἥκω，是來到、抵達。期限是他的來臨，不是一串可推算的年月日。2:16 對別迦摩說「我快臨到你那裏」是警告；本節「直到我來」是對其餘之人的盼望與期限。兩處都指向他要來，用意不同，不可混成一句。</p>
+<h3>2️⃣ 收束｜本節歸納</h3>
+<p>不過，你們已經有的，總要抓住，直到我來。別的擔子不加了，這一件卻要抓住，一直抓到他來的時候。所持的，是已經在他們手裏的，不是那些被命名為撒但的深奧。</p>
+<details class="fold"><summary>三、數值備考</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>05_Gematria_數值\gematria_unified.sqlite</code> 的 lemma 表（value_status=ok）。下列按本頁機械層已抄錄的裁定值原樣移入，未另行推算。 庫中未見各數現成的「四層意思」條目，故不補寫。數字輔助原文，不凌駕原文。</p>
+<div class="gcards"><div class="gcard"><div class="gcard-h"><span class="gw">πλήν</span><span class="gid">G04133</span></div><ul><li><b>主數值</b> 168</li><li><b>G_iso</b> 168</li><li><b>G序數</b> 47</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ὅς</span><span class="gid">G03739</span></div><ul><li><b>主數值</b> 270</li><li><b>G_iso</b> 270</li><li><b>G序數</b> 33</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ἔχω</span><span class="gid">G02192</span></div><ul><li><b>主數值</b> 1405</li><li><b>G_iso</b> 1405</li><li><b>G序數</b> 51</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">κρατέω</span><span class="gid">G02902</span></div><ul><li><b>主數值</b> 1226</li><li><b>G_iso</b> 1226</li><li><b>G序數</b> 76</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ἄχρι</span><span class="gid">G00891</span></div><ul><li><b>主數值</b> 711</li><li><b>G_iso</b> 711</li><li><b>G序數</b> 49</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ἄν</span><span class="gid">G00302</span></div><ul><li><b>主數值</b> 51</li><li><b>G_iso</b> 51</li><li><b>G序數</b> 14</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div><div class="gcard"><div class="gcard-h"><span class="gw">ἥκω</span><span class="gid">G02240</span></div><ul><li><b>主數值</b> 828</li><li><b>G_iso</b> 828</li><li><b>G序數</b> 41</li><li>語言：希臘文（lemma.value_status=ok）</li></ul></div></div>
+</div></details>
+<h2>四、對照經文</h2>
+<p>本節是 2:24「不將別的擔子放在你們身上」的直接下文，當連著讀。κρατέω 在 2:13、2:14-15 的兩種「持守」，是本書內最近的對照。2:16 的「快臨到」與本節「直到我來」同指向他的來臨，用意不同，須分別。後文 3:11「你既有的，就要持守」是後來的回響，不可提前寫成已在本節展開。</p>
+<h2>五、語意</h2>
+<p><strong>字面</strong>　你們已經有的，總要持守，直到我來。</p>
+<p><strong>本書用法</strong>　本節是對其餘之人僅有的吩咐，上接「不加別的擔子」，下啟 2:26 得勝者的應許。持守的對象是已經有的，期限是他來。</p>
+<p><strong>舊約根源</strong>　本節沒有整句舊約外引。等待那要來的一位，卻是全書已經反覆寫出的方向。</p>
+<p><strong>新約慣用</strong>　新約常吩咐人持守已得的，直到主來。本節用同一個「持守」的動詞，把真假抓住分開。</p>
+<p><strong>跨篇深意</strong>　他不加新的擔子，卻要人把已經有的抓緊。真正的持守，不是抓住深奧的口號，乃是把已經被他認得的，拿到他來的那一天。</p>
+<h2>六、總意</h2>
+<p>別的擔子不加了，這一節卻不讓人鬆手。你們已經有的，總要持守。路不是去另尋一套更深的道理，乃是把已經在手裏的抓住。</p>
+<p>一直抓到他來。期限不是人自己排的年份，乃是他的腳步。推雅推喇其餘的人，可以從那教訓旁邊走過，卻不能空手等到那一天。　神的心，是把擔子減到最小，也把持守送到他來的時候。</p>
+<details class="fold"><summary>附錄：原文字典（CBOL 全條）</summary><div class="foldbody">
+<p class="subpage">資料源：專用庫 <code>04_原文字典_CBOL\dict_unified.sqlite</code> 全條。 下列為本頁機械層原有之原文字典摺層，原樣移入，不刪條目，不改 Strong 號，不杜撰義項。</p>
+<details class="ntfold"><summary><span class="heb">πλήν</span> <span class="tl">plḗn</span> <span class="sn">G04133</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G04133</li><li>詞形 πλήν</li><li>音譯 plḗn</li><li>讀音 plane</li><li>約 新約</li><li>詞類 副詞</li><li>字源 源自 04119 ; 副詞</li><li>KJV 用法 but 14, nevertheless 8, notwithstanding 4, but rather 2, except 1, than 1, save 1; 31</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 但是</li><li>2 僅僅, 不過, 然而</li><li>3 另一方面, 無論如何</li><li>4 除了...以外</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>04133  πλήν  副詞 連接詞一、副詞作連接詞，置在句子或子句之前。A. 反意詞：「但」。μὲν…πλήν雖然…但，路22:22。B. 「只是，然而，但」。πλὴν λέγω ὑμῖν但我告訴你，太11:22,24（ἀμὴν λέγω ὑμῖν我實在告訴你們，平行經文： 太10:15）;太26:64（ 太17:12λέγω δὲ ὑμῖν，只是我告訴你們；可9:13ἀλλὰ λέγω ὑμιν我告訴你們）。πλὴν οὐαί但有禍了，太18:7;（參 路17:1οὐαὶ δέ但有禍了）。πλὴν οὐχ ὡς ἐγὼ θέλω ἀλλ᾽ ὡς σύ然而不要照我的意思，只要照你的意思，太26:39;參 路22:42（ 可14:36ἀλλ᾽ οὐ τί ἐγὼ θέλω然而不要從我的意思）。路6:24,35 10:11,14,20 11:41 13:33 18:8 19:27 22:21。也作否定詞的回顧：μὴ κλαίετε ἐπ᾽ ἐμέ, πλὴν ἐφ᾽ ἑαυτὰς κλαίετε不要為我哭，當為自己哭，路23:28。μὴ ζητεῖτε…πλὴν ζητεῖτε不要求…只要求，路12:29-31。C. 「只要，然而」，講話時轉語氣，強調要點。保羅在 林前11:11 弗5:33 腓3:16 4:14，也可能包括 腓1:18τί γάρ; πλήν ὅτι…這怎樣呢？反正…；啟2:25。D. πλὴν ὅτι「只，但」。徒20:23；可能也包括 腓1:18（見上述C.）τί γὰρ πλὴν ὅτι…；這有何妨呢？無論怎樣…E. 轉換話題，「只是，然而」，πλὴν ἰδοὺ ἡ χείρ κτλ.然而你看，出賣我之人的手（從設立聖餐而轉話題預言被出賣的事），路22:21直譯。二、不正式介系詞，與所有格連用：除了，通常於否定句子之後： 可12:32 約8:10公認經文;徒15:28 20:23 27:22。連於正面的句子之後： 徒8:1。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from ;<br/>moreover (besides), i.e. albeit, save that, rather, yet</p>
+<p>4133 plen {plane}<br/>from<br/>4119<br/>;; adv<br/>AV - but 14, nevertheless 8, notwithstanding 4, but rather 2,<br/>except 1, than 1, save 1; 31<br/>1) moreover, besides, but, nevertheless<br/>2) besides, except, but</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ὅς</span> <span class="tl">hós</span> <span class="sn">G03739</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G03739</li><li>詞形 ὅς</li><li>音譯 hós</li><li>讀音 hos</li><li>約 新約</li><li>詞類 代名詞</li><li>字源 [字源] probably a primary word (or perhaps a form of the article ); the relatively (sometimes demonstrative) pronoun, who, which, what, that</li><li>KJV 用法 which 395, whom 262, that 129, who 84, whose 53, what 42, that which 20, whereof 13, misc 430; 1393</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 ...的那一位, ...的那一個, 什麼, 那個...</li><li>2 這一個</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>03739  ὅς, ἥ, ὅ 代名詞甲、關係代名詞：「…的人，…者，…的事物」。一、一般來說，關係代名詞的性和數與它所論及的名詞或代名詞（即前述詞）一致；它的格由支配它的動詞，名詞，或介詞決定：ὁ ἀστήρ, ὃν εἶδον所看見的那星，太2:9。ὁ Ἰησοῦς, ὃν ἐγὼ καταγγέλλω ὑμῖν我所傳與你們的耶穌，徒17:3。Ἰουδαῖον ᾧ （要意會ἧν）ὄνομα Βαριησοῦς一個…猶太人，他名（是）巴耶穌，徒13:6原文。 ὁ Ἰουδαῖος,… οὗ ὁ ἔπαινος 猶太人…這樣的人所受的稱讚，⊙ 羅2:29。Ἰσραηλίτης, ἐν ᾧ δόλος οὐκ ἔστιν 以色列人，在他裡面沒有詭詐，約1:47。οὗτος περὶ οὗ ἀκούω τοιαῦτα 這個人，關於他，我聽見這樣的事，路9:9及其他極多處。二、指示代名詞用法有時隱含在關係代名詞之內：A. 將兩種代名詞用同一個格表示：ὅς那位－ ὃς οὐ λαμβάνει那位不拿起…的，太10:38。可9:40。οὗ那一位的，約18:26。ᾧ對所…的那位，羅6:16。ὅν（某人）對他（或它）（做某事）的那個，可15:12 約1:45。οἷς對所…的那些，太20:23。οὕς對他們（或它們）（做某事）的那些，可3:13 約5:21。ὅ那…的，太10:27。在某些經文中，若介詞支配關係代名詞，它只是支配（被省略的）指示代名詞，如παρ᾽ ὅ過於所…的，羅12:3 加1:8。或ὑπὲρ ὅ (ἅ)，林前10:13 林後12:6 門1:21。πρὸς ἅ按著所…的，林後5:10。εἰς ὅν 約6:29；或是必須加在兩種代名詞前，如ἐν ᾧ在那其中…的事上，林後11:12 彼前2:12 3:16（彼得前書的經文亦可歸類於甲十一C.內）。或ἐν οἷς 腓4:11。ὑπὲρ οὗ 為所…的…，林前10:30。 ἀφ᾽ ὧν 從那些從…的人中，林後2:3。一相當爭論性的經文ἑταῖρε, ἐφ᾽ ὃ πάρει；太26:50可能屬於此處，但我們需要補充一些必要的字眼，如下：朋友，（你是否錯用了你的吻）為了那個使你在這裡的（目的）？或如下：是跟那個你之所以出現的（目的）有關的（使你吻我）？但另見B.2.和九B.。B. 但兩種代名詞也可以用不同的格表示，在這情形之下，指示代名詞幾乎常用主格或直接受格表示：1. 用主格：οὗ那他的…的，徒13:25。ὧν那些他們…的，羅4:7（ 詩32:1）。ᾧ那…於他的人或那…所為他的人，路7:43 彼後1:9。οἷς為前者之複數，太19:11 羅15:21（ 賽52:15）。ὅ那位，那（主格）所（直接受格）的，太13:12 25:29 26:13 可11:23 路12:3。相似者－ἅ，路12:20。ὅν所…的那人，約3:34 4:18 徒10:21。ἐφ᾽ ὃν所關於的那人，來7:13。2. 用直接受格：ὧν那…所屬的，約13:29。ᾧ那其中…的，提後1:12。帶介系詞亦同－ἐν ᾧ，羅14:21。複數用ἐν οἷς，彼後2:12。ἐφ᾽ ὅ那在其上…的，路5:25。περὶ ὧν所…的事，徒24:13。ἐφ᾽ οἷς從所…的那些事，羅6:21（這段經文或許是商業上的隱喻）。εἰς ὃν那…到他的，羅10:14上。太26:50（見二A.）此意，但須作以下之補充：朋友，（作）你所為而來的（那個）！3. 僅有在特例中，所補上的指示代名詞才用其他的格：οὗ＝τούτῳ, οὗ，所…的他… 羅10:14下。παρ᾽ ὧν＝τούτοις, παρ᾽ ὧν給他們，從這些人… 路6:34。三、在某些情況有特殊的結構：A. 在ὅς後的人稱代名詞的冗言用法：γυνὴ ἧς εἶχεν τὸ θυγάτριον αὐτῆς 一個婦人，她有自己的女兒，可7:25，此用法如古典希臘文一樣早，且在後期希臘文中並未消失，但最主要是受閃族語言影響；其他版本中省略αὐτῆς以期與希臘語言用法一致。οὗ τὸ πτύον ἐν τῇ χειρὶ αὐτοῦ 那他的簸箕在他手裡的，太3:12 路3:17。 οὗ … τῶν ὑποδημάτων αὐτοῦ那…他的鞋帶的，可1:7 路3:16。οὗ τῷ μώλωπι αὐτοῦ那藉著祂的鞭傷的，彼前2:24異版。用於引述：ἐφ᾽ οὓς ἐπικέκληται… ἐπ᾽ αὐτούς那被稱…於其身的，徒15:17原文，摩9:12。尤常見於啟示錄－ 啟3:8 7:2,9 9:11異版;啟13:8,12,20:8。B. 根據意義的結構：1. 單數的關係代名詞應用於複數的某事物上：οὐρανοῖς…, ἐξ οὗ (οὐρανοῦ)諸天的…，從它（天上）腓3:20。2. 複數的關係代名詞應用於單數上：πλῆθος πολύ …οἳ ἦλθον一大群的人（單數）…他們都來，路6:16,17。κατὰ πόλιν πᾶσαν, ἐν αἷς 每一城各處，在這些城中，徒15:36。參ἤδη δευτέραν ἐπιστολήν, ἐν αἷς（即ἐν ταῖς δυσὶν ἐπιστ.）已經是第二封信，在其（這二封信）中，彼後3:1。3. 關係代名詞遵照它前述詞本質上的性別，而不是文法上的性別：τέκνα μου. οὔς我小子啊！…為你們，加4:19;參約二1:1 門1:10。ἔθνη, οἵ外邦人，他們… 徒15:17（ 摩9:12）;參 徒26:17。παιδάριον, ὃς 孩童，他…，約6:9。θηρίον, ὅς獸，牠… 啟13:14。ὀνόματα, οἵ名，他們… 徒3:4異版。γενεᾶς σκολιᾶς, ἐν οἷς 彎曲的世代，在其中… 腓2:15。應用在基督身上：τὴν κεφαλήν, ἐξ οὗ 元首，靠著他…，西2:19。四、關係代名詞有受牽引（或吸收）的現象，在古典希臘文，碑文，蒲草紙稿，七十士中亦可見，其簡單關係代名詞ὅς, ἥ, ὅ偶而被吸引成它的前述詞的格，甚至關係代名詞在其本身子句中的地位可能要求另外不同的格：A. 在多數的情況，關係代名詞的直接受格常被吸引成它的前述詞的所有格或間接受格：περὶ πράγματος οὗ ἐὰν αἰτήσωνται關於你們求的事，太18:19。τῆς διαθήκης ἧς ὁ θεὸς διέθετο　神所立的約，徒3:25。參 太24:50下;可7:13 路2:20 3:19 5:9 9:43 15:16 約4:14 7:31 15:20 17:5 21:10 徒1:1 2:22 22:10 林前6:19 林後1:6 10:8,13 弗2:10 帖後1:4 猶1:15等。前置詞亦可為能判知而未寫出的指示代名詞（見二），用所有格或間接受格：關係代名詞的直接受格可受其牽引而變為所有格或間接受格：οὐδὲν  ὧν ἑώρακαν其實是οὐδὲν τούτων ἃ ἑώρακαν不向人（傳報）所看見的這事，路9:36；τούτω省略，而ἅ取了它的格（與古典用法一樣早）。路23:14,41 徒8:24 21:19,24 22:15 25:11 26:16 羅15:18 林前7:1 弗3:20 來5:8。ὧν＝τούτων, οὕς 約17:9 林後12:17。οἷς＝τούτοις, ἅ 路24:25。B. 關係代名詞的間接受格較不常受牽引：ἕως τῆς ἡμέρας ἧς (＝ᾗ) ἀνελήμφθη 直到被接上升的日子，徒1:22（參 利23:15 25:50）;弗1:6 4:1 提前4:6異版；κατέναντι οὗ ἐπίστευσεν θεοῦ＝κατέν. τοῦ θεοῦ ᾧ ἐπίστ.在他所信的　神面前，羅4:17。διὰ τῆς παρακλήσεως ἧς παρακαλούμεθα 用我們所得安慰的安慰，林後1:4原文。C. 在含有主詞，述語和連繫詞的關係子句中，關係代名詞的性、數有時不與所修飾的名詞一致，乃是在它作主詞時與述語一致，或它作述語時與主詞一致：πνεύματι…, ὅς ἐστιν ἀρραβών 聖靈…祂是憑據，弗1:14。τῷ σπέρματί σου, ὅς ἐστιν Χριστός你那個孩子，他就是基督，加3:16。 τὴν μάχαιραν τοῦ πνεύματος, ὅ ἐστιν ῥῆμα θεοῦ聖靈的寶劍，它是　神的道，弗6:17。啟4:5 5:8。D. 關係代名詞亦可能牽引前置詞成為它自己的格（與古典用法一樣早）：τὸν ἄρτον ὃν κλῶμεν, οὐχὶ Κοινωνία … ἐστιν＝ὁ ἄρτος ὅν…我們所擘開的餅，豈不是同… 林前10:16。λίθον, ὃν ἀπεδοκίμασαν…οὗτος ἐγενήθη所棄的石頭，它成了…（ 詩118:22）太21:42 可12:10 路20:17 彼前2:7異版。παντὶ ᾧ ἐδόθη πολύ, πολὺ ζητηθήσεται παρ᾽ αὐτοῦ凡多給的就向他多要，路12:48。ὅρκον, ὃν ὤμοσεν（＝μνησθῆναι ὅρκου ὅν）他所起的誓（＝記念…的誓）路1:73。參約一2:25。E. 當關係子句中特別著重它的名詞，或子句本身的內容在表達一重要觀念，以致子句與前置詞間有明顯距離時，牽引現象不會發生（如古典用法）：τῆς σκηνῆς τῆς ἀληθινῆς, ἣν ἔπηξεν ὁ κύριος, οὐκ ἄνθρωπος真帳幕，它是主，不是人所支的，來8:2。但另參 可13:19 約2:22 4:5 徒8:32 提前4:3 多1:2 門1:10 來9:7 啟1:20。五、關係子句的前置名詞可以出現在關係子句當中：A. 不縮略其結構，格亦不受牽引： ᾗ οὐ δοκεῖτε ὥρᾳ ＝τῇ ὥρᾳ ᾗ οὐ δοκ.你們想不到的時候，太24:44。參 路12:40 17:29,30。ἃ ἡτοίμασαν ἀρώματα所預備的香料，路24:1。ὃ ἐποίησεν σημεῖον所行的神蹟，約6:14。ὃ θέλω ἀγαθόν我所願意的善，羅7:19。B. 有縮略，平時用兩次的介系詞只用一次：ἐν ᾧ κρίματι κρίνετε κριθήσεσθε ＝ἐν τᾧ κρίματι, ἐν ᾧ κρίνετε, κριθήσεσθε 你們將被人用你們所論斷的斷語論斷，太7:2上，原文；太7:2下；可4:24。ἐν ᾧ ἦν τόπῳ＝ἐν τᾧ τόπῳ ἐν ᾧ ἦν在他所在的地方，約11:6。καθ᾽ ὃν τρόπον＝κατὰ τὸν τρόπον, καθ᾽ ὅν照…的方式，徒15:11。C. 格有改變，主要由於受牽引所致：1. 關係代名詞的格改變：περὶ πάντων ὧν ἐποίησεν πονηρῶν＝περὶ πάντων πονηρῶν, ἃ ἐπ.為他所行的一切惡事，路3:19。περὶ πασῶν ὧν εἶδον δυνάμεων＝περὶ πασῶν δυνάμεων, ἃς εἶδον 因所見的一切異能，路19:37。αἰτίαν…ὧν ἐγὼ ὑπενόουν πονηρῶν 我所逆料的惡事的控告，徒25:18。關係詞的間接受格亦會受牽引成其他格：ἄχρι ἧς ἡμέρας＝ἄχρι τῆς ἡμέρας, ᾗ…以前的日子，太24:38 路1:20 17:27 徒1:2。ἀφ᾽ ἧς ἡμέρας自從…的日子，西1:6,9。2. 關係詞所修飾之名詞的格：ὃν ἐγὼ ἀπεκεφάλισα Ἰωάννην, οὗτος ἠγέρθη ＝Ἰωάννης ὃν κτλ.我所斬的約翰，他復活了，可6:16。εἰς ὃν παρεδόθητε τύπον διδαχῆς＝τῷ τύπῳ τῆς διδαχῆς εἰς ὃν παρεδόθητε 所傳給你們道理的模範，羅6:17。D. 分析上不確定之經文：περὶ ὧν κατηχήθης λόγων＝περὶ τῶν λόγων  οὓς  κατηχήθης 或τῶν λόγων, περὶ ὧν κατηχήθης 關於你所受教的道，路1:4。徒21:16的ἄγοντες παρ᾽ ᾧ ξενισθῶμεν Μνάσωνι之意應為ἄγοντες πρὸς Μνάσωνα, ἵνα ξενισθῶμεν παρ᾽ αὐτῷ 帶到拿孫那裡以便與他同住。六、介系詞若已用在前置名詞之前，就可在關係代名詞之前省略：ἐν παντὶ χρόνῳ ᾧ (＝ἐν ᾧ) 在所有…的時候，徒1:21。εἰς τὸ ἔργον ὃ (＝εἰς ὅ)至於…的工，徒13:2。ἀπὸ πάντων ὧν (ἀφ᾽ ὧν)從一切…的事，徒13:39節，參 徒26:2。ἐν τῷ ποτηρίῳ ᾧ (＝ἐν ᾧ)用…的杯，啟18:6。七、中性的用法：A. 用以解釋，尤其解釋外國語言或暗喻：ὅ ἐστιν它就是－βασιλεὺς Σαλήμ, ὅ ἐστιν βασιλεὺς εἰρήνης撒冷王，就是平安王，來7:2;參 太27:33 可3:17 7:11,34 15:42。或ὅ ἐστιν μεθερμηνευόμενον繙出來就是，太1:23 可5:41 徒4:36;參 約1:38,41,42。ὅ ἐστιν μεθερμηνευόμενος κρανίου τόπος繙出來就是髑髏地，可15:22（異版用μεθερμηνευόμενον）。τόπος, ὃ λέγεται Ἑβραϊστὶ Γολγοθά 地方，希伯來話稱它為各各他，約19:17。另見αὐλῆς, ὅ ἐστιν πραιτώριον 院子，就是衙門，可15:16。λεπτὰ δύο, ὅ ἐστιν κοδράντης兩個小錢，就是一個大錢，可12:42。τοῦ σώματος αὐτοῦ, ὅ ἐστιν ἡ ἐκκλησία他的身體，就是教會，西1:24。πλεονέκτης ὅ ἐστιν εἰδωλολάτρης貪心的就是拜偶像的，弗5:5。τὴν ἀγάπην ὅ ἐστιν σύνδεσμος τῆς τελειότητος 愛心就是聯絡全德的，西3:14。B. 在關係代名詞修飾整個子句時使用：τοῦτον τ. Ἰησοῦν ἀνέστησεν ὁ θεός, οὗ πάντες ἡμεῖς ἐσμεν μάρτυρες這耶穌　神已經叫他復活了，我們都為這事作見證，徒2:32;參 徒3:15 11:30 26:9,10 加2:10 西1:29 彼前2:8 啟21:8。C. 作受詞直接受格，其內容由緊鄰之下文描述：ὃ ἀπέθανεν, τῇ ἁμαρτίᾳ ἀπέθανεν ἐφάπαξ＝τὸν θάνατον, ὃν ἀπέθανεν κτλ.他所死的（即他所受的死）是一次向罪死，羅6:10上；參 羅6:10下。ὃ νῦν ζῶ ἐν σαρκί我現在在肉身活著的，加2:20。八、關係詞與連續結構或最終意義（結果或目的）同用：τίς ἔγνω νοῦν κυρίου, ὃς συμβιβάσει αὐτόν誰曾知道主的心，以致他能教導祂呢？ 林前2:16（參 賽40:13）。ἄξιός ἐστιν ᾧ παρέξῃ τοῦτο他配得叫你行這事，路7:4。ἀποστέλλω τὸν ἄγγελόν μου… ὃς κατασκευάσει我要差遣我的使者…他要預備，太11:10。ἔπεμψα  Τιμόθεον, … ὃς ὑμᾶς ἀναμνήσει我已打發提摩太…他必題醒你們，林前4:17。九、取代疑問代名詞：A. 在間接問句中：ὃ ἐγὼ ποιῶ我所作的，約13:7。ἃ λέγουσιν他們所說的，提前1:7。約18:21。B. 新約語言學者極反對ὅς用在直接問句的用法，支持此用法為正常的例子仍待發現，甚至一些碑文中發現的例子仍有存疑之處，包括，太26:50，ἐφ ὃ πάρει之意如為「你來此是為了什麼？」仍不能充份支持。另見甲二A.B.2.。十、與質詞連用：A. 與ἄν (ἐάν)，見ἄν－SG302。B. 與γέ（見γέ－SG1065二）羅8:32。C. 與δήποτε：無論什麼，約5:4（版本各用οἵῳ與ᾧ, δηποτοῦν與δήποτε）。D. 與καί：他也，可3:19 路6:13,14 7:49等。E. 與περ＝ὅσπερ. ἥπερ. ὅπερ：就是那位… 可15:6公認經文。十一、與介詞同用（另見上文：二A.；二B.2.；五B.C.；六）形成一種連接詞：A. 與ἀντί︰ἀνθ᾽ ὦν（見ἀντί－SG473三）「因為」，⊙ 路1:20 19:44 徒12:23 帖後2:10;因此，路12:3。B. 帶εἰς︰εἰς ὅ為達這目的，※ 帖後1:11。C. 帶ἐν：ἐν οἷς與上文所敘述的情況相連－。在那一種情況之下＝在這些情況之下，在一個由前述者所產生的情況中，路12:1 徒24:18公認經文;徒26:12。相同者或另有ἐν ᾧ在某情況中，彼前1:6 2:12 3:16,19 4:4。另見ἐν－SG1722六和上文甲二A.。D. 帶ἐπί︰ἐφ᾽ ᾧ＝ἐπὶ τούτῳ ὅτι為「這…緣故，因為」，羅5:12 林後5:4 腓3:12;為了，腓4:10。其中前三處經文或為商業隱喻；見ἐπί－SG1909乙一B.3.。E. οὗ χάριν「所以」，路7:47。F. 用以指示時間：ἀφ᾽ ἧς（見ἀπό甲二C.）「從（某）時候，自從」，路7:45 徒24:11 彼後3:4。ἀφ᾽ οὖ（見ἀπό－SG575二C.）當…那時，自從，路13:25 24:21 啟16:18。ἄχρι οὗ（見ἄχρι－SG891二A.）直到（當… ），徒7:18 羅11:25 林前11:26 加3:19異版。或ἕως οὗ，太1:25 13:33 14:22 17:9 路13:21等。μέχρις οὗ直等到… 可13:30 加4:19。有關所有格οὗ作地方副詞的用法，見SG3757。乙、指示代名詞：「這個」。一、ὃς δέ但他。可15:23 約5:11。多數是︰二、ὃς μὲν…ὃς δέ這個…而那個，陽性以單數或複數的各種格出現： 太22:5 路23:33 徒27:44 羅14:5 林前11:21 林後2:16 猶1:22,23。ὃ μὲν …ὃ δέ這個…那個，羅9:21。ἃ μὲν…ἃ δὲ一些…另一些，提後2:20。ὃς μὲν… ὃς δὲ…ὃς δὲ一個…又一個…再一個，太21:35 25:15。或 ὃ μὲν … ὃ δὲ …ὃ δὲ 太13:8下，太13:23。ᾧ μὲν …ἄλλῳ δὲ …ἑτέρῳ這人…那人…又有一人（ἄλλῳ δέ共重覆了五次之多。在最後的一次之前有第二個ἑτέρῳ）林前12:8-10。 ὃ μὲν …καὶ ἄλλο κτλ.有的…另有的，※ 可4:4。ὃ μὲν…καὶ ἔτερον有的…另有別的（重覆多次），※ 路8:5。或ἃ μὲν…ἄλλα δέ（重覆多次），太13:4-8上。在破格文體中οὓς μὲν不帶οὓς δέ，林前12:28。ὃς μὲν … ὁ δὲ ἀσθενῶν有人…但那軟弱的，羅14:2。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] probably a primary word (or perhaps a form of the article );<br/>the relatively (sometimes demonstrative) pronoun, who, which, what, that</p>
+<p>3739 hos {hos} including feminine he {hay}, and neuter ho {ho}<br/>probably a primary word (or perhaps a form of the article 3588);; pron<br/>AV - which 395, whom 262, that 129, who 84, whose 53, what 42,<br/>that which 20, whereof 13, misc 430; 1393<br/>1) who, which, what, that</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ἔχω</span> <span class="tl">échō</span> <span class="sn">G02192</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02192</li><li>詞形 ἔχω</li><li>音譯 échō</li><li>讀音 ekh&#x27;-o</li><li>約 新約</li><li>詞類 動詞</li><li>字源 [字源] a primary verb; to hold (used in very various applications, literally or figuratively, direct or remote; such as possession; ability, contiuity, relation, or condition)</li><li>KJV 用法 have 613, be 22, need + 5532 12, misc 63, vr have 2; 712</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 擁有</li><li>2 有 (關係親近)</li><li>3 緊握</li><li>4 佩戴</li><li>5 能夠</li><li>6 認為, 視為</li><li>7 有 (某種經驗)</li><li>8 在某種狀態或情況中</li><li>9 近於</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02192  ἔχω 動詞未ἕξω；不完εἶχον，1複εἴχαμεν約二1:5；3複εἰχαν 可8:7 啟9:8或εἴχοσαν 約15:22,24；2不定式ἔσχον；完ἔσχηκα；過完ἐσχήκειν。甲、主動，及物：一、「擁有，持有」。A. 字義：「握在手中」。ἔ. τι ἐν τῇ χειρί 有某物在手中，啟1:16 6:5 10:2 17:4。或不帶ἐν τῇ χειρί在手中－（ 書6:8）。ἔ. κιθάραν拿著琴，啟5:8。λιβανωτὸν χρυσοῦν拿著金香爐，啟8:3，參 啟8:6 14:17，另見ἀλάβαστρον－SG211玉瓶，太26:7 可14:3。B. 用於衣服，武器等：「穿上，戴上」。τὸ ἔνδυμα衣服，太3:4 22:12。κατὰ κεφαλῆς ἔχων 帶τί，某人蒙著頭，林前11:4。ἔ. θώρακας有甲，啟9:9,17。ἔ. μάχαιραν帶一把刀，約18:10。用於樹亦類似：ἔ. φύλλα有葉子，可11:13。C. 「保持，保存」。1. 字義：把一彌拿（一工人的百日工資）包在手巾裡存著，路19:20。2. 喻意：τὴν μαρτυρίαν見證，啟6:9 12:17 19:10；真道的奧秘，提前3:9；純正話語的規範，提後1:13;佔有，⊙ 可6:18。D. 指狀態：「把持住，抓住」。（ 伯21:6 賽13:8）εἶχεν αὐτὰς τρόμος καὶ ἔκστασις戰慄和驚奇抓著他們，可16:8原文。二、「擁有，得到」。A. 字義：κτήματα πολλά有很多田產，※ 太19:22 可10:22。πρόβατα羊，路15:4 約10:16。θησαυρόν財寶，太19:21 可10:21下。βίον養生的，路21:4約一3:17。δραχμὰς δέκα十塊錢，路15:8。πλοῖα船，啟18:19。κληρονομίαν基業，弗5:5。θυσιαστήριον祭壇，來13:10上；μέρος ἔ. ἔν τινι有份於某事，啟20:6。一般用法：μηδὲν ἔ.一無所有，林後6:10。ὅσα ἔχεις你所有的，可10:21;參 可12:44 太13:44,46 18:25。τί ἔχεις ὃ οὐκ ἔλαβες：你有什麼不是領受的？ 林前4:7。直接受詞常帶形容詞或分詞：ἔ. ἄπαντα κοινά凡物共有，徒2:44。ἔ. πολλὰ ἀγαθὰ κείμενα有許多財物積存，路12:19。來12:1。獨立用法：ἔ.有（某物），太13:12上;可4:25上;路8:18上。ἐκ τοῦ ἔχειν照你們所有的，林後8:11。ἔ. εἰς ἀπαρτισμόν有完成，⊙ 路14:28。帶否定詞：ἔ.沒有，太13:12下;可4:25下;路8:18下。πᾶς ὁ ἔχων凡有的，太25:29上;路19:26上。ὁ μὴ ἔχων沒有的（ 尼8:10）太25:29下;路19:26下;林前11:22。B. 指人擁有與他人的密切關係：1. 指親人：πατέρα ἔ.有…父，約8:41。ἀδελφούς有…弟兄，路16:28。ἄνδρα丈夫，約4:17,18 林前7:2下，林前7:13 加4:27（ 賽54:1）。γυναῖκα有…妻子，林前7:2上,林前7:12,29。τέκνα孩子，太21:28 22:24 提前3:4 5:4 多1:6。υἱούς 兒子，路15:11 加4:22。σπέρμα 孩子，太22:25。帶直接受格作受詞及述語ἔ. τινὰ Πατέρα 有某人為祖宗，太3:9。ἔ. τινὰ γυναῖκα（γυναῖκα得自上下文）娶某人為妻，太14:4；參 可6:18；ὥστε γυναῖκά τινα τοῦ πατρὸς ἔ.有人甚至於收了他父親的妻子，林前5:1。2. 更一般性的用法：φίλον有朋友，路11:5。ἀσθενοῦντας病人，路4:40和χήρας寡婦，提前5:16要照顧；παιδαγωγοὺς ἔ.有師傳，林前4:15。δοῦλον僕人，路17:7。οἰκονόμον 管家，路16:1；κύριον ἔ.有位主，即受一位主來管理，西4:1；δεσπότην ἔ.有…主人，提前6:2；βασιλέα王，約19:15。ἀρχιερέα大祭司，來4:14 8:1。ποιμένα牧人，太9:36。ἔχων ὑπ᾽ ἐμαυτὸν στρατιώτας有兵在我以下 路7:8。ἔ. τινὰ ὑπηρέτην有某人作幫手，徒13:5。ἔ. τινὰ τύπον有某人作榜樣，腓3:17。用於基督徒與　神和與耶穌的關係：ἔ. θεόν, τὸν πατέρα, τὸν υἱόν有　神，有父，有子，即與他們聯合，約一2:23約二1:9。C. 指整體與部份的關係：「具有，含有」。1. 用於有生命：如人和動物身體的一部份－μέλη肢體，羅12:4上；參 林前12:12。σάρκα καὶ ὀστέα骨和肉，路24:39。ἀκροβυστίαν割禮，徒11:3。οὖς耳，啟2:7,11。或ὦτα 太11:15 可7:16 路8:8。χεῖρας, πόδας, ὀφθαλμούς 手，腳，眼，太18:8,9 可9:44,46,47。用於動物或類似之物：ἔ. πρόσωπον有…臉孔，⊙ 啟4:7。πτέρυγας翅膀，啟4:8。κέρατα角，啟5:6。ψυχάς性命，啟8:9。τρίχας頭髮，啟9:8。κεφαλάς頭，⊙ 啟12:3等。2. 用於無生命的物件：如城－τ. θεμελίους ἔ.有根基，來11:10;參 啟21:14。如植物－ῥίζαν ἔ.有根，太13:6 可4:6。D. 「在手，可支配」。ἄρτους餅，太14:17;參 太15:34。οὐκ ἔχω ὃ παραθήσω αὐτῷ  沒有什麼給他擺上，路11:6。 μὴ ἐχόντων τί φάγωσιν沒有什麼喫的，可8:1;參 太15:32。οὐκ ἔχω ποῦ συνάξω 沒有地方收藏，路12:17。ἄντλημα打水的器具，約4:11上。οἰκίας ἔ.有家，林前11:22。用於人：擁有。摩西和先知，路16:29。παράκλητον中保，約一2:1。οὐδένα ἔχω ἰσόψυχον沒有知己，腓2:20。ἄνθρωπον οὐκ ἔχω 沒有人，約5:7。E. 用身體和靈魂的各種狀況：1. 用於疾病等：ἀσθενείας病，徒28:9。μάστιγας 災病，可3:10。πληγὴν τῆς μαχαίρης 受刀傷，啟13:14。θλῖψιν苦難，約16:33下;林前7:28 啟2:10。特別指鬼附：δαιμόνιον ἔ.有鬼附著，太11:18 路7:33 8:27 約7:20 8:48,49,52 10:20。Βεεζεβούλ別西卜，可3:22。πνεῦμα ἀκάθαρτον污靈，可3:30 7:25 徒8:7。πνεῦμα δαιμονίου ἀκαθάρτου污鬼的靈，路4:33。πνεῦμα πονηρόν惡靈 徒19:13。πνεῦμα ἄλαλον不能說話的靈，可9:17。πνεῦμα ἀσθενείας病靈，路13:11。τὸν λεγιῶνα群（鬼的名稱）可5:15。2. 用於一般狀況，特點，能力，情感，內在的操守：ἀγάπην ἔ.有…愛，約5:42 13:35 15:13約一4:16 林前13:1以下;林後2:4 腓2:2 彼前4:8。ἀγνωσίαν θεοῦ對　神的無知，林前15:34。ἁμαρτίαν罪，約9:41 15:22上。ἀσθένειαν弱點，※ 來7:28。γνῶσιν知識，林前8:1,10。ἐλπίδα 盼望，徒24:15 羅15:4 林後3:12 10:15 弗2:12約一3:3。ἐπιθυμίαν切願，※ 腓1:23。ἐπιποθίαν渴慕之心，※ 羅15:23下；ζῆλον ἔ.熱心，羅10:2，嫉妒，雅3:14。θυμόν暴怒，啟12:12。λύπην憂愁，約16:21,22 林後2:3 腓2:27；μνείαν τινὸς ἔ.有對某人的惦記，帖前3:6。παρρησίαν大膽，門1:8 來10:19約一2:28 3:21 4:17 5:14。πεποίθησιν信心，林後3:4 腓3:4。或πίστιν 太17:20 21:21 徒14:9 羅14:22 林前13:2 提前1:19等。προφητείαν先知講道之能，林前13:2。σοφίαν智慧，啟17:9。συνείδησιν ἁμαρτιῶν罪的感覺，來10:2。καλὴν συνείδησιν清白的良心，來13:18。ἀγαθὴν σ.無虧的良心，提前1:19 彼前3:16；或ἀπρόσκοπον σ. 徒24:16；ὑπομονήν忍耐，⊙ 啟2:3。φόβον懼怕，提前5:20。χαράν快樂，門1:7。χάριν ἔ. τινί有對某人感謝，路17:9 提前1:12 提後1:3。F. 有指示時間或歲數的指示：πεντήκοντα ἔτη οὔπω ἔχεις你還沒有五十歲，約8:57。τριάκοντα κ. ὀκτὼ ἔτη ἔχων ἐν τῇ ἀσθενείᾳ αὐτοῦ在病中有三十八年，※ 約5:5;參 太9:20異版。τέσσαρας ἡμέρας ἔ. ἐν τῷ μνημείῳ在墳墓裡已經有四天了，※ 約11:17。πολὺν χρόνον ἔ.已有許久了（在某處或某狀況），※ 太5:6；ἡλικίαν ἔχειν成人，太9:21,23。τέλος ἔχειν有結局，可3:26 路22:37（後者見 τέλος－SG5056一A. 末）；參 來7:3。G. 用於益處，利益，或使人喜愛的安慰：ἔ. τὰ αἰτήματα所求的我們都得著了，約一5:15；ἀνάπαυσιν  ἔ.有歇息，※ 啟4:8 14:11；ἀπόλαυσιν τινος ἔ.有喜愛某事，來11:25。βάθος γῆς深土，太13:5下;可4:5下；γῆν πολλήν許多土，太13:5上;可4:5上。εἰρήνην平安，羅5:1。ἐλευθερίαν 自由，加2:4。參ἐξουσία, ἐπαγγελία, ἔπαινος, ζωή, ἰκμάς, καιρός, καρπός, καύχημα, καύχησις, λόγος, μισθός, νοῦς, πνεῦμα, προσαγωγή, πρόφασις, τιμή, χάρις（＝恩典），χάρισμα（見上列字）。H. 「掌有」，即「由某人管理，保管」。ἔ. τὰς κλεῖς拿著鑰匙，啟1:18;參 啟3:7。τὸ γλωσσόκομον帶著錢囊，約12:6 13:29。I. 「帶有」，即「受制於某事物之下」：ἀνάγκην ἔχειν有不得已的事，林前7:37上；後接不定詞：「被迫，必需」（ἀνάγκη－SG318一）路14:18 來7:27。χρείαν ἔ.有需要，獨立用法： 弗4:28下，τινός 需要某事物： 太6:8 9:12上;可11:3 路19:31,34 約13:29 林前12:21 來10:36等；後接不定詞： 太3:14 14:16 約13:10 帖前1:8 4:9 5:1。νόμον律法，約19:7。ἐπιταγήν 命令，林前7:25。或ἐντολήν 來7:5約一2:7 4:21約二1:5;參 約14:21。διακονίαν職份，林後4:1。ἀγῶνα 爭戰，腓1:30 西2:1。πρᾶξιν用處，羅12:4下。ἔγκλημα罪名，徒23:29。J. 「自己裡面有」。帶ἐν的變異結構：用於女人－ἐν γαστρὶ ἔ.懷孕（γαστήρ －SG1064二）太1:18,23（ 賽7:14）;太24:19 可13:17 路21:23 帖前5:3 啟12:2。 ἔ. τινὰ ἐν τῇ καρδίᾳ把某人放在心上，腓1:7。或ἔ. τι ἐν ἑαυτῷ ：ζωήν生命，約5:26。τὴν μαρτυρίαν 見證，約一5:10異版；τὸ ἀπόκριμα τοῦ θανάτου有死的判決，林後1:9原文。三、「伴有或隨伴」，亦帶μεθ᾽ ἑαυτοῦ τινά有某人伴隨，太15:30 26:11 可2:19 14:7 路2:42異版;約12:8。四、「含有，導致」。帶直接受格，用於ὑπομονή 忍耐：ἔργον τέλειον完全的功用，※ 雅1:4。用於πίστις信心：ἔργα行為，雅2:17。用於φόβος懼怕：κόλασιν刑罰，約一4:18。用於παρρησία勇敢：μεγάλην μισθαποδοσίαν大賞賜，來10:35。五、「視為，認為」。帶受詞直接受格和述語直接受格：ἔχε με παρῃτημένον准我辭了，路14:18下，路14:19。ἔ. τινὰ ὡς προφήτην以某人為先知，太14:5 21:26,46異版。τινὰ ἔντιμον ἔ.有尊重某人的心，腓2:29。ἔ. τινὰ εἰς προφήτην以某人為先知，太21:46。εἶχον τ. Ἰωάννην ὄντως ὅτι προφήτης ἦν 真以約翰為先知，可11:32。六、ἔ.後接不定詞：A. 「有可能，能，能夠」。（ 箴3:27） ἔ.  ἀποδοῦναι能夠償還，太18:25上;路7:42 14:14。μὴ ἐ. περισσότερον τι ποιῆσαι沒有什麼可作的，路12:4。οὐδὲν ἔ ἀντειπεῖν沒有話可辯駁，徒4:14;參 多2:8。ἔ. κατηγορεῖν αὐτοῦ得著告他的把柄，約8:6異版。ἀσφαλές τι γράψαι οὐκ ἔχω沒有確實的可以奏明，徒25:26上；參 徒25:26下。ἔ. μεταδιδόναι有以分給，弗4:28上。ἔ. τὴν τούτων μνήμην ποιεῖσθαι能常常記得這些事，彼後1:15。κατ᾽ οὐδενὸς εἰχεν μείζονος ὀμόσαι沒有比自己更大的可以指著起誓，來6:13。意義相同卻不帶不定詞，不定詞由上下文看出：ὃ ἔσχεν（即ποιῆσαι）ἐποίησεν他所作的是盡他所能的，可14:8。B. 「必須」。（ 創18:31）βάπτισμα ἔχω βαπτισθῆναι 我有當受的洗，路12:50。 ἔχω σοί τι εἰπεῖν我有句話要對你說，路7:40。ἀπαγγεῖλαί 告訴，徒23:17,19;參 徒23:18。πολλὰ γράφειν許多事要寫，約二1:12約三1︰13。七、特別的組合：A. 帶介系詞：ἐν：τὸν θεὸν ἔχειν ἐν ἐπιγνώσει在認識上…有　神，※ 羅1:28。ἐν ἑτοίμῳ ἔ. 我有準備了，林後10:6（ἕτοιμος－SG2092二）ἐν ἐποὶ οὐκ ἔχει οὐδέν他在我裡面是毫無所有，約14:30。帶κατά τινος：有關 林前11:4見甲一B.。ἔ. τι κατά τινος有某事敵對某人，太5:23 可11:25；後接ὅτι，啟2:14。或ἔ. κατά τινος後接ὅτι，啟2:4,20。ἔ. τινὰ κατὰ πρόσωπον和某人對質，徒25:16。帶μετά ἔ. τι μετά τινος：同某人有某事－κρίματα訴訟，林前6:7。帶πρός τινα某事敵對某人，徒24:19。ζητήματα ἔ. πρός τινα 與某人有爭辯，徒25:19。λόγον ἔ. πρός τινα有控告某人的事，徒19:38。πρᾶγμα ἔ. πρός τινα有對某人相爭的事，林前6:1。πρός τινα ἔ. μομφήν對某人有嫌隙，西3:13。B. τοῦτο ἔχεις ὅτι你有這一個（優點）就是，啟2:6。ἔ. ὁδόν離…（有多遠 ）：用於橄欖山 ὅ ἐστιν ἐγγὺς Ἰερουσαλὴμ σαββάτου ἔχον ὁδόν離耶路撒冷不遠，約有安息日可走的路程，徒1:12。ἴδε ἔχεις τὸ σόν你看，你有你原有的，太25:25原文。ἔχετε κουστωδίαν你們有看守的兵（即你們可以派人看守）太27:65。乙、主動，不及物：「是，在」。帶副詞。一、用於人：πῶς ἔχουσιν景況如何，徒15:36（參 創43:27）。ἑτοίμως ἔ.有準備，後接不定詞，徒21:13 林後12:14 彼前4:5。或ἐν ἑτοίμῳ ἔ. 林後10:6（見ἕτοιμος－SG2092二，末）。κακῶς ἔ.害病的（ 結34:4），太4:24 8:16 9:12下。καλῷς ἔ.健康，可16:18；或ἐσχάτως ἔ.（見ἐσχάτως－SG2079），可5:23；κομψότερον ἔ.有起色，※ 約4:52。二、用於非人稱：「它是，情況是」：ἄλλως另一種，提前5:25。οὔτως這樣，徒7:1 12:15 17:11 24:9。τὸ νῦν ἔχον如今，徒24:25。丙、關身：「堅持，持守」。新約中只見分詞。一、指內在的歸屬和緊密的聯合。帶所有格表示歸屬和聯合的對象：τὰ ἐχόμενα σωτηρίας屬於得救的事，來6:9。二、用於地點：ἐχόμενος臨近的，κωμοπόλεις鄉村，可1:38。三、用於時間：「接著」。τῇ ἐ.次日，路13:33 徒20:15；帶ἡμέρᾳ日子，徒21:26。τῷ ἐχομένῳ σαββάτῳ 到下安息日，徒13:44異版（代替ἐρχομένῳ）。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primary verb;<br/>to hold (used in very various applications, literally or figuratively, direct or remote; such as possession; ability, contiuity, relation, or condition)</p>
+<p>2192 echo {ekh&#x27;-o}<br/>including an alternate form scheo {skheh&#x27;-o}, used in certain<br/>tenses only), a primary verb; TDNT - 2:816,286; v<br/>AV - have 613, be 22, need + 5532 12, misc 63, vr have 2; 712<br/>1) to have, i.e. to hold<br/>1a) to have (hold) in the hand, in the sense of wearing, to have<br/>(hold) possession of the mind (refers to alarm, agitating<br/>emotions, etc.), to hold fast keep, to have or comprise or<br/>involve, to regard or consider or hold as<br/>2) to have i.e. own, possess<br/>2a) external things such as pertain to property or riches or<br/>furniture or utensils or goods or food etc.<br/>2b) used of those joined to any one by the bonds of natural blood<br/>or marriage or friendship or duty or law etc, of attendance or<br/>companionship<br/>3) to hold one&#x27;s self or find one&#x27;s self so and so, to be in such or<br/>such a condition<br/>4) to hold one&#x27;s self to a thing, to lay hold of a thing, to adhere<br/>or cling to<br/>4a) to be closely joined to a person or a thing</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">κρατέω</span> <span class="tl">kratéō</span> <span class="sn">G02902</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02902</li><li>詞形 κρατέω</li><li>音譯 kratéō</li><li>讀音 krat-eh&#x27;-o</li><li>約 新約</li><li>詞類 動詞</li><li>字源 [字源] from ; to use strength, i.e. seize or retain (literally or figuratively)</li><li>KJV 用法 hold 12, take 9, lay hold on 8, hold fast 5, take by 4, lay hold upon 2, lay hand on 2, misc 5; 47</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 達到 (<br/>徒 27:13<br/>)</li><li>2 握住 (<br/>徒 3:11<br/>啟 2:1<br/>)</li><li>3 掌握, 掌控</li><li>3a 逮捕</li><li>3b 抓住</li><li>4 阻止, 抑制</li><li>5 堅持, 堅守</li><li>6 留在原處 (<br/>約 20:23<br/>)</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02902  κρατέω 動詞不完ἐκράτουν；未κρατήσω；1不定式ἐκράτησα；完不定κεκρατηκέναι；不完被ἐκρατούμην；完被κεκράτημαι，3複κεκράτηνται。一、「據為己有」。A. 「逮捕，拘留，捉拿」τινά某人（參 詩137:9）太14:3 21:46 26:4,48,50,55,57 可6:17 12:12 14:1,44,46,49,51 徒24:6 啟20:2。B. 「緊握，抓住」，強行「抓住」，也有指不用武力的（參 撒下6:6 歌3:4）；帶人或物的直接受格，太12:11 18:28 22:6 28:9 可3:21。τῆς χειρός (τινος)抓著（某人的）手（ 詩73:23 創19:16）太9:25 可1:31 5:41 9:27 路8:54。τινὰ τῆς χειρός某人的手，可9:27公認經文。C. 「達到」。τῆς προθέσεως目的，徒27:13。二、「拿著」。A. 「緊握」τινά某人的手，以致他無法走開，徒3:11。B. 「拿」在手裡。τὶ ἐν τῇ δεξιᾷ右手拿著，啟2:1。C. 「拉回來」，以行動來阻止，禁止。帶直接受格，後接ἵνα μή使不，啟7:1。被動：「被阻止」，後接τοῦ μή和不定詞－他們的眼睛ἐκρατοῦντο τοῦ μὴ ἐπιγνῶναι 「迷糊」了，不認識，路24:16；但不確定所指的是肉體的眼睛或是心靈的眼睛（參διανοίγω－SG1272一B.）。D. 「抓緊」，以防逃脫。1. 「被一個能力抓住」。被動：οὐκ ἧν δυνατὸν κρατεῖσθαι αὐτὸν ὑπ᾽ αὐτοῦ 他（基督）不能被死拘禁，徒2:24。2. 「緊抓」某人或某物，因而與它或他緊密連結。帶直接受格：τὴν κεφαλήν 元首（即基督）西2:19。τὴν παράδοσιν遺傳，可7:3;參 可7:4,8 帖後2:15。τὴν διδαχήν教訓，啟2:14,15。τὸ ὄνομά μου我的名，啟2:13。帶事物所有格：（ 箴14:18）τῆς ὁμολογίας所承認的道，來4:14。τῆς ἐλπίδος指望，來6:18。3. 「持守，抓住」屬於自己的某事物，使別人不能把它拿走，啟2:25 3:11。4. 將話「守住」，為使自己能記在心裡，可9:10。5. 「留住」。τὰς ἁμαρτίας罪（反於ἀφιέναι赦免）約20:23。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] from ;<br/>to use strength, i.e. seize or retain (literally or figuratively)</p>
+<p>2902 krateo {krat-eh&#x27;-o}<br/>from<br/>2904<br/>; TDNT - 3:910,466; v<br/>AV - hold 12, take 9, lay hold on 8, hold fast 5, take by 4,<br/>lay hold upon 2, lay hand on 2, misc 5; 47<br/>1) to have power, be powerful<br/>1a) to be chief, be master of, to rule<br/>2) to get possession of<br/>2a) to become master of, to obtain<br/>2b) to take hold of<br/>2c) to take hold of, take, seize<br/>2c1) to lay hands on one in order to get him into one&#x27;s power<br/>3) to hold<br/>3a) to hold in the hand<br/>3b) to hold fast, i.e. not discard or let go<br/>3b1) to keep carefully and faithfully<br/>3c) to continue to hold, to retain<br/>3c1) of death continuing to hold one<br/>3c2) to hold in check, restrain</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ἄχρι</span> <span class="tl">áchri</span> <span class="sn">G00891</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G00891</li><li>詞形 ἄχρι</li><li>音譯 áchri</li><li>讀音 akh&#x27;-ree</li><li>約 新約</li><li>詞類 連接詞</li><li>字源 [字源] akin to (through the idea of a terminus); (of time) until or (of place) up to</li><li>KJV 用法 until 14, unto 13, till 3, till + 3739 + 302 3, until + 3739 2, while + 3739 2, even to 2, misc 7; 49</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 直到..., 到...為止</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>00891  ἄχρι  連接詞此種雅典形式最常在新約中出現；而希臘形式之ἄχρις只出現在 加3:19（所有抄本）和 來3:13（多數抄本），兩處都後接有母音。一、非固有的介詞，帶所有格：A. 指時間：直到。ἄ. ἦς ἡμέρας直到…的那日，太24:38 路1:20 17:27 徒1:2,22異版；ἄ. τῆς ἡμέρας ταύτης直到今日，徒2:29 23:1 26:22；ἄ. καιροῦ暫時，路4:13（ἄ. χρόνου 同節異版）；徒13:11。 ἄχρι χρόνων ἀποκαταστάσεως等到…復興的時候，徒3:21。ἄ. αὐγῆς直到天亮，徒20:11；ἄ. τοῦ δεῦρο到如今，羅1:13；或ἄ. τοῦ νῦν 羅8:22 腓1:5。林前4:11 林後3:14 加4:2 腓1:6；ἄ. τέλους一直到底，來6:11 啟2:26；ἄ. ἡμερῶν πέντε過五天，徒20:6；ἄ. νόμου直到有律法，或沒有律法以先，羅5:13。參 太13:30異版。B. 指地點：到…為止。馬可福音短結尾； ἦλθεν ἄχρι ἐμοῦ直來到我跟前，徒11:5;參 徒13:6 20:4公認經文;徒28:15；ἄ. τούτου τοῦ λόγου 說到這句話，徒22:22；ἄ. καὶ ὑμῶν一直…到你們，林後10:13,14；ἄ. μερισμοῦ甚至…能剖開，來4:12;參 啟14:20 18:5。C. 喻意：指方式：διώκειν ἄ. θανάτου 逼迫直到死地，徒22:4；πιστὸς ἄ. θανάτου至死忠心，啟2:10;參 啟12:11。二、連接詞：A. 帶關係詞：ἄχρι οὖ（＝ἄχρι χρόνου ᾧ ）直到…時候。帶過去直說－ἄ. οὖ ἀνέστη直到那…興起，徒7:18；ἄ. οὗ ἡμέρα ἤμελλεν γίνεσθαι直到天漸亮的時候，徒27:33。帶不定式假設－（ 伯32:11）路21:24 羅11:25 林前11:26 15:25；帶ἄν：ἄχρι οὖ ἄν直到當…時候，加3:19異版；啟2:25。只要：ἄ. οὗ τὸ σήμερον καλεῖται還有叫作「今天」的時候⊙ 來3:13。B. 不帶關係代名詞，與不定式假設同用：「直等到」。啟7:3 15:8 17:17異版;啟20:3,5。帶ἄν和不定式假設： 加3:19。帶未來直說: 啟17:17。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] akin to (through the idea of a terminus);<br/>(of time) until or (of place) up to</p>
+<p>891 achri {akh&#x27;-ree} or achris {akh&#x27;-rece}<br/>akin to 206 (through the idea of a terminus);; prep/conj<br/>AV - until 14, unto 13, till 3, till + 3739 + 302 3, until + 3739 2,<br/>while + 3739 2, even to 2, misc 7; 49<br/>1) until, unto, etc.</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ἄν</span> <span class="tl">án</span> <span class="sn">G00302</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G00302</li><li>詞形 ἄν</li><li>音譯 án</li><li>讀音 an</li><li>約 新約</li><li>詞類 質詞</li><li>字源 [字源] a primary particle, denoting a supposition, wish, possibility or uncertainty</li><li>KJV 用法 whosoever 35, whatsoever 7, whomsoever 5, whereinsoever 1, what things soever 1, whatsoever + 3745 7, an many as + 3745 4, whosoever + 3745 2, what things so ever + 3745 1, wherewith soever + 3745 1, whithersoever + 3699 4, wheresoever + 3699 2, whatsoever + 3748 5, whosoever + 3748 3, whose soever + 5100 2, not tr 111; 191 此字本身沒有意思, 只用來表示條件子句</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>一 ἄν帶不定式或不完直說：<br/>A. 表示過去時間持續的動作，但受所述條件之限定，尤其是在關係詞之後者：不定式（<br/>創30:42<br/>民9:17<br/>撒上14:47<br/>結10:11<br/>）。ὅσοι ἂν ἥψαντο αὐτοῦ ἐσῴζοντο凡摸著他的人，就都好了，<br/>可6:56<br/>。不完（<br/>結1:20<br/>） ὅπου ἂν εἰσεπορεύετο εἰς κώμας 凡他所到的地方，<br/>可6:56<br/>。καθότι ἄν τις χρείαν εἶχεν 照個人所需用的，<br/>徒2:45<br/>4:35<br/>。<br/>林前12:2<br/>之ὡς ἂν ἤγεσθε 也類似（除非ἀνήγεσθε 之抄本正確）。參ὅταν－<br/>SG3752<br/>二C.及D.<br/>B. 用於表達與事實相反的結論句中：<br/>1. 帶不完式：οὗτος εἰ ἦν προφήτης, ἐγίνωσκεν ἄν 這人若是先知，他<br/>必<br/>知（但他不知）<br/>路7:39<br/>。 εἰ ἔχετε πίστιν … ἐλέγετε ἄν 你們若有信心…<br/>就是<br/>說，<br/>路17:6<br/>。εἰ ἐπιστεύετε Μωϋσεῖ, ἐπιστεύετε ἂν ἐμοί你們如果信摩西，也<br/>必<br/>信我，<br/>約5:46<br/>。εἰ ἐμὲ ᾔδειτε, καὶ τὸν πατέρα μου ἂν ᾔδειτε 若是認識我，也<br/>就<br/>認識我的父，<br/>約8:19<br/>;參<br/>約8:42<br/>9:41<br/>15:19<br/>。εἰ ἔτι ἀνθρώποις ἤρεσκον, Χριστοῦ δοῦλος οὐκ ἂν ἤμην若仍討人的喜歡，我<br/>就<br/>不是基督的僕人了，<br/>加1:10<br/>;參<br/>加3:21<br/>。 εἰ ἑαυτοὺς διεκρίνομεν, οὐκ ἂν ἐκρινόμεθα 我們若是先分辨自己，<br/>就<br/>不至於受審，<br/>林前11:31<br/>。 εἰ ἦν ἐπὶ γῆς, οὐδ᾽ ἦν ἂν ἱερεύς 他若在地上，<br/>必<br/>不得為祭司，<br/>來8:4<br/>;參<br/>來4:8<br/>8:7<br/>11:15<br/>。<br/>2. 帶不定式式：表達對過去事物提出假設（<br/>創30:27<br/>）。 εἰ ἐγένοντο αἱ δυνάμεις, πάλαι ἂν … μετενόησαν 異能若行在…，他們早已…悔改了，<br/>太11:21<br/>。εἰ ἔγνωσαν, οὐκ ἂν ἐσταύρωσαν 若知道，<br/>就<br/>不把…釘在十字架上了，<br/>林前2:8<br/>;參<br/>羅9:29<br/>（<br/>賽1:9<br/>）。 εἰ ἐγνώκειτε, οὐκ ἂν κατεδικάσατε 你們若明白…<br/>就<br/>不將…當作有罪的了，<br/>太12:7<br/>。εἰ ἠγαπᾶτέ με, ἐχάρητε ἄν你們若愛我…<br/>就<br/>必喜樂，<br/>約14:28<br/>。以過去完成式代不定式直說－εἰ ἦσαν μεμενήκεισαν ἄν 若是屬我們的，<br/>就<br/>必仍舊與我們同在，<br/>約一2:19<br/>;參<br/>約11:21<br/>異版。在<br/>路19:23<br/>中κἀγὼ ἐλθὼν σὺν τόκῳ ἂν αὐτὸ ἔπραξα 之 ἐλθὼν用以取代不真實時間的條件子句：參καὶ ἐλθὼν ἐγὼ ἐκομισάμην ἂν τὸ ἐμόν 我來的時候<br/>可以<br/>把屬我的…收回來，<br/>太25:27<br/>。同樣地ἐπεὶ οὐκ ἂν ἐπαύσαντο προσφεόμεναι；句中 ἐπεί取代條件子句的角色：「<br/>若不然<br/>」（即若祭物真能帶出最後的贖價）獻祭的事豈不早已止住了麼？<br/>來10:2<br/>。</li><li>二 ἄν在關係詞之後帶假設語氣，關係子句就形成將來或現在一般形式條件的條件子句。<br/>A. 在歸結子句中帶未來式或不完成式，顯示其條件與結果均屬將來，指單一或持續之動作。 ὃς δ᾽ ἂν ποιήσῃ καὶ διδάξῃ, οὗτος μέγας κληθήσεται<br/>無論<br/>何人遵行又教訓人遵行＝他若遵行又教訓人遵行，他…要稱為大，<br/>太5:19<br/>。ὃς ἂν ἐσθίῃ … ἔνοχος ἔσται<br/>無論<br/>何人…吃…他就是干犯，<br/>林前11:27<br/>。οὓς ἐὰν（異版為ἂν）δοκιμάσητε, τούτους πέμψω 你們寫信舉薦誰，我就打發他們，<br/>林前16:3<br/>異版。<br/>太10:11<br/>林前16:2<br/>。<br/>B. 在歸結子句中帶現在式，表明不管時態因素，其條件與結果均是持續之動作： ἃ ἂν ἐκεῖνος ποιῇ, ταῦτα καὶ ὁ υἱὸς ὁμοίως ποιεῖ 凡父所作的，子也照樣作，<br/>約5:19<br/>。ὅπου ἐὰν（異版為ἂν）αὐτὸν καταλάβῃ, ῥήσσει αὐτόν<br/>無論<br/>在那裡…把他摔倒，<br/>可9:18<br/>。ὑμῖν ἐστὶν ἡ ἐπαγγελία …, ὅσους ἂν προσκαλέσηται κύριος 因為這應許是給你們…<br/>就是<br/>主我們　神所召來的，<br/>徒2:39<br/>。 ὃς ἐὰν（異版為ἂν） βουληθῇ φίλος εἶναι τοῦ κόσμου, ἐχθρὸς τοῦ θεοῦ καθίσταται凡想與世俗為友的，<br/>就是<br/>與　神為敵了，<br/>雅4:4<br/>。</li><li>三 在時間子句之中，當描述一事件可能或將發生，但不能確定時，ἄν帶假設語氣：<br/>A. ὅταν（＝ὅτε ἄν；參 ὅταν）帶現在式假設語氣，表示定期重複發生之動作：ὅταν ἄρτον ἐσθίωσιν<br/>無論<br/>何時吃飯時，<br/>太15:2<br/>。ὅταν λαλῇ τὸ ψεῦδος<br/>無論<br/>何時他說謊，<br/>約8:44<br/>。 ὅταν λέγῃ τις<br/>無論<br/>何時有人說，<br/>林前3:4<br/>。帶不定式式假設語氣，表示將來發生之動作，被認為已完成：ὅταν ποιήσητε πάντα<br/>當<br/>你們作完了，<br/>路17:10<br/>。ὅταν ἔλθῃ ὁ κύριος<br/>當<br/>園主已來的時候，<br/>太21:40<br/>； ὅταν ἔλθῃ ἐν τῆ δόξῃ<br/>當<br/>他在榮耀裡降臨時，<br/>可8:38<br/>;參<br/>約4:25<br/>16:13<br/>徒23:35<br/>。 ὅταν πάλιν εἰσαγάγῃ τὸν πρωτότοκον 　神使長子…來<br/>的時候<br/>，<br/>來1:6<br/>。<br/>B. ἡνίκα ἄν 「<br/>每逢<br/>」（<br/>出1:10<br/>33:22<br/>34:24<br/>等）。ἡνίκα ἂν ἀναγινώσκηται Μωϋσῆς<br/>每逢<br/>誦讀摩西書的時候，<br/>林後3:15<br/>。ἡνίκα δὲ ἐὰν ἐπιστρέψῃ 但<br/>幾時<br/>歸向主，<br/>林後3:16<br/>。<br/>C. ὁσάκις ἄν「<br/>每次<br/>」: ὁσάκις ἐὰν πίνητε<br/>每逢<br/>喝的時候，<br/>林前11:25<br/>。ὁσὰκις ἐὰν ἐσθίητε<br/>林前11:26<br/>。<br/>D. ὡς ἄν<br/>同時<br/>（<br/>書2:14<br/>）：ὡς ἂν πορεύωμαι 我去的<br/>同時<br/>，<br/>羅15:24<br/>。ὡς ἂν ἔλθω 我來<br/>的時候<br/>，<br/>林前11:34<br/>。ὡς ἂν ἀφίδω τὰ περὶ ἐμέ 我<br/>一看<br/>出我的事要怎樣了結，<br/>腓2:23<br/>。ἀφ᾽ οὗ ἂν<br/>之後<br/>，<br/>路13:25<br/>。只有ἕως ἄν表示確定時間（<br/>創24:14,19<br/>49:10<br/>出23:30<br/>等 ）：μείνατε ἕως ἂν ἐξέλθητε 住到你們離去的時候，<br/>太10:11<br/>。 ἕως ἂν ἴδωσιν τὴν βασιλείαν τοῦ θεοῦ 必看見　神的國，<br/>路9:27<br/>。<br/>太2:13<br/>5:26<br/>。ἕως ἂν λάβῃ<br/>直到<br/>得了，<br/>雅5:7<br/>。ἄχρι οὗ（異版有ἄν）ἔλθῃ 直等到他來，<br/>林前11:26<br/>。ἄχρι οὗ (異版有ἄν) θῇ 直等到他放，<br/>林前15:25<br/>。ἄχρι οὗ ἂν ἥξω 直等到我來，<br/>啟2:25<br/>。ἄχρις ἂν ἔλθῃ 等候來到，<br/>加3:19<br/>（僅一些抄本有此）。πρὶν ἄν：πρὶν ἂν ἴδῃ τὸν χριστόν<br/>必<br/>看見基督，<br/>路2:26<br/>。</li><li>四 在目的子句中用 ὅπως ἄν：（<br/>創18:19<br/>50:20<br/>出33:13<br/>耶7:23<br/>等）ὅπως ἂν ἀποκαλυφθῶσιν διαλογισμοί<br/>叫<br/>…意念顯露出來，<br/>路2:35<br/>。ὅπως ἂν ἔλθωσιν καιροὶ 日子<br/>就<br/>…來到，<br/>徒3:19<br/>。<br/>徒15:17<br/>（<br/>摩9:12<br/>異版）;<br/>羅3:4<br/>（<br/>詩51:4<br/>）。</li><li>五 在主要子句中祈願語氣帶ἄν幾乎沒有，例外的情形是：如保羅向亞基帕王所說εὐξαίμην ἂν我向　神所求的，<br/>徒26:29<br/>。參路加的文學用語－直接修詞問句（<br/>創23:15<br/>伯19:23<br/>）πῶς γὰρ ἂν δυναίμην<br/>怎能<br/>明白呢？<br/>徒8:31<br/>。 τί ἂν θέλοι οὗτος λέγειν 這人…要說甚麼？<br/>徒17:18<br/>。多在間接問句出現，在不完成式或歷史現在式之後－τὸ τί ἂν θέλοι καλεῖσθαι αὐτό 問他要叫這孩子甚麼名字，<br/>路1:62<br/>。τὸ τίς ἂν εἴη μείζων αὐτῶν 他們當中誰將為大，<br/>路9:46<br/>。τί ἂν ποιήσαιεν τῷ Ἰησοῦ 怎樣處治耶穌，<br/>路6:11<br/>。τί ἂν γένοιτο τοῦτο 這事將來如何，<br/>徒5:24<br/>。τί ἂν εἴη τὸ ὅραμα 異象是甚麼意思，<br/>徒10:17<br/>。</li><li>六 ἄν 帶不定詞及分詞： ἵνα μὴ δόξω ὡς ἂν （或異版為ὡσὰν）ἐκφοβεῖν ὑμᾶς 免得你們以為…是要威嚇你們，<br/>林後10:9<br/>。εἰ μήτι ἂν （要意會γένηται）ἐκ συμφώνου<br/>除非<br/>兩相情願，<br/>林前7:5<br/>。</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>00302  ἄν  質詞（在關係詞之後，ἐάν〔見SG1437〕常代用ἄν）。一種希臘文特有的質詞，難以用中文一詞來譯之；它表示動詞之動作是由環境或狀況所限定；ἄν對其子句的影響，是由與其合用動詞之語氣與時態而定。一、ἄν帶不定式或不完直說：A. 表示過去時間持續的動作，但受所述條件之限定，尤其是在關係詞之後者：不定式（ 創30:42 民9:17 撒上14:47 結10:11）。ὅσοι ἂν ἥψαντο αὐτοῦ ἐσῴζοντο凡摸著他的人，就都好了，可6:56。不完（ 結1:20） ὅπου ἂν εἰσεπορεύετο εἰς κώμας 凡他所到的地方，可6:56。καθότι ἄν τις χρείαν εἶχεν 照個人所需用的，徒2:45 4:35。林前12:2之ὡς ἂν ἤγεσθε 也類似（除非ἀνήγεσθε 之抄本正確）。參ὅταν－SG3752二C.及D.B. 用於表達與事實相反的結論句中：1. 帶不完式：οὗτος εἰ ἦν προφήτης, ἐγίνωσκεν ἄν 這人若是先知，他必知（但他不知）路7:39。 εἰ ἔχετε πίστιν … ἐλέγετε ἄν 你們若有信心…就是說，路17:6。εἰ ἐπιστεύετε Μωϋσεῖ, ἐπιστεύετε ἂν ἐμοί你們如果信摩西，也必信我，約5:46。εἰ ἐμὲ ᾔδειτε, καὶ τὸν πατέρα μου ἂν ᾔδειτε 若是認識我，也就認識我的父，約8:19;參 約8:42 9:41 15:19。εἰ ἔτι ἀνθρώποις ἤρεσκον, Χριστοῦ δοῦλος οὐκ ἂν ἤμην若仍討人的喜歡，我就不是基督的僕人了，加1:10;參 加3:21。 εἰ ἑαυτοὺς διεκρίνομεν, οὐκ ἂν ἐκρινόμεθα 我們若是先分辨自己，就不至於受審，林前11:31。 εἰ ἦν ἐπὶ γῆς, οὐδ᾽ ἦν ἂν ἱερεύς 他若在地上，必不得為祭司，來8:4;參 來4:8 8:7 11:15。2. 帶不定式式：表達對過去事物提出假設（ 創30:27）。 εἰ ἐγένοντο αἱ δυνάμεις,  πάλαι ἂν … μετενόησαν 異能若行在…，他們早已…悔改了，太11:21。εἰ ἔγνωσαν, οὐκ ἂν ἐσταύρωσαν 若知道，就不把…釘在十字架上了，林前2:8;參 羅9:29（ 賽1:9）。 εἰ ἐγνώκειτε, οὐκ ἂν κατεδικάσατε 你們若明白…就不將…當作有罪的了，太12:7。εἰ ἠγαπᾶτέ με, ἐχάρητε ἄν你們若愛我…就必喜樂，約14:28。以過去完成式代不定式直說－εἰ ἦσαν μεμενήκεισαν ἄν 若是屬我們的，就必仍舊與我們同在，約一2:19;參 約11:21異版。在 路19:23中κἀγὼ ἐλθὼν σὺν τόκῳ ἂν αὐτὸ ἔπραξα 之 ἐλθὼν用以取代不真實時間的條件子句：參καὶ ἐλθὼν ἐγὼ ἐκομισάμην ἂν τὸ ἐμόν 我來的時候可以把屬我的…收回來，太25:27。同樣地ἐπεὶ οὐκ ἂν ἐπαύσαντο προσφεόμεναι；句中 ἐπεί取代條件子句的角色：「若不然」（即若祭物真能帶出最後的贖價）獻祭的事豈不早已止住了麼？ 來10:2。二、ἄν在關係詞之後帶假設語氣，關係子句就形成將來或現在一般形式條件的條件子句。A. 在歸結子句中帶未來式或不完成式，顯示其條件與結果均屬將來，指單一或持續之動作。 ὃς δ᾽ ἂν ποιήσῃ καὶ διδάξῃ, οὗτος μέγας κληθήσεται無論何人遵行又教訓人遵行＝他若遵行又教訓人遵行，他…要稱為大，太5:19。ὃς ἂν ἐσθίῃ … ἔνοχος ἔσται無論何人…吃…他就是干犯，林前11:27。οὓς ἐὰν（異版為ἂν）δοκιμάσητε, τούτους πέμψω 你們寫信舉薦誰，我就打發他們，林前16:3異版。太10:11 林前16:2。B. 在歸結子句中帶現在式，表明不管時態因素，其條件與結果均是持續之動作： ἃ ἂν ἐκεῖνος ποιῇ, ταῦτα καὶ ὁ υἱὸς ὁμοίως ποιεῖ 凡父所作的，子也照樣作，約5:19。ὅπου ἐὰν（異版為ἂν）αὐτὸν καταλάβῃ, ῥήσσει αὐτόν無論在那裡…把他摔倒，可9:18。ὑμῖν ἐστὶν ἡ ἐπαγγελία …, ὅσους ἂν προσκαλέσηται κύριος 因為這應許是給你們…就是主我們　神所召來的，徒2:39。 ὃς ἐὰν（異版為ἂν） βουληθῇ φίλος εἶναι τοῦ κόσμου, ἐχθρὸς τοῦ θεοῦ καθίσταται凡想與世俗為友的，就是與　神為敵了，雅4:4。三、在時間子句之中，當描述一事件可能或將發生，但不能確定時，ἄν帶假設語氣：A. ὅταν（＝ὅτε ἄν；參 ὅταν）帶現在式假設語氣，表示定期重複發生之動作：ὅταν ἄρτον ἐσθίωσιν無論何時吃飯時，太15:2。ὅταν λαλῇ τὸ ψεῦδος無論何時他說謊，約8:44。 ὅταν  λέγῃ τις無論何時有人說，林前3:4。帶不定式式假設語氣，表示將來發生之動作，被認為已完成：ὅταν ποιήσητε πάντα當你們作完了，路17:10。ὅταν ἔλθῃ ὁ κύριος當園主已來的時候，太21:40； ὅταν ἔλθῃ ἐν τῆ δόξῃ當他在榮耀裡降臨時，可8:38;參 約4:25 16:13 徒23:35。 ὅταν πάλιν εἰσαγάγῃ τὸν πρωτότοκον 　神使長子…來的時候，來1:6。B. ἡνίκα ἄν 「每逢」（ 出1:10 33:22 34:24等）。ἡνίκα ἂν ἀναγινώσκηται Μωϋσῆς每逢誦讀摩西書的時候，林後3:15。ἡνίκα δὲ ἐὰν ἐπιστρέψῃ 但幾時歸向主，林後3:16。C. ὁσάκις ἄν「每次」: ὁσάκις ἐὰν πίνητε每逢喝的時候，林前11:25。ὁσὰκις ἐὰν ἐσθίητε 林前11:26。D. ὡς ἄν同時（ 書2:14）：ὡς ἂν πορεύωμαι 我去的同時，羅15:24。ὡς ἂν ἔλθω 我來的時候，林前11:34。ὡς ἂν ἀφίδω τὰ περὶ ἐμέ 我一看出我的事要怎樣了結，腓2:23。ἀφ᾽ οὗ ἂν之後，路13:25。只有ἕως ἄν表示確定時間（ 創24:14,19 49:10 出23:30等 ）：μείνατε ἕως ἂν ἐξέλθητε 住到你們離去的時候，太10:11。 ἕως ἂν ἴδωσιν τὴν βασιλείαν τοῦ θεοῦ 必看見　神的國，路9:27。太2:13 5:26。ἕως ἂν λάβῃ直到得了，雅5:7。ἄχρι οὗ（異版有ἄν）ἔλθῃ 直等到他來，林前11:26。ἄχρι οὗ (異版有ἄν) θῇ 直等到他放，林前15:25。ἄχρι οὗ ἂν ἥξω 直等到我來，啟2:25。ἄχρις ἂν ἔλθῃ 等候來到，加3:19（僅一些抄本有此）。πρὶν ἄν：πρὶν ἂν ἴδῃ τὸν χριστόν必看見基督，路2:26。四、在目的子句中用 ὅπως ἄν：（ 創18:19 50:20 出33:13 耶7:23等）ὅπως ἂν ἀποκαλυφθῶσιν διαλογισμοί叫…意念顯露出來，路2:35。ὅπως ἂν ἔλθωσιν καιροὶ 日子就…來到，徒3:19。徒15:17（ 摩9:12異版）;羅3:4（ 詩51:4）。五、在主要子句中祈願語氣帶ἄν幾乎沒有，例外的情形是：如保羅向亞基帕王所說εὐξαίμην ἂν我向　神所求的，徒26:29。參路加的文學用語－直接修詞問句（ 創23:15 伯19:23）πῶς γὰρ ἂν δυναίμην怎能明白呢？ 徒8:31。 τί ἂν θέλοι οὗτος λέγειν 這人…要說甚麼？ 徒17:18。多在間接問句出現，在不完成式或歷史現在式之後－τὸ τί ἂν θέλοι καλεῖσθαι αὐτό 問他要叫這孩子甚麼名字，路1:62。τὸ τίς ἂν εἴη μείζων αὐτῶν 他們當中誰將為大，路9:46。τί ἂν ποιήσαιεν τῷ Ἰησοῦ 怎樣處治耶穌，路6:11。τί ἂν γένοιτο τοῦτο 這事將來如何，徒5:24。τί ἂν εἴη τὸ ὅραμα 異象是甚麼意思，徒10:17。六、ἄν 帶不定詞及分詞： ἵνα μὴ δόξω ὡς ἂν （或異版為ὡσὰν）ἐκφοβεῖν ὑμᾶς 免得你們以為…是要威嚇你們，林後10:9。εἰ μήτι ἂν （要意會γένηται）ἐκ συμφώνου除非兩相情願，林前7:5。</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primary particle, denoting a supposition, wish, possibility or uncertainty</p>
+<p>302 an {an}<br/>a primary particle;; particle<br/>AV - whosoever 35, whatsoever 7, whomsoever 5, whereinsoever 1,<br/>what things soever 1, whatsoever + 3745 7, an many as + 3745 4,<br/>whosoever + 3745 2, what things so ever + 3745 1,<br/>wherewith soever + 3745 1, whithersoever + 3699 4,<br/>wheresoever + 3699 2, whatsoever + 3748 5, whosoever + 3748 3,<br/>whose soever + 5100 2, not tr 111; 191<br/>1) has no exact English equivalent, see definitions under AV</p></div></div></details>
+<details class="ntfold"><summary><span class="heb">ἥκω</span> <span class="tl">hḗkō</span> <span class="sn">G02240</span></summary><div><div class="dict-sec"><strong>①基本資料</strong><ul class="dict-plain"><li>編號 G02240</li><li>詞形 ἥκω</li><li>音譯 hḗkō</li><li>讀音 hay&#x27;-ko</li><li>約 新約</li><li>詞類 動詞</li><li>字源 [字源] a primary verb; to arrive, i.e. be present (literally or figuratively)</li><li>KJV 用法 come 27; 27</li></ul></div><div class="dict-sec"><strong>③字義資料</strong><ol class="dict-ol"><li>1 來, 抵達, 在場</li><li>2 隱喻.</li><li>2a 來到一個人前,亦即與對方建立親密關係,成為對方的信徒; (毫無預期地)臨到</li><li>2b 臨到, 經受的事情</li></ol></div><div class="dict-sec"><strong>④中文詳解</strong><p>02240  ἥκω 動詞由於這個字有完成之意，所以它的變化有時有現在完成之形式，如 可8:3異版。不完ἧκον；未ἥξω；1不定式ἧξα 啟2:25；「來了，到達」。一、用於人：A. 提及出發點：ἀπό τινος自某地方，太8:11 路13:29。或ἔκ τινος 約4:47 羅11:26。μακρόθεν遠處，可8:3異版（參 書9:6,9 賽60:4）。B. 提及目的：εἴς τι到某地方，約4:47（見上A.）；或πρός τινα 徒28:23公認經文。ἐπί τινα到某人處，亦帶有敵意（ 代下20:2）啟3:3下。C. 獨立用法： 太24:50 路12:46 15:27 約8:42 來10:7,9（此兩節見 詩40:8），來10:37（ 哈2:3）;約一5:20 啟2:25 3:3上，啟3:9。D. 作為宗教專有名詞：1. 用於　神來臨時之莊嚴的顯現，以ἥκω來表達，約8:42。2. 指崇拜者到　神面前來（ 王上8:42 耶50:5）約6:37 啟15:4（ 詩86:9）。二、非人稱用法：用於時間－（ 結7:12ἥκει ὁ καιρός時候到了；詩102:13）或事件－ 太24:14 約2:4 彼後3:10 啟18:8。ἕωη ἥξει ὅτε直等到（…時）路13:35。ἐπί τινα歸到某人（ 賽47:9）指末後的災難，太23:36 路19:43。*</p>
+</div><div class="dict-sec"><strong>⑤英文定義</strong><p>[字源] a primary verb;<br/>to arrive, i.e. be present (literally or figuratively)</p>
+<p>2240 heko {hay&#x27;-ko}<br/>a primary verb; TDNT - 2:926,306; v<br/>AV - come 27; 27<br/>1) to have come, have arrived, be present<br/>2) metaph.<br/>2a) to come to one, i.e. to seek an intimacy with one, become<br/>his follower: to come upon one (unexpectedly)<br/>2b) to come upon one, of things endured</p></div></div></details>
+</div></details>
+<hr/>
+
+<p>總目錄：聖經原文 - 逐節查經 - 目錄 - 稿(未完成)</p>
+</div>
+</div>
+</details>
+<nav class="footbar">
+<button class="mini" id="toTop">↑ 回頂部</button>
+<a class="mini" download="66_啟示錄_Revelation rev_02_25_無聲_臨標.html" href="#" id="dlAll">⬇ 下載本節全部（文字，單一檔）</a>
+</nav>
+<div class="donebar"><div class="dt">金標要義修訂・未經獨立驗收</div>
+<div class="ds">本頁是啟示錄 第2章25節的金標要義修訂：已按金標要義重寫讀稿與查經欄，字典與數值仍取本機統一庫已裁定值、未自算。這不是金標完成，亦未經獨立驗收，不得稱為全書金標，亦不得當作上傳定稿。<br/><span style="opacity:.55;font-size:.85em;">版 2026-11-12 22:46:20 +0800・無聲讀稿殼・語音已剝・字典＝本機 dict_unified 全條・數值＝gematria_unified 已裁定值・金標要義修訂・稿(未完成)</span></div></div>
+</div>
+<div id="fabpanel">
+<div class="ftitle">頁面變色</div>
+<div class="frow theme" id="ftheme"></div>
+</div>
+<button id="fab" title="頁面變色">✎</button>
+<button id="topFab" title="回頂部">↑</button>
+<script>
+
+
+'use strict';
+function el(id){ return document.getElementById(id); }
+var THEME = [
+  ['宣紙', '#efe9dd', '#3a352d'],
+  ['夜書', '#1c1b1f', '#cfcabd'],
+  ['青瓷', '#e4ece7', '#2f3a35'],
+  ['茶褐', '#efe7de', '#4a3f36'],
+  ['藍箋', '#e6ebf1', '#2b3542'],
+  ['暮灰', '#e9e9e9', '#3c3c3c']
+];
+var ti = 0, fs = 15, lh = 1.9;
+function Sv(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function Gv(k, d){ try { var v = localStorage.getItem(k); return (v === null) ? d : v; } catch (e) { return d; } }
+function apply(){
+  var T = THEME[ti];
+  var r = document.documentElement.style;
+  r.setProperty('--bg', T[1]);
+  r.setProperty('--ink', T[2]);
+  r.setProperty('--fs', fs + 'px');
+  r.setProperty('--lh', lh);
+  var fsv = el('fsv'), lhv = el('lhv');
+  if (fsv) fsv.textContent = fs + 'px';
+  if (lhv) lhv.textContent = Number(lh).toFixed(1);
+  // sync theme buttons
+  document.querySelectorAll('#sw .sw, #ftheme .ftsw, #reftheme .rtsw').forEach(function(b){
+    var idx = parseInt(b.getAttribute('data-ti'), 10);
+    var on = (idx === ti);
+    if (b.classList.contains('sw')) b.className = 'sw' + (on ? ' on' : '');
+    if (b.classList.contains('ftsw')) { b.className = 'ftsw' + (on ? ' on' : ''); }
+    if (b.classList.contains('rtsw')) { b.className = 'rtsw' + (on ? ' on' : ''); }
+  });
+}
+function buildThemeButtons(host, cls){
+  if (!host) return;
+  host.innerHTML = '';
+  THEME.forEach(function(T, idx){
+    var b = document.createElement('button');
+    b.className = cls + (idx === ti ? ' on' : '');
+    b.setAttribute('data-ti', String(idx));
+    b.textContent = T[0];
+    b.style.background = T[1];
+    b.style.color = T[2];
+    b.onclick = function(){ ti = idx; Sv('ti', String(idx)); apply(); };
+    host.appendChild(b);
+  });
+}
+function studyPlain(){
+  var box = document.querySelector('.refbody');
+  return box ? box.innerText.trim() + '\n' : '';
+}
+function saveMD(){
+  var blob = new Blob(['\ufeff' + studyPlain()], {type: 'text/markdown;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sng_01_01_逐節查經.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+}
+function copyAll(){
+  var t = studyPlain();
+  if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function toastLater(){
+  alert('讀稿／語音後補（本版先做靜態查經殼）');
+}
+
+ti = parseInt(Gv('ti', '0'), 10);
+if (!(ti >= 0 && ti < THEME.length)) ti = 0;
+fs = parseFloat(Gv('sscos_fs_v2', '15')) || 15;
+lh = parseFloat(Gv('sscos_lh_v2', '1.9')) || 1.9;
+if (fs < 15) fs = 15; if (fs > 32) fs = 32;
+if (lh < 1.4) lh = 1.4; if (lh > 2.6) lh = 2.6;
+
+buildThemeButtons(el('sw'), 'sw');
+buildThemeButtons(el('ftheme'), 'ftsw');
+buildThemeButtons(el('reftheme'), 'rtsw');
+apply();
+
+var fr = el('fr'), lr = el('lr');
+if (fr) {
+  fr.value = fs;
+  fr.oninput = function(){ fs = parseInt(fr.value, 10); Sv('sscos_fs_v2', String(fs)); apply(); };
+}
+if (lr) {
+  lr.value = lh;
+  lr.oninput = function(){ lh = parseFloat(lr.value); Sv('sscos_lh_v2', String(lh)); apply(); };
+}
+
+['pb','sb','fb','vs0','vs1','rm','rp','rr'].forEach(function(id){
+  var n = el(id);
+  if (!n) return;
+  n.disabled = true;
+  n.classList.add('btn-dis');
+  n.onclick = toastLater;
+});
+document.querySelectorAll('#vbx .vb, #fabpanel button').forEach(function(b){
+  if (b.id === 'topFab') return;
+  if (b.closest && b.closest('#ftheme')) return;
+  if (b.classList.contains('ftsw') || b.classList.contains('rtsw')) return;
+  if (['fplay','fstop','fminus','fplus','fvolm','fvolp','fv1','fv2'].indexOf(b.id) >= 0) {
+    b.disabled = true;
+    b.onclick = toastLater;
+  }
+});
+
+var mb = el('mb'); if (mb) mb.onclick = saveMD;
+var cb = el('cb'); if (cb) cb.onclick = copyAll;
+
+var fab = el('fab'), fabpanel = el('fabpanel');
+if (fab && fabpanel) {
+  fab.title = '頁面變色';
+  fab.textContent = '✎';
+  fab.onclick = function(){
+    fabpanel.classList.toggle('open');
+    fab.classList.toggle('open');
+  };
+}
+var topFab = el('topFab');
+if (topFab) topFab.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+var tt = el('toTop');
+if (tt) tt.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+
+// download current page html
+function wireDl(a){
+  if (!a) return;
+  a.onclick = function(ev){
+    ev.preventDefault();
+    var html = '<!doctype html>\n' + document.documentElement.outerHTML;
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var x = document.createElement('a');
+    x.href = url;
+    x.download = 'sng_01_01_工作副本.html';
+    document.body.appendChild(x); x.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (x.parentNode) x.parentNode.removeChild(x); }, 800);
+  };
+}
+wireDl(el('dlAllBar'));
+wireDl(el('dlAll'));
+
+// open study by default on mobile-friendly: keep closed like gold (user expands)
+
+
+</script>
+<script>
+
+
+/* ===== 原文字典／fold：點開後再點內容任意處即摺回（Ollie 2026-10-25／2026-11-06 silent）=====
+   closest() 對應層級：點 SN 條摺 SN；點 Gematria 摺 Gematria
+   連結不關；summary 本身用原生 toggle */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('a')) return;
+  var d = t.closest('details.ntfold') || t.closest('details.fold');
+  if (!d) return;
+  if (t.closest('summary')) return;
+  if (!d.open) return;
+  d.open = false;
+}, true);
+
+
+</script>
+</body>
+</html>
